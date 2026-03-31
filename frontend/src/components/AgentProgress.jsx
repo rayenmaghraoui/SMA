@@ -21,11 +21,9 @@ const PIPELINE_STEPS = [
 const getStepIndex = (currentStep) => {
   if (!currentStep) return -1;
 
-  // Chercher par clé exacte
   const exactIndex = PIPELINE_STEPS.findIndex((s) => s.key === currentStep);
   if (exactIndex !== -1) return exactIndex;
 
-  // Chercher par contenu partiel
   const stepLower = currentStep.toLowerCase();
   if (stepLower.includes('analyse') || stepLower.includes('analysis')) return 0;
   if (stepLower.includes('interprét') || stepLower.includes('interpret')) return 1;
@@ -45,50 +43,48 @@ const AgentProgress = ({ currentStep, isLoading = false }) => {
 
   return (
     <div className="w-full">
-      {/* Message d'étape */}
       {isLoading && currentStep && (
         <motion.p
           key={currentStep}
           initial={{ opacity: 0, y: -5 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center text-sm font-medium text-blue-600 mb-4"
+          className="text-center text-sm font-medium text-cyan-200 mb-4"
         >
           {currentStep}
         </motion.p>
       )}
 
-      {/* Barre de progression */}
       <div className="flex items-center justify-between">
         {PIPELINE_STEPS.map((step, index) => {
           const isCompleted = index < currentIndex;
           const isCurrent = index === currentIndex;
-          const isPending = index > currentIndex;
 
           return (
-            <div key={step.key} className="flex flex-col items-center flex-1">
-              {/* Ligne de connexion (sauf pour le premier) */}
+            <div key={step.key} className="flex flex-col items-center flex-1 relative">
               {index > 0 && (
-                <div className="absolute h-0.5 w-full -z-10" style={{ left: '-50%' }}>
+                <div
+                  className="absolute h-0.5 top-6 -translate-y-1/2 left-0 right-1/2 -z-10 w-full"
+                  style={{ marginLeft: '-50%' }}
+                >
                   <div
-                    className={`h-full transition-all duration-500 ${
-                      isCompleted ? 'bg-green-500' : 'bg-gray-200'
+                    className={`h-full transition-all duration-500 rounded-full ${
+                      isCompleted ? 'bg-gradient-to-r from-emerald-400 to-cyan-400' : 'bg-cyan-800/60'
                     }`}
                   />
                 </div>
               )}
 
-              {/* Cercle d'étape */}
               <motion.div
                 animate={{
-                  scale: isCurrent ? 1.1 : 1,
-                  boxShadow: isCurrent ? '0 0 0 4px rgba(59, 130, 246, 0.3)' : 'none',
+                  scale: isCurrent ? 1.08 : 1,
+                  boxShadow: isCurrent ? '0 0 0 4px rgba(34, 211, 238, 0.35)' : 'none',
                 }}
                 className={`relative w-12 h-12 rounded-full flex items-center justify-center text-xl transition-colors ${
                   isCompleted
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-gradient-to-br from-emerald-400 to-teal-500 text-white'
                     : isCurrent
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-200 text-gray-500'
+                    ? 'bg-gradient-to-br from-cyan-400 to-cyan-600 text-white'
+                    : 'bg-cyan-900/70 text-cyan-500 border border-cyan-700/50'
                 }`}
               >
                 {isCompleted ? (
@@ -99,10 +95,9 @@ const AgentProgress = ({ currentStep, isLoading = false }) => {
                   <span>{step.icon}</span>
                 )}
 
-                {/* Animation de chargement */}
                 {isCurrent && isLoading && (
                   <motion.div
-                    className="absolute inset-0 rounded-full border-2 border-blue-300"
+                    className="absolute inset-0 rounded-full border-2 border-cyan-300/60"
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                     style={{ borderTopColor: 'transparent' }}
@@ -110,10 +105,9 @@ const AgentProgress = ({ currentStep, isLoading = false }) => {
                 )}
               </motion.div>
 
-              {/* Label */}
               <p
-                className={`mt-2 text-xs font-medium text-center ${
-                  isCompleted || isCurrent ? 'text-gray-900' : 'text-gray-400'
+                className={`mt-2 text-xs font-medium text-center max-w-[72px] leading-tight ${
+                  isCompleted || isCurrent ? 'text-cyan-100' : 'text-cyan-500/80'
                 }`}
               >
                 {step.label}

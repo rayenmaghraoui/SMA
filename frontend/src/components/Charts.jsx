@@ -1,5 +1,5 @@
 /**
- * Charts — graphiques Recharts pour les KPIs.
+ * Charts — graphiques Recharts pour les KPIs (thème cyan sombre).
  */
 
 import {
@@ -18,8 +18,12 @@ import {
   Cell,
 } from 'recharts';
 
-// Couleurs pour les graphiques
-const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'];
+const GRID_STROKE = 'rgba(34, 211, 238, 0.15)';
+const AXIS_STROKE = '#a5f3fc';
+const TOOLTIP_BG = 'rgba(8, 51, 68, 0.95)';
+const TOOLTIP_BORDER = 'rgba(34, 211, 238, 0.35)';
+
+const COLORS = ['#22d3ee', '#2dd4bf', '#38bdf8', '#fbbf24', '#fb7185', '#a78bfa'];
 
 /**
  * Graphique linéaire pour les revenus.
@@ -27,7 +31,7 @@ const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899'
 export const RevenueChart = ({ data }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-gray-400">
+      <div className="h-64 flex items-center justify-center text-cyan-300/70">
         Aucune donnée disponible
       </div>
     );
@@ -36,34 +40,35 @@ export const RevenueChart = ({ data }) => {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-        <XAxis dataKey="date" stroke="#6B7280" fontSize={12} />
-        <YAxis stroke="#6B7280" fontSize={12} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
+        <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE} />
+        <XAxis dataKey="date" stroke={AXIS_STROKE} fontSize={12} tick={{ fill: '#cffafe' }} />
+        <YAxis stroke={AXIS_STROKE} fontSize={12} tick={{ fill: '#cffafe' }} tickFormatter={(v) => `${(v / 1000).toFixed(0)}k`} />
         <Tooltip
           contentStyle={{
-            backgroundColor: 'white',
-            border: '1px solid #E5E7EB',
+            backgroundColor: TOOLTIP_BG,
+            border: `1px solid ${TOOLTIP_BORDER}`,
             borderRadius: '8px',
+            color: '#ecfeff',
           }}
           formatter={(value) => [`${value.toLocaleString()} TND`, 'Revenus']}
         />
-        <Legend />
+        <Legend wrapperStyle={{ color: '#cffafe' }} />
         <Line
           type="monotone"
           dataKey="revenue"
           name="Chiffre d'affaires"
-          stroke="#3B82F6"
+          stroke="#22d3ee"
           strokeWidth={2}
-          dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
+          dot={{ fill: '#22d3ee', strokeWidth: 2, r: 4 }}
           activeDot={{ r: 6 }}
         />
         <Line
           type="monotone"
           dataKey="profit"
           name="Bénéfice"
-          stroke="#10B981"
+          stroke="#2dd4bf"
           strokeWidth={2}
-          dot={{ fill: '#10B981', strokeWidth: 2, r: 4 }}
+          dot={{ fill: '#2dd4bf', strokeWidth: 2, r: 4 }}
         />
       </LineChart>
     </ResponsiveContainer>
@@ -76,13 +81,12 @@ export const RevenueChart = ({ data }) => {
 export const ChannelChart = ({ data }) => {
   if (!data || Object.keys(data).length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-gray-400">
+      <div className="h-64 flex items-center justify-center text-cyan-300/70">
         Aucune donnée disponible
       </div>
     );
   }
 
-  // Transformer l'objet en tableau
   const chartData = Object.entries(data).map(([channel, roi]) => ({
     channel,
     roi: Number(roi) || 0,
@@ -91,21 +95,22 @@ export const ChannelChart = ({ data }) => {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-        <XAxis dataKey="channel" stroke="#6B7280" fontSize={12} />
-        <YAxis stroke="#6B7280" fontSize={12} />
+        <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE} />
+        <XAxis dataKey="channel" stroke={AXIS_STROKE} fontSize={12} tick={{ fill: '#cffafe' }} />
+        <YAxis stroke={AXIS_STROKE} fontSize={12} tick={{ fill: '#cffafe' }} />
         <Tooltip
           contentStyle={{
-            backgroundColor: 'white',
-            border: '1px solid #E5E7EB',
+            backgroundColor: TOOLTIP_BG,
+            border: `1px solid ${TOOLTIP_BORDER}`,
             borderRadius: '8px',
+            color: '#ecfeff',
           }}
           formatter={(value) => [`${value.toFixed(1)}%`, 'ROI']}
         />
-        <Legend />
+        <Legend wrapperStyle={{ color: '#cffafe' }} />
         <Bar dataKey="roi" name="ROI" radius={[4, 4, 0, 0]}>
-          {chartData.map((entry, index) => (
-            <Cell key={entry.channel} fill={COLORS[index % COLORS.length]} />
+          {chartData.map((entry, cellIndex) => (
+            <Cell key={entry.channel} fill={COLORS[cellIndex % COLORS.length]} />
           ))}
         </Bar>
       </BarChart>
@@ -119,7 +124,7 @@ export const ChannelChart = ({ data }) => {
 export const DistributionChart = ({ data, nameKey = 'name', valueKey = 'value' }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-gray-400">
+      <div className="h-64 flex items-center justify-center text-cyan-300/70">
         Aucune donnée disponible
       </div>
     );
@@ -139,18 +144,19 @@ export const DistributionChart = ({ data, nameKey = 'name', valueKey = 'value' }
           nameKey={nameKey}
           label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
         >
-          {data.map((entry, index) => (
-            <Cell key={entry[nameKey]} fill={COLORS[index % COLORS.length]} />
+          {data.map((entry, cellIndex) => (
+            <Cell key={entry[nameKey]} fill={COLORS[cellIndex % COLORS.length]} />
           ))}
         </Pie>
         <Tooltip
           contentStyle={{
-            backgroundColor: 'white',
-            border: '1px solid #E5E7EB',
+            backgroundColor: TOOLTIP_BG,
+            border: `1px solid ${TOOLTIP_BORDER}`,
             borderRadius: '8px',
+            color: '#ecfeff',
           }}
         />
-        <Legend />
+        <Legend wrapperStyle={{ color: '#cffafe' }} />
       </PieChart>
     </ResponsiveContainer>
   );
@@ -162,7 +168,7 @@ export const DistributionChart = ({ data, nameKey = 'name', valueKey = 'value' }
 export const SatisfactionChart = ({ data }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center text-gray-400">
+      <div className="h-64 flex items-center justify-center text-cyan-300/70">
         Aucune donnée disponible
       </div>
     );
@@ -171,25 +177,26 @@ export const SatisfactionChart = ({ data }) => {
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-        <XAxis dataKey="date" stroke="#6B7280" fontSize={12} />
-        <YAxis stroke="#6B7280" fontSize={12} domain={[0, 5]} ticks={[1, 2, 3, 4, 5]} />
+        <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE} />
+        <XAxis dataKey="date" stroke={AXIS_STROKE} fontSize={12} tick={{ fill: '#cffafe' }} />
+        <YAxis stroke={AXIS_STROKE} fontSize={12} domain={[0, 5]} ticks={[1, 2, 3, 4, 5]} tick={{ fill: '#cffafe' }} />
         <Tooltip
           contentStyle={{
-            backgroundColor: 'white',
-            border: '1px solid #E5E7EB',
+            backgroundColor: TOOLTIP_BG,
+            border: `1px solid ${TOOLTIP_BORDER}`,
             borderRadius: '8px',
+            color: '#ecfeff',
           }}
           formatter={(value) => [`${value.toFixed(1)}/5`, 'Satisfaction']}
         />
-        <Legend />
+        <Legend wrapperStyle={{ color: '#cffafe' }} />
         <Line
           type="monotone"
           dataKey="satisfaction"
           name="Score de satisfaction"
-          stroke="#8B5CF6"
+          stroke="#a78bfa"
           strokeWidth={2}
-          dot={{ fill: '#8B5CF6', strokeWidth: 2, r: 4 }}
+          dot={{ fill: '#a78bfa', strokeWidth: 2, r: 4 }}
         />
       </LineChart>
     </ResponsiveContainer>

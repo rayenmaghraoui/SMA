@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import KpiCard from '../components/KpiCard';
-import { RevenueChart, ChannelChart } from '../components/Charts';
+import { ChannelChart } from '../components/Charts';
 import useAnalysis from '../hooks/useAnalysis';
 
 /**
@@ -15,73 +15,88 @@ import useAnalysis from '../hooks/useAnalysis';
 const Dashboard = () => {
   const { kpis, report, isLoading, error, fetchReport, triggerAnalysis } = useAnalysis();
 
-  // Charger le rapport au montage
   useEffect(() => {
     fetchReport();
   }, [fetchReport]);
 
-  // Extraire les KPIs par domaine
   const financeKpis = kpis.finance?.indicateurs || [];
   const marketingKpis = kpis.marketing?.indicateurs || [];
   const supportKpis = kpis.support?.indicateurs || [];
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
+    <div className="min-h-[calc(100vh-4rem)] p-6">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+        className="mb-8"
+      >
+        <h1 className="text-3xl font-bold text-white drop-shadow-sm">
           Tableau de Bord
         </h1>
-        <p className="mt-2 text-gray-600">
-          Vue d'ensemble des performances de votre entreprise
+        <p className="mt-2 text-cyan-200/90">
+          Vue d&apos;ensemble des performances de votre entreprise
         </p>
-      </div>
+      </motion.div>
 
-      {/* Actions */}
-      <div className="mb-8 flex gap-4">
-        <button
+      <motion.div
+        className="mb-8 flex flex-wrap gap-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.1 }}
+      >
+        <motion.button
+          type="button"
           onClick={() => triggerAnalysis(true)}
           disabled={isLoading}
-          className="px-6 py-3 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors disabled:opacity-50"
+          className="px-6 py-3 rounded-xl font-medium text-cyan-950 bg-gradient-to-r from-cyan-300 to-teal-300 shadow-lg shadow-cyan-900/30 disabled:opacity-50 disabled:cursor-not-allowed"
+          whileHover={{ scale: isLoading ? 1 : 1.03 }}
+          whileTap={{ scale: isLoading ? 1 : 0.98 }}
         >
           {isLoading ? 'Analyse en cours...' : 'Lancer l\'analyse'}
-        </button>
-        <Link
-          to="/chat"
-          className="px-6 py-3 bg-purple-500 text-white rounded-lg font-medium hover:bg-purple-600 transition-colors"
-        >
-          Poser une question
-        </Link>
-      </div>
+        </motion.button>
+        <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.98 }}>
+          <Link
+            to="/chat"
+            className="inline-block px-6 py-3 rounded-xl font-medium text-white border-2 border-cyan-400/50 bg-cyan-500/20 backdrop-blur-sm hover:bg-cyan-500/35 transition-colors"
+          >
+            Poser une question
+          </Link>
+        </motion.div>
+      </motion.div>
 
-      {/* Erreur */}
       {error && (
-        <div className="mb-8 p-4 bg-red-100 text-red-700 rounded-lg">
+        <motion.div
+          initial={{ opacity: 0, x: -8 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-8 p-4 rounded-xl bg-rose-500/20 border border-rose-400/40 text-rose-100"
+        >
           {error}
-        </div>
+        </motion.div>
       )}
 
-      {/* Message si pas de données */}
       {!isLoading && Object.keys(kpis).length === 0 && (
-        <div className="mb-8 p-8 bg-white rounded-xl shadow-md text-center">
-          <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="mb-8 p-8 glass-panel text-center"
+        >
+          <svg className="w-16 h-16 mx-auto text-cyan-300/80 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
           </svg>
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-xl font-semibold text-white mb-2">
             Aucune analyse disponible
           </h2>
-          <p className="text-gray-600 mb-4">
+          <p className="text-cyan-200/90 mb-4">
             Lancez une analyse pour voir les KPIs de votre entreprise.
           </p>
-        </div>
+        </motion.div>
       )}
 
-      {/* Grille de KPIs */}
       {Object.keys(kpis).length > 0 && (
         <>
-          {/* Section Finance */}
           <section className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-cyan-100 mb-4 flex items-center gap-2">
               <span>📊</span> Performance Financière
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -90,7 +105,7 @@ const Dashboard = () => {
                   key={kpi.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.08 }}
                 >
                   <KpiCard
                     label={kpi.label}
@@ -104,9 +119,8 @@ const Dashboard = () => {
             </div>
           </section>
 
-          {/* Section Marketing */}
           <section className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-cyan-100 mb-4 flex items-center gap-2">
               <span>📈</span> Performance Marketing
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -115,7 +129,7 @@ const Dashboard = () => {
                   key={kpi.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.08 }}
                 >
                   <KpiCard
                     label={kpi.label}
@@ -127,18 +141,20 @@ const Dashboard = () => {
               ))}
             </div>
 
-            {/* Graphique ROI par canal */}
             {kpis.marketing?.roi_par_canal && (
-              <div className="mt-6 bg-white rounded-xl shadow-md p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">ROI par Canal</h3>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6 glass-panel p-6"
+              >
+                <h3 className="text-lg font-medium text-white mb-4">ROI par Canal</h3>
                 <ChannelChart data={kpis.marketing.roi_par_canal} />
-              </div>
+              </motion.div>
             )}
           </section>
 
-          {/* Section Support */}
           <section className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-cyan-100 mb-4 flex items-center gap-2">
               <span>🎧</span> Service Client
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -147,7 +163,7 @@ const Dashboard = () => {
                   key={kpi.label}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.08 }}
                 >
                   <KpiCard
                     label={kpi.label}
@@ -161,14 +177,13 @@ const Dashboard = () => {
             </div>
           </section>
 
-          {/* Résumé exécutif */}
           {report?.resume_executif && (
             <section className="mb-8">
-              <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-cyan-100 mb-4 flex items-center gap-2">
                 <span>📋</span> Résumé Exécutif
               </h2>
-              <div className="bg-white rounded-xl shadow-md p-6">
-                <p className="text-gray-700 leading-relaxed">
+              <div className="glass-panel p-6">
+                <p className="text-cyan-100/95 leading-relaxed">
                   {report.resume_executif}
                 </p>
               </div>

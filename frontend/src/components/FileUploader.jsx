@@ -13,9 +13,6 @@ const FileUploader = ({ onUpload, isLoading = false }) => {
   const [files, setFiles] = useState([]);
   const [error, setError] = useState('');
 
-  /**
-   * Vérifie que tous les fichiers sont des CSV.
-   */
   const validateCsvFiles = useCallback((fileList) => {
     const selectedFiles = Array.from(fileList || []);
 
@@ -35,9 +32,6 @@ const FileUploader = ({ onUpload, isLoading = false }) => {
     return { validFiles: selectedFiles, errorMessage: '' };
   }, []);
 
-  /**
-   * Gestion du drag.
-   */
   const handleDragOver = useCallback((e) => {
     e.preventDefault();
     setIsDragging(true);
@@ -48,9 +42,6 @@ const FileUploader = ({ onUpload, isLoading = false }) => {
     setIsDragging(false);
   }, []);
 
-  /**
-   * Gestion du drop.
-   */
   const handleDrop = useCallback((e) => {
     e.preventDefault();
     setIsDragging(false);
@@ -66,9 +57,6 @@ const FileUploader = ({ onUpload, isLoading = false }) => {
     setFiles(validFiles);
   }, [validateCsvFiles]);
 
-  /**
-   * Gestion du click pour sélection.
-   */
   const handleFileSelect = useCallback((e) => {
     setError('');
     const { validFiles, errorMessage } = validateCsvFiles(e.target.files);
@@ -81,9 +69,6 @@ const FileUploader = ({ onUpload, isLoading = false }) => {
     setFiles(validFiles);
   }, [validateCsvFiles]);
 
-  /**
-   * Upload du fichier.
-   */
   const handleUpload = useCallback(async () => {
     if (files.length === 0 || !onUpload) return;
 
@@ -95,9 +80,6 @@ const FileUploader = ({ onUpload, isLoading = false }) => {
     }
   }, [files, onUpload]);
 
-  /**
-   * Supprimer le fichier sélectionné.
-   */
   const handleRemove = useCallback(() => {
     setFiles([]);
     setError('');
@@ -105,16 +87,15 @@ const FileUploader = ({ onUpload, isLoading = false }) => {
 
   return (
     <div className="w-full">
-      {/* Zone de drop */}
-      <div
+      <motion.div
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
-          isDragging
-            ? 'border-blue-500 bg-blue-50'
-            : 'border-gray-300 hover:border-gray-400'
-        }`}
+        animate={{
+          borderColor: isDragging ? 'rgba(34, 211, 238, 0.8)' : 'rgba(34, 211, 238, 0.35)',
+          backgroundColor: isDragging ? 'rgba(8, 145, 178, 0.25)' : 'rgba(8, 51, 68, 0.35)',
+        }}
+        className="relative border-2 border-dashed rounded-xl p-8 text-center transition-colors"
       >
         <input
           type="file"
@@ -134,15 +115,15 @@ const FileUploader = ({ onUpload, isLoading = false }) => {
               exit={{ opacity: 0, scale: 0.9 }}
               className="flex flex-col items-center"
             >
-              <svg className="w-12 h-12 text-green-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-12 h-12 text-emerald-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <p className="text-lg font-medium text-gray-900">
+              <p className="text-lg font-medium text-white">
                 {files.length} fichier(s) sélectionné(s)
               </p>
               <div className="mt-2 max-h-28 overflow-y-auto w-full">
                 {files.map((currentFile) => (
-                  <p key={`${currentFile.name}-${currentFile.lastModified}`} className="text-sm text-gray-500">
+                  <p key={`${currentFile.name}-${currentFile.lastModified}`} className="text-sm text-cyan-200/85">
                     {currentFile.name} - {(currentFile.size / 1024).toFixed(1)} Ko
                   </p>
                 ))}
@@ -156,32 +137,37 @@ const FileUploader = ({ onUpload, isLoading = false }) => {
               exit={{ opacity: 0 }}
               className="flex flex-col items-center"
             >
-              <svg className="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <motion.svg
+                className="w-12 h-12 text-cyan-400/80 mb-3"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                animate={{ y: [0, -4, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-              </svg>
-              <p className="text-lg font-medium text-gray-900">
+              </motion.svg>
+              <p className="text-lg font-medium text-white">
                 Glissez votre fichier CSV ici
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-cyan-200/80">
                 ou cliquez pour sélectionner un ou plusieurs CSV
               </p>
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
 
-      {/* Erreur */}
       {error && (
         <motion.p
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mt-3 text-sm text-red-600"
+          className="mt-3 text-sm text-rose-300"
         >
           {error}
         </motion.p>
       )}
 
-      {/* Boutons */}
       {files.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -189,19 +175,23 @@ const FileUploader = ({ onUpload, isLoading = false }) => {
           className="mt-4 flex justify-center gap-3"
         >
           <button
+            type="button"
             onClick={handleRemove}
-            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+            className="px-4 py-2 text-sm font-medium text-cyan-100 bg-cyan-950/50 border border-cyan-400/30 rounded-lg hover:bg-cyan-500/20 transition-colors"
             disabled={isLoading}
           >
             Annuler
           </button>
-          <button
+          <motion.button
+            type="button"
             onClick={handleUpload}
-            className="px-6 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
+            className="px-6 py-2 text-sm font-medium text-cyan-950 bg-gradient-to-r from-cyan-300 to-teal-300 rounded-lg shadow-md shadow-cyan-900/25 disabled:opacity-50"
             disabled={isLoading}
+            whileHover={{ scale: isLoading ? 1 : 1.03 }}
+            whileTap={{ scale: isLoading ? 1 : 0.97 }}
           >
             {isLoading ? 'Upload en cours...' : 'Uploader'}
-          </button>
+          </motion.button>
         </motion.div>
       )}
     </div>

@@ -2,29 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Évite un flash blanc au chargement (aligné sur le thème cyan) */
+html,
+body {
+  background-color: #0c4a6e;
+}
+
 /* Font par défaut */
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
-/* Scrollbar personnalisée */
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Fond animé cyan / teal (appliqué sur la coque App) */
+.app-shell-bg {
+  background: linear-gradient(
+    125deg,
+    #0c4a6e 0%,
+    #0e7490 25%,
+    #0891b2 50%,
+    #0d9488 75%,
+    #155e75 100%
+  );
+  background-size: 280% 280%;
+  animation: gradient-shift 18s ease infinite;
+}
+
+@layer utilities {
+  .glass-panel {
+    @apply bg-cyan-950/45 backdrop-blur-xl border border-cyan-400/25 shadow-xl shadow-cyan-950/40 rounded-2xl;
+  }
+
+  .glass-panel-soft {
+    @apply bg-teal-950/35 backdrop-blur-md border border-cyan-300/15 rounded-xl;
+  }
+}
+
+/* Scrollbar — thème cyan */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: rgba(8, 51, 68, 0.6);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: linear-gradient(180deg, #22d3ee, #14b8a6);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a1a1a1;
+  background: #67e8f9;
 }
 
 /* Animation pour le chat */
@@ -54,6 +94,11 @@ body {
   }
 
   body {
+    background: white;
+  }
+
+  .app-shell-bg {
+    animation: none;
     background: white;
   }
 }

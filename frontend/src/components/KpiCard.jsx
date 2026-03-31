@@ -29,16 +29,16 @@ const formatValue = (value, format, unite) => {
 };
 
 /**
- * Détermine la couleur de tendance.
+ * Détermine la couleur de tendance (lisible sur fond sombre).
  */
 const getTrendColor = (trend, inverse = false) => {
   if (trend === 'hausse' || trend === 'up') {
-    return inverse ? 'text-red-500' : 'text-green-500';
+    return inverse ? 'text-rose-400' : 'text-emerald-400';
   }
   if (trend === 'baisse' || trend === 'down') {
-    return inverse ? 'text-green-500' : 'text-red-500';
+    return inverse ? 'text-emerald-400' : 'text-rose-400';
   }
-  return 'text-gray-500';
+  return 'text-cyan-300';
 };
 
 /**
@@ -83,20 +83,21 @@ const KpiCard = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-white rounded-xl shadow-md p-6 ${className}`}
+      whileHover={{ y: -4, transition: { type: 'spring', stiffness: 400, damping: 25 } }}
+      className={`glass-panel p-6 border-cyan-400/30 ${className}`}
     >
       <div className="flex items-center justify-between">
         <div className="flex-1">
-          <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+          <p className="text-sm font-medium text-cyan-300/90 uppercase tracking-wider">
             {label}
           </p>
-          <p className="mt-2 text-3xl font-bold text-gray-900">
+          <p className="mt-2 text-3xl font-bold text-white">
             {formatValue(value, format, unite)}
           </p>
         </div>
 
         {icon && (
-          <div className="p-3 bg-blue-100 rounded-full">
+          <div className="p-3 rounded-full bg-cyan-500/25 border border-cyan-400/35 text-cyan-200">
             {icon}
           </div>
         )}
