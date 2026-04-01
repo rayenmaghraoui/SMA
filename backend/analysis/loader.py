@@ -368,6 +368,126 @@ def load_datasets(data_dir: Optional[Path] = None) -> Dict[str, pd.DataFrame]:
     return datasets
 
 
+def _detect_dataset_type(columns: pd.Index) -> str:
+    """
+    Détecte le type de dataset à partir des colonnes.
+
+    Args:
+        columns: Colonnes du CSV.
+
+    Returns:
+        "finance", "marketing", "support" ou "unknown".
+    """
+    normalized = {str(col).strip().lower() for col in columns}
+
+    schemas = {
+        "finance": set(FINANCE_SCHEMA.keys()),
+        "marketing": set(MARKETING_SCHEMA.keys()),
+        "support": set(SUPPORT_SCHEMA.keys()),
+    }
+
+    best_type = "unknown"
+    best_ratio = 0.0
+
+    for dataset_type, expected_columns in schemas.items():
+        ratio = len(normalized & expected_columns) / len(expected_columns)
+        if ratio > best_ratio:
+            best_ratio = ratio
+            best_type = dataset_type
+
+    return best_type if best_ratio >= 0.7 else "unknown"
+
+
+def _find_uploaded_dataset_paths(upload_dir: Path) -> Dict[str, Path]:
+    """
+    Trouve les fichiers uploadés et les mappe vers finance/marketing/support.
+
+    Si plusieurs fichiers matchent le même type, le plus récent est conservé.
+
+    Args:
+        upload_dir: Dossier des uploads.
+
+    Returns:
+        Mapping {"finance": Path, "marketing": Path, "support": Path}.
+    """
+    selected: Dict[str, Path] = {}
+    selected_mtime: Dict[str, float] = {}
+
+    for csv_path in upload_dir.glob("*.csv"):
+        try:
+            preview_df = pd.read_csv(csv_path, nrows=5)
+            dataset_type = _detect_dataset_type(preview_df.columns)
+            if dataset_type == "unknown":
+                continue
+
+            mtime = csv_path.stat().st_mtime
+            current = selected_mtime.get(dataset_type, float("-inf"))
+            if mtime >= current:
+                selected[dataset_type] = csv_path
+                selected_mtime[dataset_type] = mtime
+
+        except Exception as e:
+            logger.warning("Impossible d'analyser le fichier uploadé %s: %s", csv_path, e)
+
+    return selected
+
+
+def load_uploaded_datasets(upload_dir: Optional[Path] = None) -> Dict[str, pd.DataFrame]:
+    """
+    Charge, valide et nettoie les datasets depuis le dossier uploads.
+
+    Args:
+        upload_dir: Dossier des fichiers uploadés. Si None, utilise UPLOADS_DIR.
+
+    Returns:
+        dict avec les clés "finance", "marketing", "support".
+
+    Raises:
+        FileNotFoundError: Si un des trois datasets est introuvable dans uploads.
+        ValueError: Si un fichier trouvé ne respecte pas le schéma attendu.
+    """
+    from backend.config import UPLOADS_DIR
+
+    resolved_dir = Path(upload_dir) if upload_dir is not None else UPLOADS_DIR
+    logger.info("Chargement des datasets uploadés depuis : %s", resolved_dir)
+
+    if not resolved_dir.exists():
+        raise FileNotFoundError(f"Dossier uploads introuvable : {resolved_dir}")
+
+    mapped_paths = _find_uploaded_dataset_paths(resolved_dir)
+    missing_types = {"finance", "marketing", "support"} - set(mapped_paths.keys())
+    if missing_types:
+        raise FileNotFoundError(
+            "Fichiers uploadés manquants pour : "
+            f"{', '.join(sorted(missing_types))}. "
+            "Uploadez un CSV pour chaque domaine."
+        )
+
+    datasets: Dict[str, pd.DataFrame] = {}
+
+    finance_path = mapped_paths["finance"]
+    marketing_path = mapped_paths["marketing"]
+    support_path = mapped_paths["support"]
+
+    logger.info("Fichier finance uploadé sélectionné : %s", finance_path.name)
+    logger.info("Fichier marketing uploadé sélectionné : %s", marketing_path.name)
+    logger.info("Fichier support uploadé sélectionné : %s", support_path.name)
+
+    df_finance = pd.read_csv(finance_path)
+    _validate_columns(df_finance, FINANCE_SCHEMA, "finance")
+    datasets["finance"] = _clean_finance(df_finance)
+
+    df_marketing = pd.read_csv(marketing_path)
+    _validate_columns(df_marketing, MARKETING_SCHEMA, "marketing")
+    datasets["marketing"] = _clean_marketing(df_marketing)
+
+    df_support = pd.read_csv(support_path)
+    _validate_columns(df_support, SUPPORT_SCHEMA, "support")
+    datasets["support"] = _clean_support(df_support)
+
+    return datasets
+
+
 # ============================================================
 # Exécution directe — affichage debug
 # ============================================================

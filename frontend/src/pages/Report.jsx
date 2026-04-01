@@ -63,14 +63,14 @@ const Report = () => {
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const response = await api.get('/report');
-        setReport(response.data.report);
-      } catch (err) {
-        if (err.response?.status === 404) {
-          setError("Aucun rapport disponible. Lancez d'abord une analyse.");
+        const response = await api.get('/report/latest');
+        if (response.data?.success && response.data?.has_report) {
+          setReport(response.data.report);
         } else {
-          setError(err.response?.data?.detail || 'Erreur lors du chargement');
+          setError("Aucun rapport disponible. Lancez d'abord une analyse.");
         }
+      } catch (err) {
+        setError(err.response?.data?.detail || 'Erreur lors du chargement');
       } finally {
         setIsLoading(false);
       }

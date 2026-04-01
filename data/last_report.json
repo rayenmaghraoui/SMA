@@ -1,0 +1,184 @@
+{
+  "resume_executif": "L'entreprise a réalisé un chiffre d'affaires de 1,793,000 TND avec une marge de 28.5%. La tendance est en croissance. Le taux de conversion marketing moyen est de 4.97%, avec le canal 'seo' comme meilleur performeur. La satisfaction client est moyen (3.6/5) avec un risque de churn de 20.0%. 2 anomalie(s) ont été détectées et nécessitent attention. Actions prioritaires : Optimisation du ROI Marketing, Programmes de parrainage, Marketing Digital.",
+  "kpis": {
+    "finance": {
+      "titre": "Performance Financière",
+      "indicateurs": [
+        {
+          "label": "Chiffre d'affaires total",
+          "valeur": 1793000.0,
+          "unite": "TND",
+          "format": "currency"
+        },
+        {
+          "label": "Bénéfice total",
+          "valeur": 516000.0,
+          "unite": "TND",
+          "format": "currency"
+        },
+        {
+          "label": "Marge bénéficiaire",
+          "valeur": 28.49,
+          "unite": "%",
+          "format": "percent"
+        },
+        {
+          "label": "Croissance moyenne",
+          "valeur": 3.48,
+          "unite": "%",
+          "format": "percent"
+        },
+        {
+          "label": "Tendance",
+          "valeur": "hausse",
+          "unite": "",
+          "format": "text"
+        }
+      ],
+      "meilleur_mois": "2025-12",
+      "pire_mois": "2025-01"
+    },
+    "marketing": {
+      "titre": "Performance Marketing",
+      "indicateurs": [
+        {
+          "label": "Budget dépensé",
+          "valeur": 60500.0,
+          "unite": "TND",
+          "format": "currency"
+        },
+        {
+          "label": "Conversions totales",
+          "valeur": 2449,
+          "unite": "",
+          "format": "number"
+        },
+        {
+          "label": "Taux de conversion",
+          "valeur": 4.97,
+          "unite": "%",
+          "format": "percent"
+        },
+        {
+          "label": "Coût par conversion",
+          "valeur": 24.7,
+          "unite": "TND",
+          "format": "currency"
+        }
+      ],
+      "meilleur_canal": "seo",
+      "meilleure_campagne": "CAM011",
+      "roi_par_canal": {
+        "display": 2.57,
+        "email": 5.31,
+        "seo": 5.71,
+        "social_media": 3.58
+      }
+    },
+    "support": {
+      "titre": "Service Client",
+      "indicateurs": [
+        {
+          "label": "Satisfaction moyenne",
+          "valeur": 3.56,
+          "unite": "/5",
+          "format": "rating"
+        },
+        {
+          "label": "Temps de résolution",
+          "valeur": 8.38,
+          "unite": "heures",
+          "format": "duration"
+        },
+        {
+          "label": "Taux de churn élevé",
+          "valeur": 20.0,
+          "unite": "%",
+          "format": "percent"
+        },
+        {
+          "label": "Conformité SLA",
+          "valeur": 96.0,
+          "unite": "%",
+          "format": "percent"
+        }
+      ],
+      "probleme_frequent": "technical"
+    }
+  },
+  "anomalies": {
+    "total": 2,
+    "details": [
+      {
+        "dataset": "support",
+        "colonne": "resolution_hours",
+        "index": 4,
+        "valeur": 24.0,
+        "type": "high"
+      },
+      {
+        "dataset": "support",
+        "colonne": "resolution_hours",
+        "index": 15,
+        "valeur": 36.0,
+        "type": "high"
+      }
+    ]
+  },
+  "interpretation": "Pour améliorer la satisfaction client dans cette PME tunisienne, je vous propose trois actions prioritaires basées sur les données disponibles : 1. **Optimisation de la durée de résolution des problèmes techniques** (resolution_hours: 24.0 et 36.0) : Afin d'améliorer la satisfaction client, il est important de réduire la durée de résolution des incidents techniques. Cela peut être obtenu en mettant en place une organisation plus efficace du support technique, en fournissant un entraînement régulier aux agents de support et en utilisant des outils de gestion de demandes pour optimiser les processus internes. 2. **Amélioration de la qualité de la communication avec les clients** : La satisfaction moyenne est de 3,56/5, ce qui indique que certaines améliorations sont nécessaires dans la manière dont les clients sont traités. Pour améliorer la qualité de la communication, il est important d'entraîner régulièrement les agents de support à être plus empathiques et à mieux comprendre les besoins des clients. 3. **Analyse des problèmes les plus fréquents** (problème le plus fréquent : technical) : Pour réduire la fréquence des incidents techniques, il est important d'analyser les causes des problèmes les plus fréquents et de mettre en place des mesures correctives. Cela peut inclure l'amélioration de la documentation technique, l'entraînement des agents de support aux problèmes courants ou encore le développement de solutions techniques pour éviter les incidents récurrents. Objectifs chiffrés à court terme : - Réduire la durée de résolution moyenne des incidents techniques à 12 heures dans les 30 jours. - Augmenter la satisfaction client à 4,0/5 dans les 60 jours. - Réduire le taux de churn élevé à 15% dans les 90 jours.",
+  "recommendations": [
+    {
+      "priorite": 1,
+      "titre": "Optimisation du ROI Marketing",
+      "action": "Suivre le coût d'acquisition client (CAC) en divisant les dépenses marketing par le nombre de nouveaux clients acquis.",
+      "impact": "Réduction des dépenses marketing inutiles et amélioration du ROI",
+      "source": "[guide_gestion_entreprises_tunisiennes.md] 2. Stratégies Marketing Adaptées au Marché Tunisien: ### 2.3 Optimisation du ROI Marketing"
+    },
+    {
+      "priorite": 1,
+      "titre": "Programmes de parrainage",
+      "action": "Offrir des avantages aux clients existants qui recommandent l'entreprise.",
+      "impact": "Réduction des dépenses marketing et amélioration du taux de conversion",
+      "source": "[guide_gestion_entreprises_tunisiennes.md] 2. Stratégies Marketing Adaptées au Marché Tunisien: ### 2.2 Acquisition de Clients"
+    },
+    {
+      "priorite": 2,
+      "titre": "Marketing Digital",
+      "action": "Utiliser les réseaux sociaux pour atteindre un large public tunisien.",
+      "impact": "Amélioration de la visibilité et du taux de conversion",
+      "source": "[guide_gestion_entreprises_tunisiennes.md] 2. Stratégies Marketing Adaptées au Marché Tunisien: ## 2.1 Marketing Digital"
+    },
+    {
+      "priorite": 3,
+      "titre": "Analyse des KPIs",
+      "action": "Utiliser les KPIs marketing et de vente pour mesurer le succès de ses campagnes.",
+      "impact": "Amélioration de la compréhension des performances marketing et de l'efficacité des stratégies",
+      "source": "[guide_interpretation_kpis_tunisie.md] 3. KPIs Marketing et Vente"
+    },
+    {
+      "priorite": 4,
+      "titre": "Analyse des problèmes les plus fréquents",
+      "action": "Analyser les causes des problèmes les plus fréquents pour mettre en place des mesures correctives.",
+      "impact": "Réduction de la fréquence des incidents techniques",
+      "source": "[guide_gestion_entreprises_tunisiennes.md] 2. Stratégies Marketing Adaptées au Marché Tunisien: ## 2. Stratégies Marketing Adaptées au Marché Tunisien"
+    }
+  ],
+  "sources_rag": [
+    {
+      "document": "guide_gestion_entreprises_tunisiennes.md",
+      "section": "2. Stratégies Marketing Adaptées au Marché Tunisien",
+      "pertinence": 0.7489
+    },
+    {
+      "document": "guide_interpretation_kpis_tunisie.md",
+      "section": "3. KPIs Marketing et Vente",
+      "pertinence": 0.6604
+    }
+  ],
+  "metadata": {
+    "date_generation": "2026-04-01T17:01:25.440624",
+    "version": "1.0",
+    "pipeline_errors": [],
+    "nombre_sources": 2
+  }
+}

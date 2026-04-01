@@ -6,6 +6,36 @@ import { useState, useCallback, useRef } from 'react';
 import { streamChat } from '../services/chatService';
 
 /**
+ * Supprime les duplications courantes de réponse LLM.
+ * Cas visés: texte complet répété 2x à la suite.
+ */
+const dedupeAssistantContent = (content) => {
+  if (!content || content.length < 200) return content;
+
+  const normalized = content.replace(/\s+/g, ' ').trim();
+  const half = Math.floor(normalized.length / 2);
+
+  // Détection "A + A" (ou quasi identique) sur la réponse complète
+  const first = normalized.slice(0, half).trim();
+  const second = normalized.slice(half).trim();
+  if (first.length > 100 && (second.startsWith(first) || first === second)) {
+    return first;
+  }
+
+  // Détection via phrase d'ouverture répétée
+  const anchor = 'Analyse de la situation financière';
+  const firstIdx = normalized.indexOf(anchor);
+  if (firstIdx >= 0) {
+    const secondIdx = normalized.indexOf(anchor, firstIdx + anchor.length + 20);
+    if (secondIdx > 0) {
+      return normalized.slice(0, secondIdx).trim();
+    }
+  }
+
+  return normalized;
+};
+
+/**
  * Hook pour gérer le chat avec streaming.
  *
  * @returns {{
@@ -78,6 +108,15 @@ export const useChat = () => {
       },
 
       onDone: () => {
+        // Nettoyage final pour éviter l'affichage d'une réponse dupliquée
+        setMessages((prev) => {
+          const updated = [...prev];
+          const lastMessage = updated[updated.length - 1];
+          if (lastMessage?.role === 'assistant' && lastMessage.content) {
+            lastMessage.content = dedupeAssistantContent(lastMessage.content);
+          }
+          return updated;
+        });
         setIsLoading(false);
         setCurrentStep('');
         isSendingRef.current = false;

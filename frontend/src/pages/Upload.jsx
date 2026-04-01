@@ -2,10 +2,10 @@
  * Upload — page d'upload de fichiers CSV.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import FileUploader from '../components/FileUploader';
-import { uploadCSV } from '../services/uploadService';
+import { uploadCSV, listUploads } from '../services/uploadService';
 
 /**
  * Page Upload.
@@ -13,7 +13,21 @@ import { uploadCSV } from '../services/uploadService';
 const Upload = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [uploadResults, setUploadResults] = useState([]);
+  const [persistedUploads, setPersistedUploads] = useState([]);
   const [error, setError] = useState('');
+
+  const loadPersistedUploads = useCallback(async () => {
+    try {
+      const response = await listUploads();
+      setPersistedUploads(Array.isArray(response?.files) ? response.files : []);
+    } catch (err) {
+      console.warn('Impossible de charger la liste des uploads:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadPersistedUploads();
+  }, [loadPersistedUploads]);
 
   const handleUpload = useCallback(async (files) => {
     setIsUploading(true);
@@ -41,6 +55,7 @@ const Upload = () => {
       }
 
       setUploadResults(successfulResults);
+      await loadPersistedUploads();
 
       if (failedUploads.length > 0) {
         setError(failedUploads.join(' | '));
@@ -50,7 +65,14 @@ const Upload = () => {
     } finally {
       setIsUploading(false);
     }
-  }, []);
+  }, [loadPersistedUploads]);
+
+  const formatFileSize = (size) => {
+    if (!Number.isFinite(size)) return '-';
+    if (size < 1024) return `${size} o`;
+    if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} Ko`;
+    return `${(size / (1024 * 1024)).toFixed(2)} Mo`;
+  };
 
   return (
     <div className="min-h-[calc(100vh-4rem)] p-6">
@@ -106,6 +128,49 @@ const Upload = () => {
         className="glass-panel p-8"
       >
         <FileUploader onUpload={handleUpload} isLoading={isUploading} />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.16 }}
+        className="mt-6 glass-panel p-6"
+      >
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-semibold text-white">Fichiers uploadés persistés</h3>
+          <button
+            onClick={loadPersistedUploads}
+            className="px-3 py-1.5 rounded-lg text-sm text-cyan-100 bg-cyan-500/20 border border-cyan-300/30 hover:bg-cyan-500/30"
+            type="button"
+          >
+            Rafraîchir
+          </button>
+        </div>
+
+        {persistedUploads.length === 0 ? (
+          <p className="text-cyan-200/80 text-sm">Aucun fichier uploadé pour le moment.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-cyan-300/80 border-b border-cyan-400/20">
+                  <th className="text-left py-2">Fichier</th>
+                  <th className="text-left py-2">Taille</th>
+                  <th className="text-left py-2">Dernière modification</th>
+                </tr>
+              </thead>
+              <tbody>
+                {persistedUploads.map((item) => (
+                  <tr key={`${item.filename}-${item.modified}`} className="border-b border-cyan-400/10 text-cyan-100/95">
+                    <td className="py-2 pr-3">{item.filename}</td>
+                    <td className="py-2 pr-3">{formatFileSize(item.size)}</td>
+                    <td className="py-2 pr-3">{item.modified ? new Date(item.modified * 1000).toLocaleString('fr-FR') : '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </motion.div>
 
       <AnimatePresence>

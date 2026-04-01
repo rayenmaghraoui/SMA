@@ -156,23 +156,26 @@ def _remove_duplicate_content(text: str) -> str:
     Returns:
         Texte nettoyé sans doublons.
     """
-    if not text or len(text) < 300:
+    if not text or len(text) < 180:
         return text
+
+    normalized = " ".join(text.split()).strip()
 
     # Méthode 1: Chercher si le début du texte se répète plus loin
     # Prendre les premiers 50 caractères comme signature
-    signature = text[:50].strip()
+    signature = normalized[:80].strip()
 
     if signature:
         # Chercher cette signature après la position 100
-        second_occurrence = text.find(signature, 100)
+        second_occurrence = normalized.find(signature, 120)
 
         if second_occurrence > 0:
             # Le texte se répète - garder uniquement la première partie
-            return text[:second_occurrence].strip()
+            return normalized[:second_occurrence].strip()
 
     # Méthode 2: Chercher des phrases clés qui se répètent
     key_phrases = [
+        "Pour améliorer la satisfaction client",
         "Analyse de la situation financière",
         "Évaluation de la performance marketing",
         "Points forts",
@@ -180,14 +183,75 @@ def _remove_duplicate_content(text: str) -> str:
     ]
 
     for phrase in key_phrases:
-        first_pos = text.find(phrase)
+        first_pos = normalized.find(phrase)
         if first_pos >= 0:
-            second_pos = text.find(phrase, first_pos + len(phrase) + 50)
+            second_pos = normalized.find(phrase, first_pos + len(phrase) + 30)
             if second_pos > 0:
                 # Cette phrase apparaît deux fois - couper au deuxième
-                return text[:second_pos].strip()
+                return normalized[:second_pos].strip()
 
-    return text
+    # Méthode 3: Détection générique d'une répétition de bloc long (suffixe)
+    # On cherche un segment de taille significative présent 2 fois.
+    for window in (260, 220, 180):
+        if len(normalized) < window * 2:
+            continue
+        segment = normalized[:window]
+        second = normalized.find(segment, window + 40)
+        if second > 0:
+            return normalized[:second].strip()
+
+    return normalized
+
+
+def _build_interpretation_prompt(
+    kpis_text: str,
+    anomalies_text: str,
+    rag_text: str,
+    user_question: str = "",
+) -> str:
+    """
+    Construit un prompt d'interprétation adapté au contexte.
+
+    Si l'utilisateur pose une question ciblée (ex: satisfaction client),
+    le prompt force une réponse focalisée sur ce besoin.
+    """
+    question = (user_question or "").strip()
+
+    base_context = f"""Voici les données d'une PME tunisienne à analyser :
+
+{kpis_text}
+
+{anomalies_text}
+
+{rag_text}
+"""
+
+    if question:
+        return base_context + f"""
+QUESTION UTILISATEUR :
+{question}
+
+CONSIGNES PRIORITAIRES :
+1. Réponds d'abord et directement à la question utilisateur.
+2. Focalise la réponse uniquement sur le domaine concerné.
+   Si la question porte sur la satisfaction client, concentre-toi sur le support client.
+3. N'ajoute pas d'analyse détaillée finance/marketing sauf si indispensable à la question.
+4. Donne 3 à 5 actions concrètes, priorisées et mesurables.
+5. Appuie chaque recommandation par les KPIs/anomalies disponibles.
+6. Conclus avec des objectifs chiffrés à court terme (30 à 90 jours).
+7. Ne répète pas les sections ou les paragraphes.
+
+Format attendu : réponse structurée, concise et actionnable en français."""
+
+    return base_context + """
+CONSIGNES :
+1. Analyse la situation financière globale de l'entreprise.
+2. Évalue la performance marketing et identifie les canaux les plus rentables.
+3. Examine la qualité du service client et le risque de perte de clients.
+4. Identifie les 3 points forts et les 3 points faibles principaux.
+5. Explique les anomalies détectées et leurs impacts potentiels.
+
+Fournis une analyse structurée et actionnable."""
 
 
 def interpretation_agent(state: AgentState) -> AgentState:
@@ -212,27 +276,18 @@ def interpretation_agent(state: AgentState) -> AgentState:
         anomalies = state.get("anomalies", [])
         rag_context = state.get("rag_context", [])
 
+        user_question = state.get("user_question", "")
+
         # Construire le prompt utilisateur
         kpis_text = _format_kpis_for_prompt(kpis)
         anomalies_text = _format_anomalies_for_prompt(anomalies)
         rag_text = _format_rag_context_for_prompt(rag_context)
-
-        user_prompt = f"""Voici les données d'une PME tunisienne à analyser :
-
-{kpis_text}
-
-{anomalies_text}
-
-{rag_text}
-
-CONSIGNES :
-1. Analyse la situation financière globale de l'entreprise.
-2. Évalue la performance marketing et identifie les canaux les plus rentables.
-3. Examine la qualité du service client et le risque de perte de clients.
-4. Identifie les 3 points forts et les 3 points faibles principaux.
-5. Explique les anomalies détectées et leurs impacts potentiels.
-
-Fournis une analyse structurée et actionnable."""
+        user_prompt = _build_interpretation_prompt(
+            kpis_text=kpis_text,
+            anomalies_text=anomalies_text,
+            rag_text=rag_text,
+            user_question=user_question,
+        )
 
         logger.debug("[Interpretation Agent] Appel LLM en cours...")
 
@@ -292,20 +347,17 @@ async def interpretation_agent_async(state: AgentState) -> AgentState:
         kpis = state.get("kpis", {})
         anomalies = state.get("anomalies", [])
         rag_context = state.get("rag_context", [])
+        user_question = state.get("user_question", "")
 
         kpis_text = _format_kpis_for_prompt(kpis)
         anomalies_text = _format_anomalies_for_prompt(anomalies)
         rag_text = _format_rag_context_for_prompt(rag_context)
-
-        user_prompt = f"""Voici les données d'une PME tunisienne à analyser :
-
-{kpis_text}
-
-{anomalies_text}
-
-{rag_text}
-
-Fournis une analyse structurée avec les points forts, points faibles et recommandations prioritaires."""
+        user_prompt = _build_interpretation_prompt(
+            kpis_text=kpis_text,
+            anomalies_text=anomalies_text,
+            rag_text=rag_text,
+            user_question=user_question,
+        )
 
         llm = _get_llm()
         messages = [
@@ -314,7 +366,7 @@ Fournis une analyse structurée avec les points forts, points faibles et recomma
         ]
 
         response = await llm.ainvoke(messages)
-        interpretation = response.content
+        interpretation = _remove_duplicate_content(response.content)
 
         logger.info("[Interpretation Agent] Interprétation async générée")
 

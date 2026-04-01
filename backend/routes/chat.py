@@ -14,6 +14,7 @@ from fastapi.responses import StreamingResponse
 
 from backend.models.request_models import ChatRequest
 from backend.agents.graph import run_graph_streaming, get_pipeline_steps
+from backend.routes.report import save_report
 
 logger = logging.getLogger(__name__)
 
@@ -90,6 +91,11 @@ async def _stream_chat_response(message: str) -> AsyncGenerator[str, None]:
 
                 # Envoyer le rapport complet
                 report = event.get("report", {})
+                if report:
+                    try:
+                        save_report(report)
+                    except Exception as e:
+                        logger.warning("Impossible de sauvegarder le rapport depuis /chat: %s", e)
                 yield _format_sse("report", json.dumps(report, ensure_ascii=False))
 
             elif step == "error":
@@ -169,12 +175,18 @@ async def chat_simple(request: ChatRequest) -> dict:
 
     try:
         final_state = await run_graph_async(user_question=request.message)
+        report = final_state.get("report", {})
+        if report:
+            try:
+                save_report(report)
+            except Exception as e:
+                logger.warning("Impossible de sauvegarder le rapport depuis /chat/simple: %s", e)
 
         return {
             "success": True,
             "interpretation": final_state.get("interpretation", ""),
             "recommendations": final_state.get("recommendations", []),
-            "report": final_state.get("report", {}),
+            "report": report,
             "errors": final_state.get("errors", []),
         }
 

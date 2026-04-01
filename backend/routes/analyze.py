@@ -10,8 +10,10 @@ import logging
 from fastapi import APIRouter, HTTPException
 
 from backend.agents.graph import run_graph_async
+from backend.analysis import loader
 from backend.models.request_models import AnalyzeRequest
 from backend.models.response_models import AnalyzeResponse
+from backend.routes.report import save_report
 
 logger = logging.getLogger(__name__)
 
@@ -35,10 +37,13 @@ async def analyze_data(request: AnalyzeRequest = AnalyzeRequest()) -> AnalyzeRes
                  - use_defaults=False : utilise les fichiers upload\u00e9s
 
     Returns:
-        AnalyzeResponse contenant les KPIs, anomalies et erreurs \u00e9ventuelles.
-
-    Raises:
-        HTTPException 500 : En cas d'erreur critique lors de l'analyse.
+            # Utiliser les CSV uploadés depuis data/uploads/.
+            uploaded_datasets = loader.load_uploaded_datasets()
+            serialized_raw_data = {
+                key: df.to_dict(orient="records")
+                for key, df in uploaded_datasets.items()
+            }
+            final_state = await run_graph_async(raw_data=serialized_raw_data)
     """
     logger.info("Re\u00e7u POST /analyze \u2014 use_defaults=%s", request.use_defaults)
 
@@ -57,6 +62,13 @@ async def analyze_data(request: AnalyzeRequest = AnalyzeRequest()) -> AnalyzeRes
         errors = final_state.get("errors", [])
         kpis = final_state.get("kpis", {})
         anomalies = final_state.get("anomalies", [])
+        report = final_state.get("report", {})
+
+        if report:
+            try:
+                save_report(report)
+            except Exception as e:
+                logger.warning("Impossible de sauvegarder le rapport après /analyze: %s", e)
 
         # D\u00e9terminer le succ\u00e8s
         has_kpis = bool(kpis)
