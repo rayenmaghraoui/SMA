@@ -1,0 +1,64 @@
+# ============================================================
+# .dockerignore — AI Business Consultant
+# Exclure les fichiers inutiles du contexte de build Docker
+# => Build plus rapide et image plus légère
+# ============================================================
+
+# Environnements virtuels Python
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Cache Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Cache pytest et coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Données de développement (montées en volume si besoin)
+# backend/rag/chroma_db/    ← commenté : on veut l'inclure si déjà peuplé
+
+# Node.js (frontend — géré dans le Dockerfile frontend)
+frontend/node_modules/
+frontend/.npm
+frontend/dist/
+
+# Git
+.git/
+.gitignore
+
+# IDE et éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Variables d'environnement locales (sensibles)
+# NE PAS envoyer le .env dans l'image Docker
+# Les variables sont passées via docker-compose environment:
+# .env    ← on en a besoin pour env_file: dans docker-compose
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Documentation (non nécessaire dans l'image)
+*.md
+!README.md
+
+# Fichiers de test et CI
+.github/

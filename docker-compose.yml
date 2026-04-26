@@ -1,0 +1,211 @@
+# ============================================================
+# docker-compose.yml — AI Business Consultant
+# Lance les services : backend + frontend (+ ollama optionnel)
+#
+# MODE RAPIDE (recommandé — utilise Ollama local avec GPU) :
+#   1. Lancer Ollama sur Windows :  ollama serve
+#   2. docker-compose up --build
+#
+# MODE TOUT-EN-DOCKER (CPU uniquement, lent ~10 min/requête) :
+#   docker-compose --profile with-ollama up --build
+# ============================================================
+
+# ============================================================
+# SERVICES
+# ============================================================
+
+services:
+
+  # ----------------------------------------------------------
+  # SERVICE 1 : Ollama — OPTIONNEL (activé avec --profile)
+  # ⚠️  Sans GPU, Mistral 7B est très lent (~2-3 min par appel LLM)
+  # Préférer Ollama installé nativement sur Windows pour utiliser
+  # le GPU et obtenir des réponses en ~5-10 secondes.
+  # ----------------------------------------------------------
+  ollama:
+    image: ollama/ollama:latest
+    container_name: sma_ollama
+    profiles: ["with-ollama"]     # N'est lancé que si --profile with-ollama
+
+    ports:
+      - "11434:11434"
+
+    volumes:
+      - ollama_data:/root/.ollama
+
+    command: serve
+
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+    networks:
+      - sma_network
+
+    restart: unless-stopped
+
+  # ----------------------------------------------------------
+  # SERVICE 2 : ollama-init — OPTIONNEL (pull Mistral)
+  # Uniquement actif avec --profile with-ollama
+  # ----------------------------------------------------------
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: sma_ollama_init
+    profiles: ["with-ollama"]
+
+    volumes:
+      - ollama_data:/root/.ollama
+
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "=== ollama-init : attente que le serveur Ollama soit prêt... ==="
+        until ollama list > /dev/null 2>&1; do
+          echo "Ollama pas encore prêt, nouvelle tentative dans 3s..."
+          sleep 3
+        done
+        echo "=== Serveur Ollama prêt. Téléchargement de Mistral... ==="
+        ollama pull mistral
+        echo "=== Mistral téléchargé avec succès. ==="
+
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+    networks:
+      - sma_network
+
+    restart: no
+
+  # ----------------------------------------------------------
+  # SERVICE 3 : Backend — FastAPI + LangGraph + ChromaDB
+  # Par défaut, pointe vers Ollama sur la machine hôte (GPU)
+  # via host.docker.internal:11434
+  # ----------------------------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+
+    container_name: sma_backend
+    image: sma-backend:latest
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      # ============================================================
+      # MODE RAPIDE (par défaut) : Ollama tourne sur la machine hôte
+      # host.docker.internal = adresse spéciale Docker qui pointe
+      # vers la machine Windows/Mac (là où le GPU est accessible)
+      # ============================================================
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - OLLAMA_MODEL=${OLLAMA_MODEL:-mistral}
+      - LLM_TEMPERATURE=${LLM_TEMPERATURE:-0.3}
+      - LLM_MAX_TOKENS=${LLM_MAX_TOKENS:-2048}
+
+      # Modèle d'embeddings
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-sentence-transformers/sentence-t5-base}
+
+      # Chemins internes au conteneur
+      - DATA_DIR=/app/data
+      - DOCUMENTS_DIR=/app/documents
+      - CHROMA_DB_PATH=/app/backend/rag/chroma_db
+      - UPLOADS_DIR=/app/data/uploads
+
+      # RAG
+      - RAG_CHUNK_SIZE=${RAG_CHUNK_SIZE:-500}
+      - RAG_CHUNK_OVERLAP=${RAG_CHUNK_OVERLAP:-50}
+      - RAG_TOP_K=${RAG_TOP_K:-3}
+
+      # API
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - FRONTEND_URL=http://localhost:5173
+
+      # Environnement
+      - DEBUG=${DEBUG:-false}
+
+    env_file:
+      - .env
+
+    volumes:
+      - chroma_data:/app/backend/rag/chroma_db
+      - uploads_data:/app/data/uploads
+
+    # Pas de depends_on par défaut — Ollama est externe
+    # En mode --profile with-ollama, ajouter depends_on manuellement
+    # ou vérifier via le healthcheck du backend (déjà tolérant)
+
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+    networks:
+      - sma_network
+
+    restart: unless-stopped
+
+  # ----------------------------------------------------------
+  # SERVICE 4 : Frontend — React 18 + Vite (servi par Nginx)
+  # ----------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: sma_frontend
+    image: sma-frontend:latest
+
+    ports:
+      - "5173:80"
+
+    depends_on:
+      backend:
+        condition: service_healthy
+
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    networks:
+      - sma_network
+
+    restart: unless-stopped
+
+
+# ============================================================
+# VOLUMES — persistence entre les redémarrages
+# ============================================================
+
+volumes:
+  ollama_data:
+    driver: local
+
+  chroma_data:
+    driver: local
+
+  uploads_data:
+    driver: local
+
+
+# ============================================================
+# RÉSEAU — communication interne entre les services
+# ============================================================
+
+networks:
+  sma_network:
+    driver: bridge
+    name: sma_network
