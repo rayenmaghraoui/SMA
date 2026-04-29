@@ -1,7 +1,7 @@
 """
 Agent d'interprétation — analyse LLM des KPIs.
 
-Cet agent utilise Mistral via Ollama pour interpréter les KPIs calculés
+Cet agent utilise DeepSeek-V3.2 via Azure AI Foundry pour interpréter les KPIs calculés
 et les anomalies détectées dans le contexte d'une PME tunisienne.
 
 Entrée : state["kpis"], state["anomalies"], state["rag_context"]
@@ -11,13 +11,14 @@ Sortie : state["interpretation"]
 import logging
 from typing import Any, Dict, List
 
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from backend.agents.state import AgentState
 from backend.config import (
-    OLLAMA_BASE_URL,
-    OLLAMA_MODEL,
+    AZURE_OPENAI_API_KEY,
+    AZURE_OPENAI_ENDPOINT,
+    AZURE_OPENAI_MODEL,
     LLM_TEMPERATURE,
     LLM_MAX_TOKENS,
 )
@@ -25,25 +26,36 @@ from backend.config import (
 logger = logging.getLogger(__name__)
 
 # Prompt système pour l'interprétation
-SYSTEM_PROMPT = """Tu es un expert en gestion d'entreprise spécialisé dans les PME tunisiennes.
+SYSTEM_PROMPT = """Tu es un consultant business spécialisé dans les PME tunisiennes.
 
 CONTEXTE :
-- Tu analyses les indicateurs de performance (KPIs) d'une entreprise tunisienne.
+- Tu analyses les KPIs d'une entreprise tunisienne.
 - Tous les montants sont en Dinars Tunisiens (TND).
 - Tu connais le contexte économique tunisien : TVA 19%, IS 15% pour PME,
-  réglementation du Code du travail tunisien, saisonnalité (Ramadan, été).
+  Code du travail tunisien, saisonnalité (Ramadan, été).
 
-TON RÔLE :
-- Interpréter les KPIs financiers, marketing et support client.
-- Identifier les points forts et les faiblesses de l'entreprise.
-- Expliquer les anomalies détectées et leurs causes possibles.
-- Contextualiser par rapport au marché tunisien.
+RÈGLES STRICTES :
+- Maximum 5 points au total.
+- Chaque point = 1 courte phrase.
+- Pas de paragraphes, pas de répétitions.
+- Langage simple et direct.
+- Inclure des chiffres ou KPIs si pertinent.
+- Éviter les formulations vagues ou génériques.
+- Ne pas utiliser le gras, l'italique ou tout autre formatage spécial.
+- Ne pas utiliser de symboles comme **, *, #, __, etc.
 
-FORMAT DE RÉPONSE :
-- Réponds en français.
-- Structure ta réponse avec des sections claires.
-- Sois concis mais précis.
-- Utilise des pourcentages et chiffres pour appuyer tes analyses.
+FORMAT OBLIGATOIRE (respecter exactement) :
+Insight 1: courte explication
+Insight 2: courte explication
+Insight 3: courte explication
+Action 1: courte recommandation
+Action 2: courte recommandation
+
+IMPORTANT :
+- Chaque ligne commence par un mot-clé court suivi de deux-points.
+- Ne rien écrire avant le premier "Insight 1:".
+- Ne rien écrire après le dernier point.
+- Répondre uniquement en français.
 """
 
 
@@ -133,13 +145,14 @@ def _format_rag_context_for_prompt(rag_context: List[Dict]) -> str:
     return "\n".join(lines)
 
 
-def _get_llm() -> ChatOllama:
+def _get_llm() -> ChatOpenAI:
     """Retourne une instance du LLM configuré."""
-    return ChatOllama(
-        base_url=OLLAMA_BASE_URL,
-        model=OLLAMA_MODEL,
+    return ChatOpenAI(
+        base_url=AZURE_OPENAI_ENDPOINT,
+        api_key=AZURE_OPENAI_API_KEY,
+        model=AZURE_OPENAI_MODEL,
         temperature=LLM_TEMPERATURE,
-        num_predict=1024,  # Limiter à 1024 tokens pour éviter les répétitions
+        max_tokens=1024,
     )
 
 
@@ -260,7 +273,7 @@ def interpretation_agent(state: AgentState) -> AgentState:
 
     Cet agent :
     1. Construit un prompt avec les KPIs, anomalies et contexte RAG
-    2. Appelle Mistral via Ollama pour générer une interprétation
+    2. Appelle DeepSeek-V3.2 via Azure AI Foundry pour générer une interprétation
     3. Remplit state["interpretation"]
 
     Args:
@@ -319,7 +332,7 @@ def interpretation_agent(state: AgentState) -> AgentState:
         logger.exception("[Interpretation Agent] Erreur : %s", e)
         error_msg = (
             "Impossible de générer l'interprétation. "
-            "Vérifiez qu'Ollama est lancé avec le modèle Mistral."
+            "Vérifiez la configuration Azure OpenAI (clé API, endpoint, modèle)."
         )
         return {
             **state,

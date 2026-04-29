@@ -13,13 +13,14 @@ import json
 import re
 from typing import Any, Dict, List
 
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from backend.agents.state import AgentState
 from backend.config import (
-    OLLAMA_BASE_URL,
-    OLLAMA_MODEL,
+    AZURE_OPENAI_API_KEY,
+    AZURE_OPENAI_ENDPOINT,
+    AZURE_OPENAI_MODEL,
     LLM_TEMPERATURE,
     LLM_MAX_TOKENS,
 )
@@ -57,13 +58,14 @@ RETOURNE UNIQUEMENT LE TABLEAU JSON, sans texte avant ou après.
 """
 
 
-def _get_llm() -> ChatOllama:
+def _get_llm() -> ChatOpenAI:
     """Retourne une instance du LLM configuré."""
-    return ChatOllama(
-        base_url=OLLAMA_BASE_URL,
-        model=OLLAMA_MODEL,
+    return ChatOpenAI(
+        base_url=AZURE_OPENAI_ENDPOINT,
+        api_key=AZURE_OPENAI_API_KEY,
+        model=AZURE_OPENAI_MODEL,
         temperature=LLM_TEMPERATURE,
-        num_predict=LLM_MAX_TOKENS,
+        max_tokens=LLM_MAX_TOKENS,
     )
 
 

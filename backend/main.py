@@ -18,7 +18,8 @@ from backend.config import (
     API_PORT,
     DEBUG,
     FRONTEND_URL,
-    OLLAMA_BASE_URL,
+    AZURE_OPENAI_ENDPOINT,
+    AZURE_OPENAI_MODEL,
 )
 from backend.routes.analyze import router as analyze_router
 from backend.routes.upload import router as upload_router
@@ -47,25 +48,30 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
     """
     Gestion du cycle de vie de l'application.
 
-    - Startup : vérifie la connexion à Ollama
+    - Startup : vérifie la configuration Azure OpenAI
     - Shutdown : nettoyage des ressources
     """
     # Startup
     logger.info("=== Démarrage de l'API AI Business Consultant ===")
     logger.info("Mode DEBUG : %s", DEBUG)
     logger.info("Frontend URL : %s", FRONTEND_URL)
-    logger.info("Ollama URL : %s", OLLAMA_BASE_URL)
+    logger.info("Azure OpenAI endpoint : %s", AZURE_OPENAI_ENDPOINT)
+    logger.info("Modèle LLM : %s", AZURE_OPENAI_MODEL)
 
-    # Vérifier la connexion à Ollama
+    # Vérifier l'accessibilité de l'endpoint Azure
     try:
         async with httpx.AsyncClient(timeout=5.0) as client:
-            response = await client.get(f"{OLLAMA_BASE_URL}/api/tags")
-            if response.status_code == 200:
-                logger.info("Connexion à Ollama : OK")
+            response = await client.get(
+                AZURE_OPENAI_ENDPOINT,
+                headers={"User-Agent": "AI-Business-Consultant/1.0"},
+            )
+            # Un 401 ou 200 signifie que le serveur répond
+            if response.status_code in (200, 401, 404):
+                logger.info("Connexion à Azure AI Foundry : OK (status %d)", response.status_code)
             else:
-                logger.warning("Ollama répond mais avec status %d", response.status_code)
+                logger.warning("Azure répond avec status %d", response.status_code)
     except Exception as e:
-        logger.warning("Impossible de contacter Ollama : %s", e)
+        logger.warning("Impossible de contacter Azure AI Foundry : %s", e)
         logger.warning("Le LLM ne sera pas disponible pour les recommandations")
 
     yield

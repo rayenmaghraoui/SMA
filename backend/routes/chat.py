@@ -76,22 +76,14 @@ async def _stream_chat_response(message: str) -> AsyncGenerator[str, None]:
                 interpretation = event.get("interpretation", "")
 
                 if interpretation:
-                    # Envoyer par chunks pour simuler le streaming
-                    words = interpretation.split()
-                    chunk = []
-
-                    for word in words:
-                        chunk.append(word)
-                        if len(chunk) >= 5:  # Envoyer par groupes de 5 mots
-                            yield _format_sse("token", " ".join(chunk) + " ")
-                            chunk = []
-
-                    if chunk:
-                        yield _format_sse("token", " ".join(chunk))
+                    # Envoyer par chunks de caractères pour préserver la structure Markdown
+                    chunk_size = 60
+                    for i in range(0, len(interpretation), chunk_size):
+                        yield _format_sse("token", interpretation[i:i + chunk_size])
 
                 # Envoyer le rapport complet
                 report = event.get("report", {})
-                if report:
+                if isinstance(report, dict) and report:
                     try:
                         save_report(report)
                     except Exception as e:

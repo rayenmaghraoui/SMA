@@ -57,11 +57,15 @@ SUPPORT_CSV: Path = DATA_DIR / "03_customer_support.csv"
 
 
 # ============================================================
-# LLM (Ollama)
+# LLM (Azure AI Foundry — DeepSeek-V3.2)
 # ============================================================
 
-OLLAMA_BASE_URL: str = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "mistral")
+AZURE_OPENAI_API_KEY: str = os.getenv("AZURE_OPENAI_API_KEY", "")
+AZURE_OPENAI_ENDPOINT: str = os.getenv(
+    "AZURE_OPENAI_ENDPOINT",
+    "https://selim-mdosvfln-eastus2.services.ai.azure.com/openai/v1/",
+)
+AZURE_OPENAI_MODEL: str = os.getenv("AZURE_OPENAI_MODEL", "DeepSeek-V3.2")
 LLM_TEMPERATURE: float = float(os.getenv("LLM_TEMPERATURE", "0.3"))
 LLM_MAX_TOKENS: int = int(os.getenv("LLM_MAX_TOKENS", "2048"))
 
@@ -124,8 +128,8 @@ def get_config() -> Dict[str, Any]:
         "marketing_csv": str(MARKETING_CSV),
         "support_csv": str(SUPPORT_CSV),
         # LLM
-        "ollama_base_url": OLLAMA_BASE_URL,
-        "ollama_model": OLLAMA_MODEL,
+        "azure_openai_endpoint": AZURE_OPENAI_ENDPOINT,
+        "azure_openai_model": AZURE_OPENAI_MODEL,
         "llm_temperature": LLM_TEMPERATURE,
         "llm_max_tokens": LLM_MAX_TOKENS,
         # Embeddings

@@ -20,8 +20,9 @@ sentence-transformers>=2.7.0
 chromadb>=0.5.0
 langchain-chroma>=0.1.0
 
-# --- LLM local (Ollama) ---
-langchain-ollama>=0.2.0
+# --- LLM (Azure AI Foundry / OpenAI-compatible) ---
+langchain-openai>=0.2.0
+openai>=1.30.0
 
 # --- Data analysis ---
 pandas>=2.2.0

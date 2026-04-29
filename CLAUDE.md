@@ -40,7 +40,7 @@ Multi-Agents Pipeline (LangGraph)
          │
          ├── Data Analysis (Pandas + Scikit-learn)
          ├── RAG System (ChromaDB + sentence-t5-base)
-         └── LLM (Mistral 7B via Ollama)
+         └── LLM (DeepSeek-V3.2 via Azure AI Foundry)
 ```
 
 **Workflow fixe et séquentiel :**
@@ -63,7 +63,7 @@ input_data → analysis_agent → interpretation_agent → rag_agent
 | Data analysis     | Pandas + NumPy + Scikit-learn          | dernière |
 | Vector DB         | ChromaDB                               | 0.5+     |
 | Embeddings        | sentence-transformers/sentence-t5-base | dernière |
-| LLM local         | Mistral 7B via Ollama                  | dernière |
+| LLM cloud         | DeepSeek-V3.2 via Azure AI Foundry     | dernière |
 | Validation        | Pydantic v2                            | 2.x      |
 | Variables env     | python-dotenv                          | dernière |
 | Tests             | pytest + pytest-asyncio                | dernière |
@@ -81,7 +81,7 @@ input_data → analysis_agent → interpretation_agent → rag_agent
 | Routing     | React Router v6   |
 
 ### LLM & Embeddings
-- **LLM :** `mistral` via Ollama — URL : `http://localhost:11434`
+- **LLM :** `DeepSeek-V3.2` via Azure AI Foundry — variable `AZURE_OPENAI_ENDPOINT`
 - **Modèle embeddings :** `sentence-transformers/sentence-t5-base`
   (T5 encoder fine-tuné pour la similarité sémantique — recommandé par l'encadrant)
 - **Température LLM :** 0.3 (réponses cohérentes, peu aléatoires)
@@ -275,20 +275,33 @@ class AgentState(TypedDict):
 **Format SSE pour /chat :**
 ```
 data: {"type": "step",  "content": "Analyse des données en cours..."}
-data: {"type": "token", "content": "Voici"}
-data: {"type": "token", "content": " mon"}
-data: {"type": "token", "content": " analyse"}
+data: {"type": "token", "content": "Insight 1: La marge "}
+data: {"type": "token", "content": "bénéficiaire est ..."}
+data: {"type": "report", "content": "{...}"}
 data: {"type": "done",  "content": ""}
 ```
+
+**Streaming :** les tokens sont envoyés par blocs de 60 caractères (préserve les sauts de ligne et la structure Markdown).
+
+**Format de réponse du chat (interpretation_agent) :**
+```
+Insight 1: courte explication
+Insight 2: courte explication
+Insight 3: courte explication
+Action 1: courte recommandation
+Action 2: courte recommandation
+```
+Règles : max 5 points, 1 phrase par point, pas de gras ni de symboles Markdown.
 
 ---
 
 ## 9. Configuration (.env)
 
 ```bash
-# LLM
-OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=mistral
+# LLM (Azure AI Foundry — DeepSeek-V3.2)
+AZURE_OPENAI_API_KEY=<votre_clé>
+AZURE_OPENAI_ENDPOINT=https://<ressource>.services.ai.azure.com/openai/v1/
+AZURE_OPENAI_MODEL=DeepSeek-V3.2
 LLM_TEMPERATURE=0.3
 LLM_MAX_TOKENS=2048
 
@@ -427,10 +440,6 @@ Quand tu génères les prompts système pour les agents LLM, tiens compte de :
 ## 13. Commandes utiles
 
 ```bash
-# Démarrer Ollama + télécharger Mistral
-ollama serve
-ollama pull mistral
-
 # Installer les dépendances Python
 pip install -r requirements.txt
 
@@ -475,7 +484,7 @@ Phase 4 (Semaine 7-9) : interpretation_agent.py → recommendation_agent.py
 
 - Ne pas utiliser `print()` en dehors des scripts de test — utiliser `logging`
 - Ne pas hardcoder les chemins de fichiers — utiliser `config.py`
-- Ne pas appeler Ollama de façon synchrone — toujours `async/await`
+- Ne pas appeler l'API Azure de façon synchrone — toujours `async/await`
 - Ne pas stocker les DataFrames bruts dans l'état LangGraph — les sérialiser en dict
 - Ne pas générer de code frontend sans Tailwind CSS
 - Ne pas oublier les CORS dans `main.py` (le frontend est sur le port 5173)
