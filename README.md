@@ -222,7 +222,7 @@ curl http://localhost:8000/report
 
 ### GET /health
 
-Vérifie l'état de l'API et d'Ollama.
+Vérifie l'état de l'API et d'Azure AI Foundry.
 
 ```bash
 curl http://localhost:8000/health
@@ -278,11 +278,19 @@ ai-business-consultant/
 │   │   ├── request_models.py
 │   │   └── response_models.py
 │   │
-│   └── routes/                   # Routes API
-│       ├── analyze.py            # POST /analyze
-│       ├── upload.py             # POST /upload
-│       ├── chat.py               # POST /chat (SSE)
-│       └── report.py             # GET /report
+    ├── routes/                   # Routes API
+    │   ├── analyze.py            # POST /analyze
+    │   ├── upload.py             # POST /upload
+    │   ├── chat.py               # POST /chat (SSE)
+    │   └── report.py             # GET /report
+    │
+    └── tests/                    # Tests unitaires et d'intégration
+        ├── conftest.py           # Fixtures partagées
+        ├── test_analysis.py      # 38 tests — analyzers + anomaly detector
+        ├── test_agents.py        # 16 tests — agents LangGraph
+        ├── test_rag.py           # 15 tests — retriever ChromaDB
+        ├── test_routes.py        # 16 tests — routes FastAPI
+        └── test_results.txt      # Rapport généré par run_tests.ps1
 │
 └── frontend/
     ├── .env                      # VITE_API_URL
@@ -327,12 +335,12 @@ ai-business-consultant/
 |--------|----------|
 | Installer dépendances Python | `pip install -r requirements.txt` |
 | Installer dépendances JS | `cd frontend && npm install` |
-| Lancer Ollama | `ollama serve` |
-| Télécharger Mistral | `ollama pull mistral` |
 | Indexer les documents | `python -m backend.rag.ingest` |
 | Lancer le backend | `uvicorn backend.main:app --reload --port 8000` |
 | Lancer le frontend | `cd frontend && npm run dev` |
 | Tester l'API | `curl -X POST http://localhost:8000/analyze` |
+| **Lancer les tests** | `.venv\Scripts\python.exe -m pytest backend/tests/ -v` |
+| **Tests + rapport fichier** | `.\run_tests.ps1` |
 
 ---
 
@@ -353,6 +361,27 @@ ai-business-consultant/
 - [x] **Phase 2** : Analyzers + Analysis Agent + route /analyze
 - [x] **Phase 3** : Système RAG complet + RAG Agent
 - [x] **Phase 4** : Interpretation + Recommendation + Report Agents + Frontend React
+- [x] **Phase 5** : Tests unitaires et d'intégration — 85/85 tests passés
+
+---
+
+## Tests
+
+```bash
+# Lancer tous les tests
+.venv\Scripts\python.exe -m pytest backend/tests/ -v
+
+# Lancer les tests avec rapport sauvegardé dans backend/tests/test_results.txt
+.\run_tests.ps1
+```
+
+| Fichier | Tests | Couverture |
+|---------|-------|------------|
+| `test_analysis.py` | 38 | FinanceAnalyzer, MarketingAnalyzer, SupportAnalyzer, AnomalyDetector |
+| `test_agents.py` | 16 | create_initial_state, analysis_agent, pipeline mocké |
+| `test_rag.py` | 15 | structure résultats, pertinence, robustesse |
+| `test_routes.py` | 16 | /health, /upload, /analyze, /report |
+| **Total** | **85** | **85/85 PASSED** |
 
 ---
 

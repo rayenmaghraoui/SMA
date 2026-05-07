@@ -160,7 +160,7 @@ def _remove_duplicate_content(text: str) -> str:
     """
     Supprime le contenu dupliqué dans la réponse LLM.
 
-    Mistral peut parfois répéter le même contenu. Cette fonction
+    DeepSeek peut parfois répéter le même contenu. Cette fonction
     détecte et supprime les sections dupliquées.
 
     Args:

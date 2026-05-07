@@ -43,3 +43,6 @@ dist-ssr/
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Documentation Markdown
+*.md

@@ -29,7 +29,7 @@ Application web full-stack avec backend IA:
 - Frontend web (React) pour l'interaction utilisateur.
 - API backend (FastAPI) pour l'orchestration métier.
 - Pipeline multi-agents (LangGraph) pour le raisonnement séquentiel.
-- Moteur IA local (Mistral via Ollama) + RAG (ChromaDB).
+- LLM cloud (DeepSeek-V3.2 via Azure AI Foundry) + RAG (ChromaDB).
 
 
 ## 2. Architecture & structure du projet
@@ -165,6 +165,5 @@ Application web full-stack avec backend IA:
 ### Outils DevOps / déploiement (présents dans le projet)
 - Uvicorn pour exécution locale du backend.
 - Vite pour exécution locale du frontend.
-- Ollama pour héberger localement le modèle LLM.
-
-Aucun pipeline CI/CD, conteneur Docker, orchestrateur ou configuration cloud n'est explicitement présent dans ce workspace.
+- Docker + docker-compose pour la containerisation (Dockerfiles présents pour frontend et backend).
+- Azure AI Foundry pour l'hébergement cloud du modèle LLM (DeepSeek-V3.2).

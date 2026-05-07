@@ -133,29 +133,29 @@ app.include_router(report_router)
 @app.get("/health", response_model=HealthResponse, tags=["Système"])
 async def health_check() -> HealthResponse:
     """
-    Vérifie l'état de santé de l'API et des services dépendants.
+    Vérifie l'état de santé de l'API et du LLM Azure AI Foundry.
 
     Returns:
-        HealthResponse avec le statut de l'API et d'Ollama.
+        HealthResponse avec le statut de l'API et d'Azure.
     """
     api_ok = True
-    ollama_ok = False
+    azure_ok = False
 
-    # Vérifier Ollama
+    # Vérifier la joignabilité de l'endpoint Azure AI Foundry
     try:
         async with httpx.AsyncClient(timeout=3.0) as client:
-            response = await client.get(f"{OLLAMA_BASE_URL}/api/tags")
-            ollama_ok = response.status_code == 200
+            response = await client.get(AZURE_OPENAI_ENDPOINT)
+            azure_ok = response.status_code < 500
     except Exception:
-        ollama_ok = False
+        azure_ok = False
 
     # Déterminer le statut global
-    if api_ok and ollama_ok:
+    if api_ok and azure_ok:
         status = "ok"
         message = "Tous les services sont opérationnels."
     elif api_ok:
         status = "degraded"
-        message = "API opérationnelle. Ollama non disponible (LLM désactivé)."
+        message = "API opérationnelle. Azure AI Foundry non joignable (vérifiez l'endpoint et la clé)."
     else:
         status = "error"
         message = "Service indisponible."
@@ -163,7 +163,7 @@ async def health_check() -> HealthResponse:
     return HealthResponse(
         status=status,
         api=api_ok,
-        ollama=ollama_ok,
+        azure=azure_ok,
         message=message,
     )
 

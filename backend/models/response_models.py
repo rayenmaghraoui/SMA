@@ -88,7 +88,7 @@ class HealthResponse(BaseModel):
 
     status: str = Field(..., description="Statut de l'API : ok | degraded | error")
     api: bool = Field(..., description="API FastAPI op\u00e9rationnelle")
-    ollama: bool = Field(..., description="Serveur Ollama accessible")
+    azure: bool = Field(..., description="Azure AI Foundry joignable")
     message: str = Field(default="", description="Message descriptif")
 
 

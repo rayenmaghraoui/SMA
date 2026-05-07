@@ -297,7 +297,7 @@ Fiabiliser la solution et finaliser les livrables PFE.
 ## 6.2 Pipeline IA
 - LangGraph (orchestration des agents)
 - LangChain (intégration LLM/RAG)
-- Ollama + Mistral (génération de texte)
+- DeepSeek-V3.2 via Azure AI Foundry (génération de texte)
 
 ## 6.3 Analyse de données
 - Pandas

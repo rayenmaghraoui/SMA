@@ -1,92 +1,24 @@
 # ============================================================
 # docker-compose.yml — AI Business Consultant
-# Lance les services : backend + frontend (+ ollama optionnel)
+# Lance les services : backend (FastAPI) + frontend (React/Nginx)
 #
-# MODE RAPIDE (recommandé — utilise Ollama local avec GPU) :
-#   1. Lancer Ollama sur Windows :  ollama serve
-#   2. docker-compose up --build
+# Prérequis : fichier .env à la racine du projet avec :
+#   AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_MODEL
 #
-# MODE TOUT-EN-DOCKER (CPU uniquement, lent ~10 min/requête) :
-#   docker-compose --profile with-ollama up --build
-# ============================================================
-
-# ============================================================
-# SERVICES
+# Lancement :
+#   docker-compose up --build
+#
+# Accès :
+#   Frontend : http://localhost:5173
+#   Backend  : http://localhost:8000
+#   Docs API : http://localhost:8000/docs
 # ============================================================
 
 services:
 
   # ----------------------------------------------------------
-  # SERVICE 1 : Ollama — OPTIONNEL (activé avec --profile)
-  # ⚠️  Sans GPU, Mistral 7B est très lent (~2-3 min par appel LLM)
-  # Préférer Ollama installé nativement sur Windows pour utiliser
-  # le GPU et obtenir des réponses en ~5-10 secondes.
-  # ----------------------------------------------------------
-  ollama:
-    image: ollama/ollama:latest
-    container_name: sma_ollama
-    profiles: ["with-ollama"]     # N'est lancé que si --profile with-ollama
-
-    ports:
-      - "11434:11434"
-
-    volumes:
-      - ollama_data:/root/.ollama
-
-    command: serve
-
-    healthcheck:
-      test: ["CMD", "ollama", "list"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 15s
-
-    networks:
-      - sma_network
-
-    restart: unless-stopped
-
-  # ----------------------------------------------------------
-  # SERVICE 2 : ollama-init — OPTIONNEL (pull Mistral)
-  # Uniquement actif avec --profile with-ollama
-  # ----------------------------------------------------------
-  ollama-init:
-    image: ollama/ollama:latest
-    container_name: sma_ollama_init
-    profiles: ["with-ollama"]
-
-    volumes:
-      - ollama_data:/root/.ollama
-
-    environment:
-      - OLLAMA_HOST=http://ollama:11434
-
-    entrypoint: ["/bin/sh", "-c"]
-    command:
-      - |
-        echo "=== ollama-init : attente que le serveur Ollama soit prêt... ==="
-        until ollama list > /dev/null 2>&1; do
-          echo "Ollama pas encore prêt, nouvelle tentative dans 3s..."
-          sleep 3
-        done
-        echo "=== Serveur Ollama prêt. Téléchargement de Mistral... ==="
-        ollama pull mistral
-        echo "=== Mistral téléchargé avec succès. ==="
-
-    depends_on:
-      ollama:
-        condition: service_healthy
-
-    networks:
-      - sma_network
-
-    restart: no
-
-  # ----------------------------------------------------------
-  # SERVICE 3 : Backend — FastAPI + LangGraph + ChromaDB
-  # Par défaut, pointe vers Ollama sur la machine hôte (GPU)
-  # via host.docker.internal:11434
+  # SERVICE 1 : Backend — FastAPI + LangGraph + ChromaDB
+  # LLM cloud : DeepSeek-V3.2 via Azure AI Foundry (.env)
   # ----------------------------------------------------------
   backend:
     build:
@@ -100,17 +32,14 @@ services:
       - "8000:8000"
 
     environment:
-      # ============================================================
-      # MODE RAPIDE (par défaut) : Ollama tourne sur la machine hôte
-      # host.docker.internal = adresse spéciale Docker qui pointe
-      # vers la machine Windows/Mac (là où le GPU est accessible)
-      # ============================================================
-      - OLLAMA_BASE_URL=http://host.docker.internal:11434
-      - OLLAMA_MODEL=${OLLAMA_MODEL:-mistral}
+      # LLM — Azure AI Foundry (DeepSeek-V3.2)
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - AZURE_OPENAI_MODEL=${AZURE_OPENAI_MODEL:-DeepSeek-V3.2}
       - LLM_TEMPERATURE=${LLM_TEMPERATURE:-0.3}
       - LLM_MAX_TOKENS=${LLM_MAX_TOKENS:-2048}
 
-      # Modèle d'embeddings
+      # Embeddings
       - EMBEDDING_MODEL=${EMBEDDING_MODEL:-sentence-transformers/sentence-t5-base}
 
       # Chemins internes au conteneur
@@ -139,16 +68,12 @@ services:
       - chroma_data:/app/backend/rag/chroma_db
       - uploads_data:/app/data/uploads
 
-    # Pas de depends_on par défaut — Ollama est externe
-    # En mode --profile with-ollama, ajouter depends_on manuellement
-    # ou vérifier via le healthcheck du backend (déjà tolérant)
-
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 30s
+      start_period: 60s
 
     networks:
       - sma_network
@@ -157,6 +82,8 @@ services:
 
   # ----------------------------------------------------------
   # SERVICE 4 : Frontend — React 18 + Vite (servi par Nginx)
+  # ----------------------------------------------------------
+  # SERVICE 2 : Frontend — React 18 + Vite (servi par Nginx)
   # ----------------------------------------------------------
   frontend:
     build:
@@ -174,7 +101,7 @@ services:
         condition: service_healthy
 
     healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:80"]
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -191,9 +118,6 @@ services:
 # ============================================================
 
 volumes:
-  ollama_data:
-    driver: local
-
   chroma_data:
     driver: local
 

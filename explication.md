@@ -16,6 +16,80 @@ Ce document a pour but de clarifier et de vulgariser l'ensemble du travail réal
 
 ---
 
+## 1.5. Schéma Global de l'Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        UTILISATEUR (Manager PME)                     │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │  Navigateur Web
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    FRONTEND  (React 18 + Vite)                       │
+│                                                                      │
+│  ┌──────────────┐  ┌──────────────┐  ┌───────────┐  ┌───────────┐  │
+│  │  Dashboard   │  │    Upload    │  │   Chat    │  │  Report   │  │
+│  │  KPI+Charts  │  │  CSV Files   │  │  SSE Live │  │  Rapport  │  │
+│  └──────────────┘  └──────────────┘  └───────────┘  └───────────┘  │
+│         Tailwind CSS · Recharts · Framer Motion · Axios             │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │  REST + SSE (port 5173 → 8000)
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    BACKEND  (FastAPI + Uvicorn)                      │
+│                                                                      │
+│  POST /upload   POST /analyze   POST /chat (SSE)   GET /report      │
+│  GET /health                                                         │
+│                     Pydantic v2 · CORS · Async                      │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│              PIPELINE MULTI-AGENTS  (LangGraph)                      │
+│                                                                      │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐             │
+│  │  Analysis   │───▶│Interpretation│───▶│  RAG Agent  │             │
+│  │   Agent     │    │   Agent     │    │             │             │
+│  │  (sync)     │    │  (LLM call) │    │ (ChromaDB)  │             │
+│  └─────────────┘    └─────────────┘    └──────┬──────┘             │
+│        │                  │                   │                     │
+│        ▼                  ▼                   ▼                     │
+│  ┌──────────────────────────────────────────────────┐              │
+│  │              ÉTAT PARTAGÉ (AgentState)            │              │
+│  │  raw_data · kpis · anomalies · interpretation    │              │
+│  │  rag_context · recommendations · report · errors │              │
+│  └──────────────────────────────────────────────────┘              │
+│                                                                      │
+│                   ┌─────────────┐    ┌─────────────┐               │
+│                   │Recommendation│───▶│   Report    │               │
+│                   │   Agent     │    │   Agent     │               │
+│                   │  (LLM call) │    │  (LLM call) │               │
+│                   └─────────────┘    └─────────────┘               │
+└──────────────┬──────────────────────────────┬───────────────────────┘
+               │                              │
+               ▼                              ▼
+┌──────────────────────────┐    ┌─────────────────────────────────────┐
+│   ANALYSE DE DONNÉES     │    │       SYSTÈME RAG                   │
+│                          │    │                                     │
+│  Pandas · NumPy          │    │  sentence-t5-base (embeddings 768d) │
+│  Scikit-learn (régress.) │    │  ChromaDB (similarité cosinus)      │
+│  IQR anomaly detection   │    │  Chunking Markdown + Recursive      │
+│                          │    │  5 guides tunisiens indexés         │
+│  KPIs Finance            │    │  (fiscalité, RH, logistique...)     │
+│  KPIs Marketing          │    │                                     │
+│  KPIs Support Client     │    └────────────────┬────────────────────┘
+└──────────────────────────┘                     │
+                                                 ▼
+                                ┌─────────────────────────────────────┐
+                                │   LLM CLOUD                         │
+                                │   DeepSeek-V3.2                     │
+                                │   via Azure AI Foundry              │
+                                │   température 0.3 · max 2048 tokens │
+                                └─────────────────────────────────────┘
+```
+
+---
+
 ## 2. Le Travail Réalisé (Mes Contributions)
 
 Au lieu de faire une simple application web, j'ai construit une véritable architecture d'Intelligence Artificielle de niveau production. Mon travail s'est divisé en plusieurs axes majeurs :
@@ -39,6 +113,79 @@ Au lieu de faire une simple application web, j'ai construit une véritable archi
 
 ## 3. Comment fonctionne le Système Multi-Agents ? (L'Architecture des 5 Agents)
 
+### Schéma du Pipeline
+
+```
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                         ENTRÉE                                               │
+│          CSV Finance + CSV Marketing + CSV Support + Question Chat           │
+└─────────────────────────────────┬────────────────────────────────────────────┘
+                                  │
+                                  ▼
+         ┌────────────────────────────────────────┐
+         │          AGENT 1 — Analysis Agent       │
+         │  ● Pandas : charge et valide les CSV    │
+         │  ● Calcule 20+ KPIs par domaine         │
+         │  ● Scikit-learn : tendance (régression) │
+         │  ● IQR : détecte les anomalies          │
+         │                                         │
+         │  Sorties → kpis, anomalies              │
+         └────────────────────────────────────────┘
+                                  │
+                                  ▼
+         ┌────────────────────────────────────────┐
+         │       AGENT 2 — Interpretation Agent    │
+         │  ● Construit un prompt dynamique avec   │
+         │    les KPIs et anomalies calculés       │
+         │  ● Appelle DeepSeek-V3.2 (Azure)        │
+         │  ● Met des mots sur les chiffres        │
+         │                                         │
+         │  Sortie → interpretation (texte)        │
+         └────────────────────────────────────────┘
+                                  │
+                                  ▼
+         ┌────────────────────────────────────────┐
+         │          AGENT 3 — RAG Agent            │
+         │  ● Formule des requêtes sémantiques     │
+         │  ● sentence-t5-base → vecteurs 768d     │
+         │  ● Similarité cosinus dans ChromaDB     │
+         │  ● Récupère Top-3 passages pertinents   │
+         │    (lois tunisiennes, fiscalité, RH…)   │
+         │                                         │
+         │  Sortie → rag_context (passages+sources)│
+         └────────────────────────────────────────┘
+                                  │
+                                  ▼
+         ┌────────────────────────────────────────┐
+         │      AGENT 4 — Recommendation Agent     │
+         │  ● Fusionne : anomalies + interprétat.  │
+         │    + contexte RAG tunisien              │
+         │  ● Appelle DeepSeek-V3.2 (Azure)        │
+         │  ● Produit N recommandations priorisées │
+         │    (priorité haute/moyenne/faible)      │
+         │                                         │
+         │  Sortie → recommendations (liste JSON)  │
+         └────────────────────────────────────────┘
+                                  │
+                                  ▼
+         ┌────────────────────────────────────────┐
+         │         AGENT 5 — Report Agent          │
+         │  ● Assemble tous les résultats          │
+         │  ● Structure le rapport JSON final      │
+         │    (résumé exécutif, KPIs, anomalies,   │
+         │    recommandations, sources RAG)        │
+         │  ● Persiste dans data/last_report.json  │
+         │                                         │
+         │  Sortie → report (JSON complet)         │
+         └────────────────────────────────────────┘
+                                  │
+                                  ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                          SORTIE FINALE                                       │
+│         Dashboard React · Chat SSE streaming · Rapport téléchargeable       │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
 La grande innovation de ce projet est l'utilisation de **LangGraph**. J'ai divisé le "cerveau" du consultant en 5 petits cerveaux (les agents), chacun ayant une tâche précise. Ils se passent l'information à la chaîne (Pipeline) :
 
 1.  **Agent d'Analyse (Analysis Agent) :**
@@ -56,16 +203,21 @@ La grande innovation de ce projet est l'utilisation de **LangGraph**. J'ai divis
 
 ## 3.5. Précision Technique : Comment les agents ont-ils été codés (from scratch) ?
 
-**C'est un point crucial : je n'ai pas utilisé de "modèles tout prêts" ou d'agents pré-configurés.** L'intégralité du comportement des agents a été programmée de A à Z par mes soins. Voici ce que j'ai implémenté concrètement dans le code :
+Il est important de souligner qu'aucun agent pré-configuré ou modèle tout prêt n'a été utilisé. L'intégralité du comportement des cinq agents a été programmée de A à Z en Python. Voici les grandes étapes de cette réalisation.
 
-*   **Définition de l'État Global (State Management) :** J'ai codé une structure de données complexe (un `TypedDict` en Python) qui voyage d'un agent à l'autre. Chaque agent lit cet état, fait son travail, et met à jour l'état avec ses propres conclusions.
-*   **Orchestration avec LangGraph :** J'ai programmé le "graphe" d'exécution (les nœuds et les arêtes). J'ai défini par le code exactement *qui* parle à *qui* et *quand*. Ce n'est pas un simple appel linéaire, c'est un flux de travail (workflow) dirigé.
-*   **Prompt Engineering Dynamique :** Pour chaque agent, j'ai rédigé des instructions (System Prompts) extrêmement spécifiques. Le code injecte dynamiquement les données statistiques calculées en Python directement dans le prompt de l'agent avant de l'envoyer au modèle DeepSeek-V3.2.
-*   **Intégration d'Outils (Tool Binding) :** Le modèle d'intelligence artificielle (DeepSeek) est "nu" au départ. J'ai dû coder l'intégration pour qu'il puisse :
-    1. Comprendre les anomalies statistiques détectées par mes scripts Python (Pandas).
-    2. Interroger la base de données vectorielle (ChromaDB) que j'ai moi-même remplie avec les lois tunisiennes.
+**La première brique est la définition de l'état partagé.** Tous les agents communiquent à travers un seul dictionnaire Python appelé `AgentState`, défini comme un `TypedDict`. Ce dictionnaire contient toutes les clés du pipeline : les données brutes en entrée (`raw_data`), les KPIs calculés (`kpis`), les anomalies détectées (`anomalies`), l'interprétation textuelle du LLM (`interpretation`), les passages RAG récupérés (`rag_context`), les recommandations priorisées (`recommendations`), le rapport final (`report`), ainsi que des métadonnées de suivi comme `errors` et `current_step`. Chaque agent reçoit cet état, y ajoute ses propres résultats, et retourne l'état complet mis à jour. Ce design garantit la traçabilité de la donnée tout au long du pipeline.
 
-En résumé : le LLM (DeepSeek-V3.2) n'est que le moteur linguistique. **L'intelligence métier, la logique d'analyse, l'orchestration et le croisement avec les lois tunisiennes ont été entièrement développés sous forme de code algorithmique (Python).**
+**La deuxième brique est la construction du graphe LangGraph.** Dans le fichier `graph.py`, j'ai manuellement déclaré chaque agent comme un nœud du graphe, puis j'ai défini les arêtes (transitions) entre eux pour former le pipeline séquentiel. LangGraph compile ce graphe en un objet exécutable qui expose une méthode `ainvoke()` asynchrone. C'est cette méthode qui est appelée depuis les routes FastAPI pour lancer l'ensemble du pipeline en une seule instruction. Le graphe est donc déterministe et reproductible : l'ordre d'exécution ne change jamais.
+
+**La troisième brique est la différence fondamentale entre agents algorithmiques et agents LLM.** L'Agent 1 (Analysis Agent) est entièrement algorithmique : il n'appelle jamais le LLM. Il utilise Pandas pour charger et valider les CSV, puis invoque les trois analyzers (finance, marketing, support) et l'AnomalyDetector. Les KPIs sont calculés de façon mathématiquement exacte — la régression linéaire de Scikit-learn pour la tendance, la méthode IQR pour les anomalies. Cela garantit que l'IA ne peut jamais se tromper sur les chiffres, car elle ne les calcule pas : elle les reçoit déjà calculés.
+
+**La quatrième brique est le prompt engineering dynamique.** Pour les agents qui utilisent le LLM (interprétation, recommandation, rapport), j'ai conçu des prompts système qui ancrent l'IA dans le contexte tunisien : monnaie en dinar (TND), TVA à 19%, référence aux organismes comme la BFPME. Le point clé est que les vraies valeurs numériques calculées par Pandas sont injectées directement dans le message utilisateur avant l'appel au LLM. Ainsi, le modèle DeepSeek-V3.2 reçoit des données concrètes et ne peut pas les inventer. Pour chaque agent LLM, la connexion à Azure AI Foundry est encapsulée dans une fonction `_get_llm()` séparée, ce qui la rend facilement remplaçable lors des tests.
+
+**La cinquième brique est l'intelligence du RAG Agent.** Contrairement à une simple recherche textuelle, l'Agent 3 ne formule pas une requête générique. Il analyse d'abord les signaux présents dans l'état : si la marge bénéficiaire est inférieure à 10%, il formule une requête ciblée sur le redressement financier tunisien ; si le taux de conversion est faible, il cherche des guides sur l'optimisation marketing ; si la satisfaction client est basse, il interroge les guides RH. Ces requêtes sont transformées en vecteurs de 768 dimensions par le modèle sentence-t5-base, puis comparées par similarité cosinus avec tous les chunks indexés dans ChromaDB. Les 3 passages les plus proches sémantiquement sont retournés avec leur source (nom du guide) et leur section (titre Markdown).
+
+**La sixième brique est la validation par les tests.** Pour garantir que le pipeline fonctionne sans régression, j'ai écrit 85 tests répartis en quatre fichiers. Les tests des analyzers vérifient la précision des calculs sur des données connues. Les tests des agents utilisent la technique du mocking : la fonction `_get_llm()` est remplacée par un faux LLM qui retourne une réponse prédéfinie, ce qui permet de tester toute la logique de l'agent sans aucun appel réel à Azure AI Foundry. Les tests des routes vérifient que l'API renvoie les bons codes HTTP et la bonne structure JSON. Les tests du retriever vérifient la pertinence sémantique des résultats ChromaDB. Au total, les 85 tests passent en environ 35 secondes.
+
+En résumé : DeepSeek-V3.2 n'est que le moteur linguistique de surface. **L'intelligence métier, la logique d'analyse, l'orchestration du pipeline et le croisement avec les lois tunisiennes ont été entièrement développés sous forme de code algorithmique Python.**
 
 ---
 
@@ -83,3 +235,123 @@ La véritable créativité scientifique de ce travail réside dans la **combinai
 1.  **L'approche Multi-Agents :** C'est un sujet de recherche très actuel en IA (fin 2023 / 2024). Faire collaborer plusieurs agents permet de réduire drastiquement les "hallucinations" de l'IA (le fait qu'elle invente des choses), car chaque agent vérifie et complète le travail du précédent.
 2.  **L'hybridation (Déterministe + Probabiliste) :** L'Agent 1 utilise des algorithmes mathématiques stricts (Scikit-learn, Pandas) pour être 100% exact sur les chiffres. C'est seulement ensuite que l'IA (probabiliste) intervient pour le texte. Cela garantit que l'IA ne se trompe jamais dans ses calculs financiers.
 3.  **L'ancrage local (Le RAG Tunisien) :** Une IA générique ne connait pas la loi tunisienne. Mon système RAG injecte intelligemment la culture et la réglementation locale dans le "cerveau" de l'IA, la rendant experte du contexte tunisien.
+
+---
+
+## 6. Stack Technique Complète
+
+### Tableau des technologies
+
+| Couche | Technologie | Rôle |
+|--------|-------------|------|
+| **Frontend** | React 18 + Vite | Interface utilisateur SPA |
+| **Frontend** | Tailwind CSS v3 | Styling utilitaire |
+| **Frontend** | Recharts | Visualisation des KPIs |
+| **Frontend** | Framer Motion | Animations fluides |
+| **Frontend** | Axios + EventSource | HTTP + SSE streaming |
+| **Frontend** | React Router v6 | Navigation entre pages |
+| **Backend** | FastAPI 0.110+ | API REST + SSE asynchrone |
+| **Backend** | Uvicorn | Serveur ASGI Python |
+| **Backend** | Pydantic v2 | Validation des données |
+| **Agents** | LangGraph 0.2+ | Orchestration du workflow multi-agents |
+| **Agents** | LangChain 0.3+ | Abstraction LLM et RAG |
+| **LLM** | DeepSeek-V3.2 | Modèle de langage (interprétation, recommandations) |
+| **LLM** | Azure AI Foundry | Hébergement cloud du LLM |
+| **Embeddings** | sentence-t5-base | Transformation texte → vecteurs 768d |
+| **Vector DB** | ChromaDB 0.5+ | Stockage et recherche vectorielle locale |
+| **Data Science** | Pandas + NumPy | Chargement, nettoyage, agrégation CSV |
+| **Data Science** | Scikit-learn | Régression linéaire (tendances) |
+| **Tests** | pytest 9 + pytest-asyncio | 85 tests unitaires et d'intégration |
+| **Déploiement** | Docker + Docker Compose | Containerisation frontend + backend |
+
+### Schéma du système RAG
+
+```
+  INGESTION (une seule fois)
+  ─────────────────────────
+  5 guides .md tunisiens
+         │
+         ▼
+  MarkdownHeaderTextSplitter     ← découpe par section logique (#, ##, ###)
+         │
+         ▼
+  RecursiveCharacterTextSplitter ← re-découpe si chunk > 500 chars
+  (chunk_size=500, overlap=50)
+         │
+         ▼
+  sentence-t5-base               ← encode chaque chunk → vecteur 768d
+         │
+         ▼
+  ChromaDB (stockage local)      ← indexe vecteur + métadonnées
+  backend/rag/chroma_db/
+
+  RECHERCHE (à chaque requête)
+  ────────────────────────────
+  Requête sémantique (ex: "fiscalité TVA PME")
+         │
+         ▼
+  sentence-t5-base               ← encode la requête → vecteur 768d
+         │
+         ▼
+  Similarité cosinus              ← compare avec tous les vecteurs indexés
+         │
+         ▼
+  Top-3 passages                  ← retourne les 3 chunks les plus proches
+  + source (nom du guide)
+  + section (titre Markdown)
+```
+
+### Structure des fichiers clés
+
+```
+backend/
+├── agents/
+│   ├── state.py                ← TypedDict : état partagé entre agents
+│   ├── graph.py                ← Graphe LangGraph (5 noeuds séquentiels)
+│   ├── analysis_agent.py       ← Calcul KPIs + détection anomalies IQR
+│   ├── interpretation_agent.py ← Prompt dynamique → DeepSeek-V3.2
+│   ├── rag_agent.py            ← Requêtes ChromaDB (sentence-t5-base)
+│   ├── recommendation_agent.py ← Plan d'action priorisé via LLM
+│   └── report_agent.py         ← Rapport JSON final structuré
+├── analysis/
+│   ├── loader.py               ← Validation et nettoyage des CSV
+│   ├── finance_analyzer.py     ← 8 KPIs financiers
+│   ├── marketing_analyzer.py   ← 7 KPIs marketing
+│   ├── support_analyzer.py     ← 6 KPIs support client
+│   └── anomaly_detector.py     ← Méthode IQR (Q1-1.5·IQR / Q3+1.5·IQR)
+├── rag/
+│   ├── embeddings.py           ← sentence-t5-base (normalize=True, dim=768)
+│   ├── ingest.py               ← Chunking hybride + indexation ChromaDB
+│   └── retriever.py            ← Similarité cosinus, top-k configurable
+├── routes/
+│   ├── analyze.py              ← POST /analyze → lance run_graph_async()
+│   ├── upload.py               ← POST /upload  → valide et stocke CSV
+│   ├── chat.py                 ← POST /chat    → SSE streaming pipeline
+│   └── report.py               ← GET /report   → lit last_report.json
+└── tests/
+    ├── test_analysis.py        ← 38 tests : analyzers + anomaly detector
+    ├── test_agents.py          ← 16 tests : state, analysis_agent, pipeline
+    ├── test_rag.py             ← 15 tests : structure, pertinence, robustesse
+    └── test_routes.py          ← 16 tests : /health, /upload, /analyze, /report
+                                   ─────────────────────────
+                                   TOTAL : 85/85 tests passés
+```
+
+---
+
+## 7. Les Données Utilisées
+
+Trois datasets CSV simulant une PME tunisienne réelle :
+
+| Fichier | Colonnes principales | KPIs calculés |
+|---------|----------------------|---------------|
+| `01_finance_performance.csv` | date, revenue, cost, profit, growth_rate | marge, tendance, volatilité, meilleur/pire mois |
+| `02_marketing_campaigns.csv` | date, campaign_id, channel, budget, clicks, conversions, conversion_rate | ROI par canal, coût/conversion, meilleure campagne |
+| `03_customer_support.csv` | date, ticket_id, issue_type, resolution_hours, satisfaction_score, churn_risk | satisfaction moy., SLA compliance, taux churn élevé |
+
+**Contexte tunisien pris en compte dans les prompts :**
+- Monnaie : Dinar Tunisien (TND)
+- Fiscalité : TVA 19%, IS 15% PME
+- Organismes : BFPME, SOTUGAR
+- Saisonnalité : Ramadan dans l'analyse marketing
+- Références légales : loi 2016-71 sur l'investissement, Code du travail tunisien

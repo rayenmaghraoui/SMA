@@ -4,7 +4,7 @@
 ## Résumé
 Ce projet de fin d'études présente la conception et la réalisation d'une plateforme intelligente d'aide à la décision d'entreprise. La solution développée exploite une architecture web full-stack et un pipeline multi-agents pour transformer des données opérationnelles en recommandations stratégiques. Le système ingère des données financières, marketing et support client, calcule des indicateurs de performance (KPI), détecte des anomalies, enrichit l'analyse avec un mécanisme RAG, puis génère un rapport structuré pour la prise de décision.
 
-La mise en oeuvre suit une méthodologie AGILE SCRUM avec des incréments fonctionnels à chaque sprint. Côté technique, le backend est construit avec FastAPI, le pipeline d'agents est orchestré avec LangGraph, l'analyse de données repose sur Pandas/Scikit-learn, le RAG s'appuie sur ChromaDB et sentence-transformers, et l'interface est développée avec React. Le modèle LLM est exécuté localement via Ollama.
+La mise en oeuvre suit une méthodologie AGILE SCRUM avec des incréments fonctionnels à chaque sprint. Côté technique, le backend est construit avec FastAPI, le pipeline d'agents est orchestré avec LangGraph, l'analyse de données repose sur Pandas/Scikit-learn, le RAG s'appuie sur ChromaDB et sentence-transformers, et l'interface est développée avec React. Le modèle LLM utilisé est DeepSeek-V3.2, accessible via Azure AI Foundry.
 
 Le résultat est une application capable de fournir des analyses claires, contextualisées et actionnables, avec une interface de chat en streaming et une restitution sous forme de rapport décisionnel.
 
@@ -15,7 +15,7 @@ Mots-clés: Multi-agents, Aide à la décision, IA, RAG, FastAPI, React, SCRUM, 
 ## Abstract
 This final-year project presents the design and implementation of an intelligent decision-support platform for enterprises. The solution relies on a full-stack web architecture and a multi-agent pipeline to transform operational data into strategic recommendations. The system ingests financial, marketing, and customer support data, computes key performance indicators (KPIs), detects anomalies, enriches interpretation with a RAG mechanism, and generates a structured report for decision-making.
 
-The implementation follows an AGILE SCRUM methodology with functional increments delivered at each sprint. On the technical side, the backend is built with FastAPI, the agent pipeline is orchestrated with LangGraph, data analysis is handled by Pandas/Scikit-learn, RAG relies on ChromaDB and sentence-transformers, and the UI is developed with React. The LLM runs locally through Ollama.
+The implementation follows an AGILE SCRUM methodology with functional increments delivered at each sprint. On the technical side, the backend is built with FastAPI, the agent pipeline is orchestrated with LangGraph, data analysis is handled by Pandas/Scikit-learn, RAG relies on ChromaDB and sentence-transformers, and the UI is developed with React. The LLM used is DeepSeek-V3.2, accessed through Azure AI Foundry.
 
 The final output is an application that provides clear, contextualized, and actionable analytics through a streaming chat interface and a decision-oriented report.
 
@@ -197,7 +197,7 @@ Le backend expose des routes pour:
 
 Points clés:
 - CORS configuré pour le frontend.
-- Health check avec test de disponibilité Ollama.
+- Health check avec test de disponibilité Azure AI Foundry.
 - Modèles Pydantic pour validation des requêtes/réponses.
 
 ## 6.2 Pipeline multi-agents
@@ -358,9 +358,9 @@ Objectif:
 - contextualiser les analyses.
 
 Travaux:
-- intégration Ollama/Mistral,
-- indexation documents,
-- retrieval sémantique.
+- intégration DeepSeek-V3.2 via Azure AI Foundry,
+- indexation documents (chunking hybride Markdown + Recursive),
+- retrieval sémantique (sentence-t5-base + ChromaDB).
 
 Livrable:
 - interprétation enrichie.
@@ -388,16 +388,18 @@ Travaux:
 Livrable:
 - application full-stack.
 
-## Sprint 7 - Stabilisation et documentation
+## Sprint 7 - Stabilisation, tests et documentation
 Objectif:
-- améliorer robustesse et finaliser livrables académiques.
+- améliorer robustesse, valider la couverture de tests, finaliser livrables académiques.
 
 Travaux:
-- tests,
-- gestion erreurs,
-- documentation technique.
+- suite de tests complète (85 tests répartis sur 4 fichiers),
+- gestion d'erreurs et fallbacks,
+- documentation technique,
+- script `run_tests.ps1` pour persistance des rapports de tests.
 
 Livrable:
+- 85/85 tests passés,
 - version démontrable en soutenance.
 
 ---
@@ -413,7 +415,7 @@ Livrable:
 ## 8.2 IA et orchestration
 - LangGraph: gestion explicite du workflow multi-agents.
 - LangChain: outillage LLM et composants RAG.
-- Ollama + Mistral: exécution locale, maîtrise des coûts et des données.
+- DeepSeek-V3.2 via Azure AI Foundry: modèle LLM cloud, température 0.3, max 2048 tokens.
 
 ## 8.3 Data science
 - Pandas/NumPy: manipulation et agrégation de données.
@@ -432,7 +434,9 @@ Livrable:
 - Axios/Fetch: communication API et streaming.
 
 ## 8.6 Qualité et outillage
-- pytest / pytest-asyncio: base de tests.
+- pytest / pytest-asyncio: suite de 85 tests unitaires et d'intégration.
+- Couverture: analyzers, agents, RAG retriever, routes FastAPI.
+- `run_tests.ps1`: script de lancement avec rapport persisté en UTF-8.
 - ESLint: qualité frontend.
 - Pyright config: cohérence environnement Python.
 
@@ -444,10 +448,11 @@ Livrable:
 - Pipeline complet exécutable.
 - Calcul multi-domaines des KPI.
 - Détection d'anomalies opérationnelle.
-- Interprétation LLM contextualisée.
+- Interprétation LLM contextualisée (DeepSeek-V3.2).
 - Recommandations priorisées produites automatiquement.
 - Rapport final structuré et consultable.
 - Interface de chat temps réel disponible.
+- **85/85 tests passés** (38 analyse, 16 agents, 15 RAG, 16 routes).
 
 ## 9.2 Valeur métier
 - Réduction du temps d'analyse manuelle.
@@ -474,7 +479,7 @@ Livrable:
 - Pas de gestion avancée d'authentification/autorisation.
 - Persistance rapport limitée (dernier rapport principalement).
 - Pas de pipeline MLOps complet (registry, monitoring dérive, CI/CD ML).
-- Couverture de tests perfectible sur scénarios complexes.
+- Couverture de tests fonctionnelle (85 tests unitaires et d'intégration); les tests end-to-end avec LLM réel restent à compléter.
 
 ## 10.2 Perspectives d'amélioration
 - Historisation des analyses et comparaison temporelle.
