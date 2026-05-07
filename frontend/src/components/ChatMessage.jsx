@@ -3,6 +3,7 @@
  */
 
 import { motion } from 'framer-motion';
+import SqlResult from './SqlResult';
 
 /**
  * Avatar utilisateur.
@@ -154,7 +155,7 @@ const formatTime = (date) => {
  * Composant ChatMessage.
  */
 const ChatMessage = ({ message }) => {
-  const { role, content, timestamp, isError } = message;
+  const { role, content, timestamp, isError, sqlResult } = message;
   const isUser = role === 'user';
 
   return (
@@ -166,7 +167,7 @@ const ChatMessage = ({ message }) => {
       {isUser ? <UserAvatar /> : <AssistantAvatar />}
 
       <div
-        className={`max-w-[70%] rounded-2xl px-4 py-3 shadow-lg ${
+        className={`max-w-[80%] rounded-2xl px-4 py-3 shadow-lg ${
           isUser
             ? 'bg-gradient-to-br from-cyan-400 to-teal-500 text-cyan-950 rounded-br-none border border-cyan-300/40'
             : isError
@@ -192,6 +193,9 @@ const ChatMessage = ({ message }) => {
               )
           }
         </div>
+
+        {/* Résultat SQL structuré */}
+        {sqlResult && <SqlResult result={sqlResult} />}
 
         {timestamp && (
           <p className={`mt-1 text-xs ${isUser ? 'text-cyan-900/70' : 'text-cyan-300/80'}`}>

@@ -54,3 +54,20 @@ class UploadRequest(BaseModel):
         pattern="^(finance|marketing|support)$",
         description="Type de dataset : finance, marketing ou support"
     )
+
+
+class SqlQueryRequest(BaseModel):
+    """
+    Requête pour l'exploration de données via SQL généré par le LLM.
+
+    Attributes:
+        question: Question en langage naturel à convertir en SQL.
+    """
+
+    question: str = Field(
+        ...,
+        min_length=3,
+        max_length=500,
+        description="Question en langage naturel sur les données",
+        examples=["Montre-moi les 10 meilleures campagnes par conversions"],
+    )

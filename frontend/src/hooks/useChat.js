@@ -103,6 +103,19 @@ export const useChat = () => {
         });
       },
 
+      onSqlResult: (sqlResult) => {
+        // Remplacer le message assistant vide par le résultat SQL structuré
+        setMessages((prev) => {
+          const updated = [...prev];
+          const lastMessage = updated[updated.length - 1];
+          if (lastMessage.role === 'assistant') {
+            lastMessage.sqlResult = sqlResult;
+            lastMessage.content = sqlResult.message || '';
+          }
+          return updated;
+        });
+      },
+
       onReport: (newReport) => {
         setReport(newReport);
       },

@@ -3,6 +3,10 @@ Route /chat — interface conversationnelle avec streaming SSE.
 
 Cette route permet aux utilisateurs de poser des questions en langage
 naturel et reçoit les réponses en streaming (Server-Sent Events).
+
+Routage d'intention :
+    - Questions stratégiques → pipeline LangGraph (5 agents)
+    - Questions d'exploration data → SQL agent (génération + exécution SQL)
 """
 
 import json
@@ -12,9 +16,12 @@ from typing import AsyncGenerator
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 
-from backend.models.request_models import ChatRequest
+from backend.models.request_models import ChatRequest, SqlQueryRequest
 from backend.agents.graph import run_graph_streaming, get_pipeline_steps
 from backend.routes.report import save_report
+from backend.sql_agent.intent_router import classify_intent
+from backend.sql_agent.generator import generate_sql
+from backend.sql_agent.executor import execute_sql
 
 logger = logging.getLogger(__name__)
 
@@ -43,13 +50,75 @@ async def _stream_chat_response(message: str) -> AsyncGenerator[str, None]:
     """
     Générateur asynchrone pour le streaming de la réponse.
 
+    Routage d'intention :
+        - "sql"       → SQL agent, résultat envoyé en SSE type "sql_result"
+        - "strategic" → pipeline LangGraph complet (5 agents)
+
     Args:
         message: Question de l'utilisateur.
 
     Yields:
         Événements SSE formatés.
     """
-    steps = get_pipeline_steps()
+    # Routage d'intention
+    intent = classify_intent(message)
+    logger.info("Intent pour '%s': %s", message[:60], intent)
+
+    if intent == "sql":
+        async for event in _stream_sql_response(message):
+            yield event
+    else:
+        async for event in _stream_strategic_response(message):
+            yield event
+
+
+async def _stream_sql_response(message: str) -> AsyncGenerator[str, None]:
+    """
+    Pipeline SQL : génère et exécute une requête SQL, stream le résultat.
+
+    Yields:
+        Événements SSE : step → sql_result → done (ou error).
+    """
+    try:
+        yield _format_sse("step", "Analyse de votre question en cours...")
+        yield _format_sse("step", "Génération de la requête SQL...")
+
+        sql, viz_type = await generate_sql(message)
+        yield _format_sse("step", "Exécution de la requête sur les données...")
+
+        rows, errors = await execute_sql(sql)
+
+        if errors:
+            yield _format_sse("error", errors[0])
+            return
+
+        # Construire la réponse SQL complète
+        from backend.routes.sql import _build_chart_data
+        chart_data = _build_chart_data(rows, viz_type)
+        chart_dict = chart_data.model_dump() if chart_data else None
+
+        sql_result = {
+            "sql": sql,
+            "rows_preview": rows[:100],
+            "total_rows": len(rows),
+            "chart_data": chart_dict,
+            "message": f"{len(rows)} ligne(s) retournée(s).",
+        }
+        yield _format_sse("sql_result", json.dumps(sql_result, ensure_ascii=False, default=str))
+        yield _format_sse("done", "")
+
+    except Exception as e:
+        logger.exception("Erreur SQL streaming: %s", e)
+        yield _format_sse("error", str(e))
+
+
+async def _stream_strategic_response(message: str) -> AsyncGenerator[str, None]:
+    """
+    Pipeline LangGraph complet (5 agents) pour les questions stratégiques.
+
+    Yields:
+        Événements SSE : step → token → report → done (ou error).
+    """
     step_labels = {
         "analysis_agent": "Analyse des données en cours...",
         "interpretation_agent": "Interprétation des KPIs...",
@@ -60,7 +129,7 @@ async def _stream_chat_response(message: str) -> AsyncGenerator[str, None]:
 
     try:
         # Envoyer le début
-        yield _format_sse("step", "Démarrage de l'analyse...")
+        yield _format_sse("step", "Démarrage de l'analyse stratégique...")
 
         # Exécuter le pipeline en streaming
         async for event in run_graph_streaming(user_question=message):

@@ -107,9 +107,38 @@ class UploadResponse(BaseModel):
 
 
 class ReportResponse(BaseModel):
-    """R\u00e9ponse de la route GET /report."""
+    """Réponse de la route GET /report."""
 
-    success: bool = Field(..., description="Succ\u00e8s de la r\u00e9cup\u00e9ration")
+    success: bool = Field(..., description="Succès de la récupération")
     report: Dict[str, Any] = Field(default_factory=dict, description="Rapport complet")
-    generated_at: Optional[str] = Field(None, description="Date de g\u00e9n\u00e9ration ISO")
+    generated_at: Optional[str] = Field(None, description="Date de génération ISO")
     message: str = Field(default="", description="Message descriptif")
+
+
+# ============================================================
+# SQL Agent
+# ============================================================
+
+class ChartData(BaseModel):
+    """Données pour le rendu d'un graphique Recharts côté frontend."""
+
+    x_key: str = Field(..., description="Colonne utilisée pour l'axe X")
+    y_keys: List[str] = Field(..., description="Colonnes utilisées pour l'axe Y")
+    data: List[Dict[str, Any]] = Field(..., description="Données du graphique (max 50 points)")
+
+
+class SqlQueryResponse(BaseModel):
+    """Réponse de la route POST /sql/query."""
+
+    success: bool = Field(..., description="Succès de la requête")
+    question: str = Field(..., description="Question originale de l'utilisateur")
+    sql: str = Field(default="", description="Requête SQL générée et exécutée")
+    rows_preview: List[Dict[str, Any]] = Field(
+        default_factory=list,
+        description="Prévisualisation des résultats (max 100 lignes)",
+    )
+    total_rows: int = Field(default=0, description="Nombre total de lignes retournées")
+    csv_path: Optional[str] = Field(None, description="URL de téléchargement CSV")
+    chart_data: Optional[ChartData] = Field(None, description="Données graphique pour Recharts")
+    message: str = Field(default="", description="Message descriptif")
+    errors: List[str] = Field(default_factory=list, description="Erreurs non bloquantes")

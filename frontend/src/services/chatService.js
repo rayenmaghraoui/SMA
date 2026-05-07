@@ -9,31 +9,27 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
  *
  * @param {string} message - Message utilisateur
  * @param {Object} callbacks - Fonctions de callback
- * @param {function} callbacks.onStep - Appelé pour chaque étape (step)
- * @param {function} callbacks.onToken - Appelé pour chaque token
- * @param {function} callbacks.onReport - Appelé avec le rapport final
- * @param {function} callbacks.onDone - Appelé à la fin
- * @param {function} callbacks.onError - Appelé en cas d'erreur
+ * @param {function} callbacks.onStep      - Appelé pour chaque étape (step)
+ * @param {function} callbacks.onToken     - Appelé pour chaque token
+ * @param {function} callbacks.onReport    - Appelé avec le rapport final
+ * @param {function} callbacks.onSqlResult - Appelé avec le résultat SQL {sql, rows_preview, chart_data, ...}
+ * @param {function} callbacks.onDone      - Appelé à la fin
+ * @param {function} callbacks.onError     - Appelé en cas d'erreur
  * @returns {function} Fonction pour annuler le stream
  */
 export const streamChat = (message, callbacks) => {
-  const { onStep, onToken, onReport, onDone, onError } = callbacks;
+  const { onStep, onToken, onReport, onSqlResult, onDone, onError } = callbacks;
 
-  // Créer la requête fetch pour SSE
   const controller = new AbortController();
 
   fetch(`${API_URL}/chat`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ message }),
     signal: controller.signal,
   })
     .then(async (response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
@@ -41,15 +37,9 @@ export const streamChat = (message, callbacks) => {
 
       while (true) {
         const { done, value } = await reader.read();
-
-        if (done) {
-          if (onDone) onDone();
-          break;
-        }
+        if (done) { if (onDone) onDone(); break; }
 
         buffer += decoder.decode(value, { stream: true });
-
-        // Parser les événements SSE
         const lines = buffer.split('\n');
         buffer = lines.pop() || '';
 
@@ -57,7 +47,6 @@ export const streamChat = (message, callbacks) => {
           if (line.startsWith('data: ')) {
             try {
               const data = JSON.parse(line.slice(6));
-
               switch (data.type) {
                 case 'step':
                   if (onStep) onStep(data.content);
@@ -71,6 +60,14 @@ export const streamChat = (message, callbacks) => {
                       ? JSON.parse(data.content)
                       : data.content;
                     onReport(report);
+                  }
+                  break;
+                case 'sql_result':
+                  if (onSqlResult) {
+                    const result = typeof data.content === 'string'
+                      ? JSON.parse(data.content)
+                      : data.content;
+                    onSqlResult(result);
                   }
                   break;
                 case 'done':
@@ -94,7 +91,6 @@ export const streamChat = (message, callbacks) => {
       }
     });
 
-  // Retourner une fonction d'annulation
   return () => controller.abort();
 };
 

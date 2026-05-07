@@ -1,5 +1,5 @@
 {
-  "resume_executif": "L'entreprise a réalisé un chiffre d'affaires de 1,793,000 TND avec une marge de 28.5%. La tendance est en croissance. Le taux de conversion marketing moyen est de 4.97%, avec le canal 'seo' comme meilleur performeur. La satisfaction client est moyen (3.6/5) avec un risque de churn de 20.0%. 2 anomalie(s) ont été détectées et nécessitent attention. Actions prioritaires : Optimisation du ROI Marketing, Programmes de parrainage, Marketing Digital.",
+  "resume_executif": "L'entreprise a réalisé un chiffre d'affaires de 1,793,000 TND avec une marge de 28.5%. La tendance est en croissance. Le taux de conversion marketing moyen est de 4.97%, avec le canal 'seo' comme meilleur performeur. La satisfaction client est moyen (3.6/5) avec un risque de churn de 20.0%. 2 anomalie(s) ont été détectées et nécessitent attention. Actions prioritaires : Structurer le reporting des marges, Calculer et optimiser le CAC.",
   "kpis": {
     "finance": {
       "titre": "Performance Financière",
@@ -125,42 +125,42 @@
       }
     ]
   },
-  "interpretation": "Pour améliorer la satisfaction client dans cette PME tunisienne, je vous propose trois actions prioritaires basées sur les données disponibles : 1. **Optimisation de la durée de résolution des problèmes techniques** (resolution_hours: 24.0 et 36.0) : Afin d'améliorer la satisfaction client, il est important de réduire la durée de résolution des incidents techniques. Cela peut être obtenu en mettant en place une organisation plus efficace du support technique, en fournissant un entraînement régulier aux agents de support et en utilisant des outils de gestion de demandes pour optimiser les processus internes. 2. **Amélioration de la qualité de la communication avec les clients** : La satisfaction moyenne est de 3,56/5, ce qui indique que certaines améliorations sont nécessaires dans la manière dont les clients sont traités. Pour améliorer la qualité de la communication, il est important d'entraîner régulièrement les agents de support à être plus empathiques et à mieux comprendre les besoins des clients. 3. **Analyse des problèmes les plus fréquents** (problème le plus fréquent : technical) : Pour réduire la fréquence des incidents techniques, il est important d'analyser les causes des problèmes les plus fréquents et de mettre en place des mesures correctives. Cela peut inclure l'amélioration de la documentation technique, l'entraînement des agents de support aux problèmes courants ou encore le développement de solutions techniques pour éviter les incidents récurrents. Objectifs chiffrés à court terme : - Réduire la durée de résolution moyenne des incidents techniques à 12 heures dans les 30 jours. - Augmenter la satisfaction client à 4,0/5 dans les 60 jours. - Réduire le taux de churn élevé à 15% dans les 90 jours.",
+  "interpretation": "Insight 1: Les données fournies ne contiennent pas d'information sur les produits ou leurs marges individuelles. Action 1: Structurer le reporting pour inclure la marge par produit ou gamme. Action 2: Extraire les données des ventes et coûts depuis le système de facturation. Action 3: Catégoriser les produits en analysant leur contribution au bénéfice total de 516k TND. Objectif: Établir un classement des 5 principaux produits par marge sous 30 jours.",
   "recommendations": [
     {
       "priorite": 1,
-      "titre": "Optimisation du ROI Marketing",
-      "action": "Suivre le coût d'acquisition client (CAC) en divisant les dépenses marketing par le nombre de nouveaux clients acquis.",
-      "impact": "Réduction des dépenses marketing inutiles et amélioration du ROI",
-      "source": "[guide_gestion_entreprises_tunisiennes.md] 2. Stratégies Marketing Adaptées au Marché Tunisien: ### 2.3 Optimisation du ROI Marketing"
-    },
-    {
-      "priorite": 1,
-      "titre": "Programmes de parrainage",
-      "action": "Offrir des avantages aux clients existants qui recommandent l'entreprise.",
-      "impact": "Réduction des dépenses marketing et amélioration du taux de conversion",
-      "source": "[guide_gestion_entreprises_tunisiennes.md] 2. Stratégies Marketing Adaptées au Marché Tunisien: ### 2.2 Acquisition de Clients"
+      "titre": "Structurer le reporting des marges",
+      "action": "Extraire les données de ventes et de coûts depuis le système de facturation. Créer un tableau de bord simple (Excel ou Power BI) pour calculer la marge unitaire et la contribution au bénéfice total de 516k TND pour chaque produit. Catégoriser les produits (ex: étoile, vache à lait, poids mort) en fonction de leur marge et volume.",
+      "impact": "Identification des 20% de produits générant 80% de la marge. Permet de concentrer les efforts sur les produits rentables et de réviser la gamme. Objectif : classer les 5 principaux produits par marge sous 30 jours.",
+      "source": "Analyse interne de l'entreprise (Insight 1)"
     },
     {
       "priorite": 2,
-      "titre": "Marketing Digital",
-      "action": "Utiliser les réseaux sociaux pour atteindre un large public tunisien.",
-      "impact": "Amélioration de la visibilité et du taux de conversion",
-      "source": "[guide_gestion_entreprises_tunisiennes.md] 2. Stratégies Marketing Adaptées au Marché Tunisien: ## 2.1 Marketing Digital"
+      "titre": "Calculer et optimiser le CAC",
+      "action": "Mesurer le Coût d'Acquisition Client (CAC) : diviser le total des dépenses marketing sur les 3 derniers mois par le nombre de nouveaux clients acquis sur la même période. Comparer ce CAC à la marge moyenne par client sur sa durée de vie. Identifier les canaux marketing les plus coûteux et les moins performants.",
+      "impact": "Réduction du gaspillage marketing. Réallocation du budget vers les canaux efficaces. Objectif chiffré : réduire le CAC de 15-20% dans les 60 jours en ajustant les campagnes.",
+      "source": "guide_gestion_entreprises_tunisiennes.md (2.3 ROI Marketing) & guide_interpretation_kpis_tunisie.md (KPI CAC)"
     },
     {
       "priorite": 3,
-      "titre": "Analyse des KPIs",
-      "action": "Utiliser les KPIs marketing et de vente pour mesurer le succès de ses campagnes.",
-      "impact": "Amélioration de la compréhension des performances marketing et de l'efficacité des stratégies",
-      "source": "[guide_interpretation_kpis_tunisie.md] 3. KPIs Marketing et Vente"
+      "titre": "Lancer un programme de parrainage",
+      "action": "Créer un programme simple de fidélité et de parrainage. Offrir une prime (réduction, cadeau, cashback) au client existant et au nouveau client parrainé. Communiquer le programme via WhatsApp Business, emailing et affichage en point de vente. Former le service client à le promouvoir.",
+      "impact": "Augmentation du taux de conversion grâce à la confiance générée par la recommandation. Réduction du CAC. Objectif : générer 15-20% des nouvelles acquisitions via le parrainage dans les 3 mois.",
+      "source": "guide_gestion_entreprises_tunisiennes.md (2.2 Acquisition de Clients - Programmes de parrainage)"
     },
     {
       "priorite": 4,
-      "titre": "Analyse des problèmes les plus fréquents",
-      "action": "Analyser les causes des problèmes les plus fréquents pour mettre en place des mesures correctives.",
-      "impact": "Réduction de la fréquence des incidents techniques",
-      "source": "[guide_gestion_entreprises_tunisiennes.md] 2. Stratégies Marketing Adaptées au Marché Tunisien: ## 2. Stratégies Marketing Adaptées au Marché Tunisien"
+      "titre": "Audit et recentrage du marketing digital",
+      "action": "Analyser les performances des campagnes Facebook/Instagram (portée, engagement, conversions). Vérifier le ciblage (âge, localisation, centres d'intérêt) et l'adéquation des créatifs avec le public tunisien. Tester des formats vidéo courts et des offres promotionnelles claires. Allouer un petit budget pour tester des publicités Google Search sur des mots-clés transactionnels.",
+      "impact": "Amélioration du taux de conversion marketing (actuellement faible). Augmentation du trafic qualifié. Objectif : augmenter le taux de conversion des campagnes de 25% en 45 jours.",
+      "source": "guide_gestion_entreprises_tunisiennes.md (2.1 Marketing Digital - Contexte tunisien)"
+    },
+    {
+      "priorite": 5,
+      "titre": "Formaliser le tableau de bord KPI",
+      "action": "Créer un tableau de bord hebdomadaire simple avec 5 KPIs maximum : Chiffre d'affaires, Marge brute, CAC, Taux de conversion marketing, Satisfaction client (NPS ou avis Google/Facebook). Définir des objectifs et des seuils d'alerte pour chaque KPI. Revue hebdomadaire de 30 min avec l'équipe concernée.",
+      "impact": "Pilotage plus réactif de l'entreprise. Détection rapide des problèmes. Prise de décision basée sur des données. Amélioration de la performance globale sur le trimestre.",
+      "source": "guide_interpretation_kpis_tunisie.md (Cadre général des KPIs) & Bonnes pratiques de gestion"
     }
   ],
   "sources_rag": [
@@ -176,7 +176,7 @@
     }
   ],
   "metadata": {
-    "date_generation": "2026-04-01T17:01:25.440624",
+    "date_generation": "2026-05-07T18:14:41.359502",
     "version": "1.0",
     "pipeline_errors": [],
     "nombre_sources": 2

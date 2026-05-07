@@ -29,24 +29,34 @@ Frontend (React)
     ▼
 Backend (FastAPI)
     │
-    ▼
-Multi-Agents Pipeline (LangGraph)
-    │
-    ├── Analysis Agent        → lit les CSV, calcule les KPIs
-    ├── Interpretation Agent  → interprète les KPIs via le LLM
-    ├── RAG Agent             → cherche dans les 5 guides tunisiens
-    ├── Recommendation Agent  → génère les recommandations
-    └── Report Agent          → structure le rapport final
-         │
-         ├── Data Analysis (Pandas + Scikit-learn)
-         ├── RAG System (ChromaDB + sentence-t5-base)
-         └── LLM (DeepSeek-V3.2 via Azure AI Foundry)
+    ├── Intent Router ──────────────────────────────────────────┐
+    │         │                                                  │
+    │    ["sql"]                                          ["strategic"]
+    │         │                                                  │
+    │         ▼                                                  ▼
+    │   SQL Agent (DuckDB)                      Multi-Agents Pipeline (LangGraph)
+    │         │                                          │
+    │  NL → SQL (DeepSeek)                  ├── Analysis Agent
+    │  validate → execute                   ├── Interpretation Agent
+    │  tableau + graphique                  ├── RAG Agent
+    │                                       ├── Recommendation Agent
+    │                                       └── Report Agent
+    │                                                  │
+    │                                       ├── Data Analysis (Pandas + Scikit-learn)
+    │                                       ├── RAG System (ChromaDB + sentence-t5-base)
+    │                                       └── LLM (DeepSeek-V3.2 via Azure AI Foundry)
 ```
 
-**Workflow fixe et séquentiel :**
+**Workflow stratégique (questions d'analyse) :**
 ```
 input_data → analysis_agent → interpretation_agent → rag_agent
            → recommendation_agent → report_agent → final_output
+```
+
+**Workflow SQL (questions de données) :**
+```
+question → intent_router → generate_sql (DeepSeek) → validate_sql
+         → execute_sql (DuckDB) → chart_data → SqlResult (frontend)
 ```
 
 ---
@@ -64,6 +74,7 @@ input_data → analysis_agent → interpretation_agent → rag_agent
 | Vector DB         | ChromaDB                               | 0.5+     |
 | Embeddings        | sentence-transformers/sentence-t5-base | dernière |
 | LLM cloud         | DeepSeek-V3.2 via Azure AI Foundry     | dernière |
+| SQL In-Memory     | DuckDB                                 | 0.10+    |
 | Validation        | Pydantic v2                            | 2.x      |
 | Variables env     | python-dotenv                          | dernière |
 | Tests             | pytest + pytest-asyncio                | dernière |
@@ -143,9 +154,18 @@ ai-business-consultant/
     ├── routes/                     # endpoints FastAPI
     │   ├── __init__.py
     │   ├── upload.py               # POST /upload
-    │   ├── chat.py                 # POST /chat  (SSE streaming)
+    │   ├── chat.py                 # POST /chat  (SSE streaming + intent routing)
     │   ├── analyze.py              # POST /analyze
-    │   └── report.py               # GET /report
+    │   ├── report.py               # GET /report
+    │   └── sql.py                  # POST /sql/query, POST /sql/query/export
+    │
+    ├── sql_agent/                  # agent SQL — exploration données NL→SQL
+    │   ├── __init__.py
+    │   ├── db.py                   # DuckDB in-memory, 3 CSV comme tables
+    │   ├── validator.py            # sécurité : SELECT only, mots-clés interdits
+    │   ├── generator.py            # DeepSeek NL→SQL + viz_type
+    │   ├── executor.py             # exécution async, timeout 10s, max 500 lignes
+    │   └── intent_router.py        # classifie "sql" ou "strategic"
     │
     ├── models/                     # schémas Pydantic
     │   ├── __init__.py
@@ -157,7 +177,8 @@ ai-business-consultant/
         ├── test_analysis.py
         ├── test_rag.py
         ├── test_agents.py
-        └── test_routes.py
+        ├── test_routes.py
+        └── test_sql_agent.py       # 20 tests : validator, intent_router, executor, route
 ```
 
 ---
@@ -264,20 +285,28 @@ class AgentState(TypedDict):
 
 ## 8. Routes API
 
-| Méthode | Route     | Description                              | Body / Params              |
-|---------|-----------|------------------------------------------|----------------------------|
-| POST    | /upload   | Upload un fichier CSV                    | multipart/form-data        |
-| POST    | /analyze  | Lance le pipeline complet sur les données| `{ "use_defaults": bool }` |
-| POST    | /chat     | Question en langage naturel (SSE stream) | `{ "message": string }`    |
-| GET     | /report   | Récupère le dernier rapport généré       | —                          |
-| GET     | /health   | Vérifie que l'API et Ollama sont up      | —                          |
+| Méthode | Route               | Description                                      | Body / Params              |
+|---------|---------------------|--------------------------------------------------|----------------------------|
+| POST    | /upload             | Upload un fichier CSV                            | multipart/form-data        |
+| POST    | /analyze            | Lance le pipeline complet sur les données        | `{ "use_defaults": bool }` |
+| POST    | /chat               | Question en langage naturel (SSE stream)         | `{ "message": string }`    |
+| GET     | /report             | Récupère le dernier rapport généré               | —                          |
+| GET     | /health             | Vérifie que l'API est up                         | —                          |
+| POST    | /sql/query          | Exploration données : NL → SQL → DuckDB → JSON   | `{ "question": string }`   |
+| POST    | /sql/query/export   | Idem mais retourne un fichier CSV téléchargeable | `{ "question": string }`   |
 
-**Format SSE pour /chat :**
+**Format SSE pour /chat — question stratégique :**
 ```
 data: {"type": "step",  "content": "Analyse des données en cours..."}
 data: {"type": "token", "content": "Insight 1: La marge "}
 data: {"type": "token", "content": "bénéficiaire est ..."}
 data: {"type": "report", "content": "{...}"}
+data: {"type": "done",  "content": ""}
+```
+
+**Format SSE pour /chat — question SQL :**
+```
+data: {"type": "sql_result", "content": "{sql, rows_preview, total_rows, chart_data, message}"}
 data: {"type": "done",  "content": ""}
 ```
 

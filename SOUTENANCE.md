@@ -53,12 +53,13 @@ Application web full-stack avec backend IA:
     - `analysis_agent.py`, `interpretation_agent.py`, `rag_agent.py`, `recommendation_agent.py`, `report_agent.py`.
   - `analysis/`: chargement/validation des CSV + calcul KPIs + détection anomalies.
   - `rag/`: embeddings, ingestion documents, retriever ChromaDB.
-  - `routes/`: endpoints REST/SSE (`/analyze`, `/upload`, `/chat`, `/report`).
+  - `routes/`: endpoints REST/SSE (`/analyze`, `/upload`, `/chat`, `/report`, `/sql/query`).
   - `models/`: schémas Pydantic requêtes/réponses.
+  - `sql_agent/`: agent SQL autonome (`db.py`, `validator.py`, `generator.py`, `executor.py`, `intent_router.py`).
 
 - Frontend (`frontend/src/`):
   - `pages/`: `Dashboard`, `Upload`, `Chat`, `Report`.
-  - `components/`: composants UI (cartes KPI, graphiques, messages chat, progression agents, upload).
+  - `components/`: composants UI (cartes KPI, graphiques, messages chat, progression agents, upload, **SqlResult** pour affichage résultats SQL).
   - `hooks/`: logique état/réseau (`useAnalysis`, `useChat`).
   - `services/`: couche API (`api.js`, `chatService.js`, `uploadService.js`).
 
@@ -68,6 +69,7 @@ Application web full-stack avec backend IA:
   - Affichage des KPIs, du rapport et des recommandations.
   - Upload de fichiers CSV.
   - Interaction conversationnelle avec streaming SSE.
+  - Affichage des résultats SQL (tableau + graphique Recharts + export CSV).
   - Navigation multi-pages (React Router).
 
 - Backend API:
@@ -82,6 +84,12 @@ Application web full-stack avec backend IA:
   - `rag_agent`: enrichit avec le contexte documentaire tunisien.
   - `recommendation_agent`: produit des actions priorisées.
   - `report_agent`: structure un rapport final consommable par le frontend.
+
+- SQL Agent (exploration de données):
+  - `intent_router`: analyse chaque question et décide entre "sql" ou "strategic".
+  - `generator`: envoie la question à DeepSeek qui génère une requête SQL + viz_type.
+  - `validator`: sécurise la requête (SELECT only, mots-clés interdits, injection SQL).
+  - `executor`: exécute la requête sur DuckDB (in-memory, 3 CSV chargés comme tables), timeout 10s, max 500 lignes.
 
 - Couche données / connaissances:
   - Datasets CSV opérationnels (finance, marketing, support).
@@ -102,20 +110,27 @@ Application web full-stack avec backend IA:
 
 #### Flux conversationnel (`POST /chat`, SSE)
 1. Frontend envoie une question utilisateur.
-2. Backend exécute le pipeline en mode streaming.
-3. Des événements SSE sont renvoyés progressivement:
-   - `step` (étape en cours),
-   - `token` (texte interprétation),
-   - `report` (rapport structuré),
-   - `done` (fin).
-4. Frontend met à jour l'UI en temps réel (progression + message assistant).
+2. Backend classe l'intention : **"sql"** (exploration de données) ou **"strategic"** (analyse stratégique).
+3. Si **"sql"** :
+   - DeepSeek génère une requête SQL + viz_type.
+   - La requête est validée (sécurité) puis exécutée sur DuckDB.
+   - Le résultat (tableau + données graphique) est envoyé en SSE via événement `sql_result`.
+4. Si **"strategic"** :
+   - Backend exécute le pipeline LangGraph (5 agents) en mode streaming.
+   - Des événements SSE sont renvoyés progressivement :
+     - `step` (étape en cours),
+     - `token` (texte interprétation),
+     - `report` (rapport structuré),
+     - `done` (fin).
+5. Frontend met à jour l'UI en temps réel.
 
 
 ## 3. Stack technique & outils utilisés
 
-### Langages de programmation
-- Python (backend, IA, analyse des données, RAG).
+- Langages de programmation
+- Python (backend, IA, analyse des données, RAG, SQL agent).
 - JavaScript / JSX (frontend React).
+- SQL (généré par le LLM, exécuté via DuckDB in-memory).
 - SQL embarqué via SQLite (stockage interne ChromaDB).
 
 ### Frameworks et librairies (rôle précis)
@@ -128,6 +143,7 @@ Application web full-stack avec backend IA:
 - Ollama + modèle Mistral: exécution locale du LLM pour interprétation et recommandations.
 - Pandas / NumPy: préparation des données et calculs KPI.
 - Scikit-learn: régressions linéaires pour déterminer les tendances temporelles.
+- DuckDB: base de données analytique in-memory. Charge les 3 CSV comme tables SQL (`finance`, `marketing`, `support`) pour l'exploration par langage naturel.
 - ChromaDB: base vectorielle locale pour l'indexation et la recherche sémantique.
 - Sentence Transformers (`sentence-transformers/sentence-t5-base`): génération d'embeddings.
 - Pydantic v2: schémas de validation des requêtes/réponses API.
@@ -160,6 +176,7 @@ Application web full-stack avec backend IA:
 - Base principale: pas de SGBD relationnel métier (pas d'ORM type SQLAlchemy).
 - Stockages utilisés:
   - ChromaDB (vector store local) pour le RAG.
+  - DuckDB in-memory pour l'exécution des requêtes SQL générées par le LLM.
   - Fichier JSON (`data/last_report.json`) pour conserver le dernier rapport généré.
 
 ### Outils DevOps / déploiement (présents dans le projet)
