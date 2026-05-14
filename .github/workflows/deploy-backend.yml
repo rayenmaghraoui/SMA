@@ -39,6 +39,7 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}/backend
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   build-and-deploy:
@@ -46,6 +47,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      actions: write
 
     steps:
       # ── 1. Checkout du code ────────────────────────────────────────────
