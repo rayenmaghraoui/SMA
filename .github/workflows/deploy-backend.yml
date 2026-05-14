@@ -28,7 +28,7 @@ name: Deploy Backend (Azure Web App for Containers)
 
 on:
   push:
-    branches: [main]
+    branches: [master]
     paths:
       - 'backend/**'
       - 'requirements.txt'
