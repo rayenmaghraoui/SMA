@@ -1,16 +1,97 @@
 date,campaign_id,channel,budget,clicks,conversions,conversion_rate
-2025-01-15,CAM001,social_media,5000,2500,125,5.0
-2025-01-20,CAM002,email,2000,1800,90,5.0
-2025-02-01,CAM003,seo,3000,4500,180,4.0
-2025-02-15,CAM004,display,4000,3200,96,3.0
-2025-03-01,CAM005,social_media,6000,3500,210,6.0
-2025-03-15,CAM006,email,2500,2200,132,6.0
-2025-04-01,CAM007,seo,3500,5000,200,4.0
-2025-04-20,CAM008,social_media,5500,3000,180,6.0
-2025-05-01,CAM009,display,3000,2800,84,3.0
-2025-05-15,CAM010,email,2200,1900,114,6.0
-2025-06-01,CAM011,social_media,7000,4200,294,7.0
-2025-06-20,CAM012,seo,4000,5500,220,4.0
-2025-07-01,CAM013,display,3500,3000,90,3.0
-2025-07-15,CAM014,email,2800,2400,168,7.0
-2025-08-01,CAM015,social_media,6500,3800,266,7.0
+2023-01-01,Application_mobile_2023_01,Application mobile,5730.19,800,24,3.0
+2023-01-01,Magasin_physique_2023_01,Magasin physique,4580.96,1000,30,3.0
+2023-01-01,Reseaux_sociaux_2023_01,Reseaux sociaux,767.89,267,8,3.0
+2023-01-01,Site_web_2023_01,Site web,3381.38,567,17,3.0
+2023-02-01,Application_mobile_2023_02,Application mobile,1530.22,300,9,3.0
+2023-02-01,Magasin_physique_2023_02,Magasin physique,7330.39,1033,31,3.0
+2023-02-01,Reseaux_sociaux_2023_02,Reseaux sociaux,1700.89,367,11,3.0
+2023-02-01,Site_web_2023_02,Site web,4519.54,900,27,3.0
+2023-03-01,Application_mobile_2023_03,Application mobile,3416.14,833,25,3.0
+2023-03-01,Magasin_physique_2023_03,Magasin physique,6526.65,900,27,3.0
+2023-03-01,Reseaux_sociaux_2023_03,Reseaux sociaux,1871.21,167,5,2.99
+2023-03-01,Site_web_2023_03,Site web,4036.65,600,18,3.0
+2023-04-01,Application_mobile_2023_04,Application mobile,1496.21,500,15,3.0
+2023-04-01,Magasin_physique_2023_04,Magasin physique,4521.22,1000,30,3.0
+2023-04-01,Reseaux_sociaux_2023_04,Reseaux sociaux,2527.09,333,10,3.0
+2023-04-01,Site_web_2023_04,Site web,7671.82,900,27,3.0
+2023-05-01,Application_mobile_2023_05,Application mobile,5364.6,767,23,3.0
+2023-05-01,Magasin_physique_2023_05,Magasin physique,8115.49,1167,35,3.0
+2023-05-01,Reseaux_sociaux_2023_05,Reseaux sociaux,2568.07,467,14,3.0
+2023-05-01,Site_web_2023_05,Site web,6173.4,967,29,3.0
+2023-06-01,Application_mobile_2023_06,Application mobile,682.58,567,17,3.0
+2023-06-01,Magasin_physique_2023_06,Magasin physique,2958.6,667,20,3.0
+2023-06-01,Reseaux_sociaux_2023_06,Reseaux sociaux,2976.22,367,11,3.0
+2023-06-01,Site_web_2023_06,Site web,2293.95,867,26,3.0
+2023-07-01,Application_mobile_2023_07,Application mobile,948.22,433,13,3.0
+2023-07-01,Magasin_physique_2023_07,Magasin physique,2986.09,1067,32,3.0
+2023-07-01,Reseaux_sociaux_2023_07,Reseaux sociaux,1705.09,267,8,3.0
+2023-07-01,Site_web_2023_07,Site web,6318.75,1000,30,3.0
+2023-08-01,Application_mobile_2023_08,Application mobile,3351.9,500,15,3.0
+2023-08-01,Magasin_physique_2023_08,Magasin physique,3930.49,867,26,3.0
+2023-08-01,Reseaux_sociaux_2023_08,Reseaux sociaux,93.41,200,6,3.0
+2023-08-01,Site_web_2023_08,Site web,4744.46,800,24,3.0
+2023-09-01,Application_mobile_2023_09,Application mobile,4115.96,767,23,3.0
+2023-09-01,Magasin_physique_2023_09,Magasin physique,3226.91,733,22,3.0
+2023-09-01,Reseaux_sociaux_2023_09,Reseaux sociaux,253.84,167,5,2.99
+2023-09-01,Site_web_2023_09,Site web,2701.24,767,23,3.0
+2023-10-01,Application_mobile_2023_10,Application mobile,2398.5,633,19,3.0
+2023-10-01,Magasin_physique_2023_10,Magasin physique,4116.68,1333,40,3.0
+2023-10-01,Reseaux_sociaux_2023_10,Reseaux sociaux,2235.82,400,12,3.0
+2023-10-01,Site_web_2023_10,Site web,3146.18,933,28,3.0
+2023-11-01,Application_mobile_2023_11,Application mobile,1921.72,300,9,3.0
+2023-11-01,Magasin_physique_2023_11,Magasin physique,9879.3,1600,48,3.0
+2023-11-01,Reseaux_sociaux_2023_11,Reseaux sociaux,1093.69,233,7,3.0
+2023-11-01,Site_web_2023_11,Site web,3014.78,967,29,3.0
+2023-12-01,Application_mobile_2023_12,Application mobile,493.69,267,8,3.0
+2023-12-01,Magasin_physique_2023_12,Magasin physique,2545.39,1133,34,3.0
+2023-12-01,Reseaux_sociaux_2023_12,Reseaux sociaux,413.62,233,7,3.0
+2023-12-01,Site_web_2023_12,Site web,2727.11,833,25,3.0
+2024-01-01,Application_mobile_2024_01,Application mobile,1599.52,567,17,3.0
+2024-01-01,Magasin_physique_2024_01,Magasin physique,8649.98,1200,36,3.0
+2024-01-01,Reseaux_sociaux_2024_01,Reseaux sociaux,875.48,233,7,3.0
+2024-01-01,Site_web_2024_01,Site web,2088.15,667,20,3.0
+2024-02-01,Application_mobile_2024_02,Application mobile,4179.45,733,22,3.0
+2024-02-01,Magasin_physique_2024_02,Magasin physique,4739.59,1267,38,3.0
+2024-02-01,Reseaux_sociaux_2024_02,Reseaux sociaux,2148.79,333,10,3.0
+2024-02-01,Site_web_2024_02,Site web,5659.61,967,29,3.0
+2024-03-01,Application_mobile_2024_03,Application mobile,2569.5,633,19,3.0
+2024-03-01,Magasin_physique_2024_03,Magasin physique,3748.39,967,29,3.0
+2024-03-01,Reseaux_sociaux_2024_03,Reseaux sociaux,14.62,100,3,3.0
+2024-03-01,Site_web_2024_03,Site web,1899.75,700,21,3.0
+2024-04-01,Application_mobile_2024_04,Application mobile,2756.48,700,21,3.0
+2024-04-01,Magasin_physique_2024_04,Magasin physique,2751.6,800,24,3.0
+2024-04-01,Reseaux_sociaux_2024_04,Reseaux sociaux,112.24,133,4,3.01
+2024-04-01,Site_web_2024_04,Site web,2872.12,667,20,3.0
+2024-05-01,Application_mobile_2024_05,Application mobile,4892.55,633,19,3.0
+2024-05-01,Magasin_physique_2024_05,Magasin physique,2174.7,933,28,3.0
+2024-05-01,Reseaux_sociaux_2024_05,Reseaux sociaux,3853.54,300,9,3.0
+2024-05-01,Site_web_2024_05,Site web,3738.79,800,24,3.0
+2024-06-01,Application_mobile_2024_06,Application mobile,2609.89,767,23,3.0
+2024-06-01,Magasin_physique_2024_06,Magasin physique,5599.72,1267,38,3.0
+2024-06-01,Reseaux_sociaux_2024_06,Reseaux sociaux,1756.24,333,10,3.0
+2024-06-01,Site_web_2024_06,Site web,2666.1,867,26,3.0
+2024-07-01,Application_mobile_2024_07,Application mobile,3983.85,900,27,3.0
+2024-07-01,Magasin_physique_2024_07,Magasin physique,3632.85,1000,30,3.0
+2024-07-01,Reseaux_sociaux_2024_07,Reseaux sociaux,1796.55,233,7,3.0
+2024-07-01,Site_web_2024_07,Site web,4709.66,867,26,3.0
+2024-08-01,Application_mobile_2024_08,Application mobile,3007.31,433,13,3.0
+2024-08-01,Magasin_physique_2024_08,Magasin physique,6135.04,1200,36,3.0
+2024-08-01,Reseaux_sociaux_2024_08,Reseaux sociaux,912.6,300,9,3.0
+2024-08-01,Site_web_2024_08,Site web,2895.08,733,22,3.0
+2024-09-01,Application_mobile_2024_09,Application mobile,3544.99,400,12,3.0
+2024-09-01,Magasin_physique_2024_09,Magasin physique,9157.24,1267,38,3.0
+2024-09-01,Reseaux_sociaux_2024_09,Reseaux sociaux,1878.41,333,10,3.0
+2024-09-01,Site_web_2024_09,Site web,7353.26,1000,30,3.0
+2024-10-01,Application_mobile_2024_10,Application mobile,1158.64,500,15,3.0
+2024-10-01,Magasin_physique_2024_10,Magasin physique,5688.9,1433,43,3.0
+2024-10-01,Reseaux_sociaux_2024_10,Reseaux sociaux,3196.31,433,13,3.0
+2024-10-01,Site_web_2024_10,Site web,5084.02,933,28,3.0
+2024-11-01,Application_mobile_2024_11,Application mobile,884.51,433,13,3.0
+2024-11-01,Magasin_physique_2024_11,Magasin physique,5048.02,1167,35,3.0
+2024-11-01,Reseaux_sociaux_2024_11,Reseaux sociaux,2143.54,300,9,3.0
+2024-11-01,Site_web_2024_11,Site web,5205.82,600,18,3.0
+2024-12-01,Application_mobile_2024_12,Application mobile,2387.14,833,25,3.0
+2024-12-01,Magasin_physique_2024_12,Magasin physique,3817.46,967,29,3.0
+2024-12-01,Reseaux_sociaux_2024_12,Reseaux sociaux,4689.11,300,9,3.0
+2024-12-01,Site_web_2024_12,Site web,5306.78,800,24,3.0

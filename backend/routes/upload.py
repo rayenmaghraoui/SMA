@@ -19,16 +19,26 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="", tags=["Upload"])
 
-# Colonnes attendues par type de fichier
+# Colonnes attendues par type de fichier (correspondance par similarité ≥70%)
 EXPECTED_COLUMNS = {
-    "finance": ["date", "revenue", "cost", "profit", "growth_rate"],
-    "marketing": [
-        "date", "campaign_id", "channel", "budget",
-        "clicks", "conversions", "conversion_rate"
+    "ventes": [
+        "invoice_id", "product_name", "category", "quantity",
+        "unit_price_tnd", "revenue_tnd", "customer_id", "customer_region",
+        "sale_date", "sales_channel", "payment_method", "estimated_profit",
     ],
-    "support": [
-        "date", "ticket_id", "issue_type", "resolution_hours",
-        "satisfaction_score", "churn_risk"
+    "regions": [
+        "customer_region", "ca_total", "profit_total",
+        "nb_transactions", "panier_moyen",
+    ],
+    "categories": [
+        "category", "ca_total", "profit_total",
+        "nb_transactions", "quantite_vendue", "prix_moyen",
+    ],
+    "canaux": [
+        "sales_channel", "ca_total", "nb_transactions", "panier_moyen",
+    ],
+    "kpis": [
+        "indicateur", "valeur",
     ],
 }
 

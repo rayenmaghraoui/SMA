@@ -1,10 +1,12 @@
 """
-Chargement, validation et nettoyage des trois datasets CSV du projet.
+Chargement, validation et nettoyage des cinq datasets CSV du projet.
 
 Les fichiers attendus (définis dans config.py) :
-    - 01_finance_performance.csv
-    - 02_marketing_campaigns.csv
-    - 03_customer_support.csv
+    - 01_donnees_vente.csv
+    - 02_analyse_region.csv
+    - 03_analyse_categorie.csv
+    - 04_analyse_canaux.csv
+    - 05_kpis_globaux.csv
 
 Usage direct (debug) :
     python -m backend.analysis.loader
@@ -13,7 +15,7 @@ Usage direct (debug) :
 import logging
 import sys
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 import pandas as pd
 
@@ -22,10 +24,12 @@ if __name__ == "__main__":
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from backend.config import (
-    DATA_DIR,
-    FINANCE_CSV,
-    MARKETING_CSV,
-    SUPPORT_CSV,
+    UPLOADS_DIR,
+    VENTES_CSV,
+    REGIONS_CSV,
+    CATEGORIES_CSV,
+    CANAUX_CSV,
+    KPIS_CSV,
     DEBUG,
 )
 
@@ -45,31 +49,48 @@ logger = logging.getLogger(__name__)
 # Schémas attendus par dataset
 # ============================================================
 
-FINANCE_SCHEMA: Dict[str, type] = {
-    "date": str,
-    "revenue": float,
-    "cost": float,
-    "profit": float,
-    "growth_rate": float,
+VENTES_SCHEMA: Dict[str, type] = {
+    "invoice_id": str,
+    "product_name": str,
+    "category": str,
+    "quantity": int,
+    "unit_price_tnd": float,
+    "revenue_tnd": float,
+    "customer_id": str,
+    "customer_region": str,
+    "sale_date": str,
+    "sales_channel": str,
+    "payment_method": str,
+    "estimated_profit": float,
 }
 
-MARKETING_SCHEMA: Dict[str, type] = {
-    "date": str,
-    "campaign_id": str,
-    "channel": str,
-    "budget": float,
-    "clicks": int,
-    "conversions": int,
-    "conversion_rate": float,
+REGIONS_SCHEMA: Dict[str, type] = {
+    "customer_region": str,
+    "ca_total": float,
+    "profit_total": float,
+    "nb_transactions": int,
+    "panier_moyen": float,
 }
 
-SUPPORT_SCHEMA: Dict[str, type] = {
-    "date": str,
-    "ticket_id": str,
-    "issue_type": str,
-    "resolution_hours": float,
-    "satisfaction_score": float,
-    "churn_risk": str,
+CATEGORIES_SCHEMA: Dict[str, type] = {
+    "category": str,
+    "ca_total": float,
+    "profit_total": float,
+    "nb_transactions": int,
+    "quantite_vendue": int,
+    "prix_moyen": float,
+}
+
+CANAUX_SCHEMA: Dict[str, type] = {
+    "sales_channel": str,
+    "ca_total": float,
+    "nb_transactions": int,
+    "panier_moyen": float,
+}
+
+KPIS_SCHEMA: Dict[str, type] = {
+    "indicateur": str,
+    "valeur": float,
 }
 
 
@@ -100,198 +121,104 @@ def _validate_columns(df: pd.DataFrame, schema: Dict[str, type], name: str) -> N
     logger.debug("[%s] Validation des colonnes OK — %d colonnes présentes", name, len(expected))
 
 
-def _clean_finance(df: pd.DataFrame) -> pd.DataFrame:
+def _clean_ventes(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Nettoie et type le dataset finance.
-
-    Conversions :
-        - date          -> datetime64[ns]
-        - revenue       -> float64
-        - cost          -> float64
-        - profit        -> float64
-        - growth_rate   -> float64
-
-    Args:
-        df: DataFrame brut.
-
-    Returns:
-        DataFrame nettoyé et typé.
+    Nettoie et type le dataset des ventes (01_donnees_vente.csv).
+    Colonnes : invoice_id, product_name, category, quantity, unit_price_tnd,
+               revenue_tnd, customer_id, customer_region, sale_date,
+               sales_channel, payment_method, estimated_profit
     """
     df = df.copy()
     df.columns = df.columns.str.strip().str.lower()
-
-    # Parsing des dates
-    df["date"] = pd.to_datetime(df["date"], format="%Y-%m-%d", errors="coerce")
-
-    # Colonnes numériques
-    for col in ["revenue", "cost", "profit", "growth_rate"]:
-        df[col] = pd.to_numeric(df[col], errors="coerce")
-
-    # Suppression des lignes sans date valide (clé primaire)
-    nb_invalid_dates = int(df["date"].isna().sum())
-    if nb_invalid_dates > 0:
-        logger.warning("[finance] %d lignes avec date invalide supprimées", nb_invalid_dates)
-        df = df.dropna(subset=["date"])
-
-    # Remplacement des valeurs numériques nulles par la médiane
-    for col in ["revenue", "cost", "profit", "growth_rate"]:
-        nb_nulls = int(df[col].isna().sum())
-        if nb_nulls > 0:
-            median_val = df[col].median()
-            df[col] = df[col].fillna(median_val)
-            logger.warning(
-                "[finance] %d valeurs nulles dans '%s' remplacées par la médiane (%.2f)",
-                nb_nulls, col, median_val,
-            )
-
-    df = df.sort_values("date").reset_index(drop=True)
-    logger.info("[finance] Nettoyage terminé — %d lignes", len(df))
+    df["sale_date"] = pd.to_datetime(df["sale_date"], format="%Y-%m-%d", errors="coerce")
+    df["product_name"] = df["product_name"].astype(str).str.strip()
+    df["category"] = df["category"].astype(str).str.strip()
+    df["customer_region"] = df["customer_region"].astype(str).str.strip()
+    df["sales_channel"] = df["sales_channel"].astype(str).str.strip()
+    df["payment_method"] = df["payment_method"].astype(str).str.strip()
+    df["revenue_tnd"] = pd.to_numeric(df["revenue_tnd"], errors="coerce")
+    df["unit_price_tnd"] = pd.to_numeric(df["unit_price_tnd"], errors="coerce")
+    df["estimated_profit"] = pd.to_numeric(df["estimated_profit"], errors="coerce")
+    df["quantity"] = pd.to_numeric(df["quantity"], errors="coerce").round().astype("Int64")
+    if df["sale_date"].isna().any():
+        df = df.dropna(subset=["sale_date"])
+    for col in ["revenue_tnd", "unit_price_tnd", "estimated_profit"]:
+        if df[col].isna().any():
+            df[col] = df[col].fillna(df[col].median())
+    if df["quantity"].isna().any():
+        df["quantity"] = df["quantity"].fillna(int(df["quantity"].median()))
+    df = df.sort_values("sale_date").reset_index(drop=True)
+    logger.info("[ventes] Nettoyage terminé — %d lignes", len(df))
     return df
 
 
-def _clean_marketing(df: pd.DataFrame) -> pd.DataFrame:
+def _clean_regions(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Nettoie et type le dataset marketing.
-
-    Conversions :
-        - date            -> datetime64[ns]
-        - campaign_id     -> str
-        - channel         -> str (strip, lower)
-        - budget          -> float64
-        - clicks          -> Int64 (nullable integer)
-        - conversions     -> Int64 (nullable integer)
-        - conversion_rate -> float64
-
-    Args:
-        df: DataFrame brut.
-
-    Returns:
-        DataFrame nettoyé et typé.
+    Nettoie et type le dataset régional (02_analyse_region.csv).
+    Colonnes : customer_region, CA_Total, Profit_Total, Nb_Transactions, Panier_Moyen
     """
     df = df.copy()
     df.columns = df.columns.str.strip().str.lower()
-
-    # Parsing des dates
-    df["date"] = pd.to_datetime(df["date"], format="%Y-%m-%d", errors="coerce")
-
-    # Colonnes texte
-    df["campaign_id"] = df["campaign_id"].astype(str).str.strip()
-    df["channel"] = df["channel"].astype(str).str.strip().str.lower()
-
-    # Colonnes numériques flottantes
-    for col in ["budget", "conversion_rate"]:
-        df[col] = pd.to_numeric(df[col], errors="coerce")
-
-    # Colonnes entières
-    for col in ["clicks", "conversions"]:
-        df[col] = pd.to_numeric(df[col], errors="coerce").round().astype("Int64")
-
-    # Suppression des lignes sans date valide
-    nb_invalid_dates = int(df["date"].isna().sum())
-    if nb_invalid_dates > 0:
-        logger.warning("[marketing] %d lignes avec date invalide supprimées", nb_invalid_dates)
-        df = df.dropna(subset=["date"])
-
-    # Gestion des valeurs nulles numériques
-    for col in ["budget", "conversion_rate"]:
-        nb_nulls = int(df[col].isna().sum())
-        if nb_nulls > 0:
-            median_val = df[col].median()
-            df[col] = df[col].fillna(median_val)
-            logger.warning(
-                "[marketing] %d valeurs nulles dans '%s' remplacées par la médiane (%.2f)",
-                nb_nulls, col, median_val,
-            )
-
-    for col in ["clicks", "conversions"]:
-        nb_nulls = int(df[col].isna().sum())
-        if nb_nulls > 0:
-            median_val = int(df[col].median())
-            df[col] = df[col].fillna(median_val)
-            logger.warning(
-                "[marketing] %d valeurs nulles dans '%s' remplacées par la médiane (%d)",
-                nb_nulls, col, median_val,
-            )
-
-    df = df.sort_values("date").reset_index(drop=True)
-    logger.info("[marketing] Nettoyage terminé — %d lignes", len(df))
+    df["customer_region"] = df["customer_region"].astype(str).str.strip()
+    df["ca_total"] = pd.to_numeric(df["ca_total"], errors="coerce")
+    df["profit_total"] = pd.to_numeric(df["profit_total"], errors="coerce")
+    df["nb_transactions"] = pd.to_numeric(df["nb_transactions"], errors="coerce").round().astype("Int64")
+    df["panier_moyen"] = pd.to_numeric(df["panier_moyen"], errors="coerce")
+    for col in ["ca_total", "profit_total", "panier_moyen"]:
+        if df[col].isna().any():
+            df[col] = df[col].fillna(df[col].median())
+    logger.info("[regions] Nettoyage terminé — %d lignes", len(df))
     return df
 
 
-def _clean_support(df: pd.DataFrame) -> pd.DataFrame:
+def _clean_categories(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Nettoie et type le dataset support client.
-
-    Conversions :
-        - date               -> datetime64[ns]
-        - ticket_id          -> str
-        - issue_type         -> str (strip, lower)
-        - resolution_hours   -> float64
-        - satisfaction_score -> float64  (valeurs valides : 1.0 – 5.0)
-        - churn_risk         -> str (strip, lower) valeurs : low | medium | high
-
-    Args:
-        df: DataFrame brut.
-
-    Returns:
-        DataFrame nettoyé et typé.
+    Nettoie et type le dataset des catégories (03_analyse_categorie.csv).
+    Colonnes : category, CA_Total, Profit_Total, Nb_Transactions, Quantite_Vendue, Prix_Moyen
     """
     df = df.copy()
     df.columns = df.columns.str.strip().str.lower()
+    df["category"] = df["category"].astype(str).str.strip()
+    df["ca_total"] = pd.to_numeric(df["ca_total"], errors="coerce")
+    df["profit_total"] = pd.to_numeric(df["profit_total"], errors="coerce")
+    df["nb_transactions"] = pd.to_numeric(df["nb_transactions"], errors="coerce").round().astype("Int64")
+    df["quantite_vendue"] = pd.to_numeric(df["quantite_vendue"], errors="coerce").round().astype("Int64")
+    df["prix_moyen"] = pd.to_numeric(df["prix_moyen"], errors="coerce")
+    for col in ["ca_total", "profit_total", "prix_moyen"]:
+        if df[col].isna().any():
+            df[col] = df[col].fillna(df[col].median())
+    logger.info("[categories] Nettoyage terminé — %d lignes", len(df))
+    return df
 
-    # Parsing des dates
-    df["date"] = pd.to_datetime(df["date"], format="%Y-%m-%d", errors="coerce")
 
-    # Colonnes texte
-    df["ticket_id"] = df["ticket_id"].astype(str).str.strip()
-    df["issue_type"] = df["issue_type"].astype(str).str.strip().str.lower()
-    df["churn_risk"] = df["churn_risk"].astype(str).str.strip().str.lower()
+def _clean_canaux(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Nettoie et type le dataset des canaux (04_analyse_canaux.csv).
+    Colonnes : sales_channel, CA_Total, Nb_Transactions, Panier_Moyen
+    """
+    df = df.copy()
+    df.columns = df.columns.str.strip().str.lower()
+    df["sales_channel"] = df["sales_channel"].astype(str).str.strip()
+    df["ca_total"] = pd.to_numeric(df["ca_total"], errors="coerce")
+    df["nb_transactions"] = pd.to_numeric(df["nb_transactions"], errors="coerce").round().astype("Int64")
+    df["panier_moyen"] = pd.to_numeric(df["panier_moyen"], errors="coerce")
+    for col in ["ca_total", "panier_moyen"]:
+        if df[col].isna().any():
+            df[col] = df[col].fillna(df[col].median())
+    logger.info("[canaux] Nettoyage terminé — %d lignes", len(df))
+    return df
 
-    # Colonnes numériques
-    for col in ["resolution_hours", "satisfaction_score"]:
-        df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    # Validation du score de satisfaction (1-5)
-    invalid_scores = df["satisfaction_score"].notna() & (
-        (df["satisfaction_score"] < 1.0) | (df["satisfaction_score"] > 5.0)
-    )
-    nb_invalid = int(invalid_scores.sum())
-    if nb_invalid > 0:
-        logger.warning(
-            "[support] %d scores de satisfaction hors de [1, 5] mis à NaN", nb_invalid
-        )
-        df.loc[invalid_scores, "satisfaction_score"] = float("nan")
-
-    # Validation des valeurs churn_risk
-    valid_churn = {"low", "medium", "high"}
-    invalid_churn = ~df["churn_risk"].isin(valid_churn)
-    nb_invalid_churn = int(invalid_churn.sum())
-    if nb_invalid_churn > 0:
-        logger.warning(
-            "[support] %d valeurs 'churn_risk' invalides remplacées par 'medium'",
-            nb_invalid_churn,
-        )
-        df.loc[invalid_churn, "churn_risk"] = "medium"
-
-    # Suppression des lignes sans date valide
-    nb_invalid_dates = int(df["date"].isna().sum())
-    if nb_invalid_dates > 0:
-        logger.warning("[support] %d lignes avec date invalide supprimées", nb_invalid_dates)
-        df = df.dropna(subset=["date"])
-
-    # Gestion des valeurs nulles numériques
-    for col in ["resolution_hours", "satisfaction_score"]:
-        nb_nulls = int(df[col].isna().sum())
-        if nb_nulls > 0:
-            median_val = df[col].median()
-            df[col] = df[col].fillna(median_val)
-            logger.warning(
-                "[support] %d valeurs nulles dans '%s' remplacées par la médiane (%.2f)",
-                nb_nulls, col, median_val,
-            )
-
-    df = df.sort_values("date").reset_index(drop=True)
-    logger.info("[support] Nettoyage terminé — %d lignes", len(df))
+def _clean_kpis(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Nettoie et type le dataset des KPIs globaux (05_kpis_globaux.csv).
+    Colonnes : Indicateur, Valeur  (format clé-valeur)
+    """
+    df = df.copy()
+    df.columns = df.columns.str.strip().str.lower()
+    df["indicateur"] = df["indicateur"].astype(str).str.strip()
+    df["valeur"] = pd.to_numeric(df["valeur"], errors="coerce").fillna(0.0)
+    logger.info("[kpis] Nettoyage terminé — %d lignes", len(df))
     return df
 
 
@@ -301,20 +228,21 @@ def _clean_support(df: pd.DataFrame) -> pd.DataFrame:
 
 def load_datasets(data_dir: Optional[Path] = None) -> Dict[str, pd.DataFrame]:
     """
-    Charge, valide et nettoie les trois datasets CSV du projet.
+    Charge, valide et nettoie les cinq datasets CSV du projet.
 
     Les fichiers attendus dans data_dir :
-        - 01_finance_performance.csv
-        - 02_marketing_campaigns.csv
-        - 03_customer_support.csv
+        - 01_donnees_vente.csv
+        - 02_analyse_region.csv
+        - 03_analyse_categorie.csv
+        - 04_analyse_canaux.csv
+        - 05_kpis_globaux.csv
 
     Args:
         data_dir: Répertoire contenant les CSV.
-                  Si None, utilise DATA_DIR défini dans config.py.
+                  Si None, utilise UPLOADS_DIR défini dans config.py.
 
     Returns:
-        dict avec les clés "finance", "marketing", "support"
-        et les DataFrames nettoyés comme valeurs.
+        dict avec les clés "ventes", "regions", "categories", "canaux", "kpis".
 
     Raises:
         FileNotFoundError: Si un fichier CSV est introuvable.
@@ -322,114 +250,94 @@ def load_datasets(data_dir: Optional[Path] = None) -> Dict[str, pd.DataFrame]:
     """
     if data_dir is not None:
         resolved_dir = Path(data_dir)
-        finance_path = resolved_dir / FINANCE_CSV.name
-        marketing_path = resolved_dir / MARKETING_CSV.name
-        support_path = resolved_dir / SUPPORT_CSV.name
+        ventes_path = resolved_dir / VENTES_CSV.name
+        regions_path = resolved_dir / REGIONS_CSV.name
+        categories_path = resolved_dir / CATEGORIES_CSV.name
+        canaux_path = resolved_dir / CANAUX_CSV.name
+        kpis_path = resolved_dir / KPIS_CSV.name
     else:
-        resolved_dir = DATA_DIR
-        finance_path = FINANCE_CSV
-        marketing_path = MARKETING_CSV
-        support_path = SUPPORT_CSV
+        resolved_dir = UPLOADS_DIR
+        ventes_path = VENTES_CSV
+        regions_path = REGIONS_CSV
+        categories_path = CATEGORIES_CSV
+        canaux_path = CANAUX_CSV
+        kpis_path = KPIS_CSV
 
     logger.info("Chargement des datasets depuis : %s", resolved_dir)
 
     datasets: Dict[str, pd.DataFrame] = {}
 
-    # ---- Finance ----
-    if not finance_path.exists():
-        raise FileNotFoundError(f"Fichier introuvable : {finance_path}")
-    logger.info("Chargement du fichier finance : %s", finance_path)
-    df_finance = pd.read_csv(finance_path)
-    _validate_columns(df_finance, FINANCE_SCHEMA, "finance")
-    datasets["finance"] = _clean_finance(df_finance)
+    if not ventes_path.exists():
+        raise FileNotFoundError(f"Fichier introuvable : {ventes_path}")
+    logger.info("Chargement du fichier ventes : %s", ventes_path)
+    df_ventes = pd.read_csv(ventes_path)
+    _validate_columns(df_ventes, VENTES_SCHEMA, "ventes")
+    datasets["ventes"] = _clean_ventes(df_ventes)
 
-    # ---- Marketing ----
-    if not marketing_path.exists():
-        raise FileNotFoundError(f"Fichier introuvable : {marketing_path}")
-    logger.info("Chargement du fichier marketing : %s", marketing_path)
-    df_marketing = pd.read_csv(marketing_path)
-    _validate_columns(df_marketing, MARKETING_SCHEMA, "marketing")
-    datasets["marketing"] = _clean_marketing(df_marketing)
+    if not regions_path.exists():
+        raise FileNotFoundError(f"Fichier introuvable : {regions_path}")
+    logger.info("Chargement du fichier regions : %s", regions_path)
+    df_regions = pd.read_csv(regions_path)
+    _validate_columns(df_regions, REGIONS_SCHEMA, "regions")
+    datasets["regions"] = _clean_regions(df_regions)
 
-    # ---- Support ----
-    if not support_path.exists():
-        raise FileNotFoundError(f"Fichier introuvable : {support_path}")
-    logger.info("Chargement du fichier support : %s", support_path)
-    df_support = pd.read_csv(support_path)
-    _validate_columns(df_support, SUPPORT_SCHEMA, "support")
-    datasets["support"] = _clean_support(df_support)
+    if not categories_path.exists():
+        raise FileNotFoundError(f"Fichier introuvable : {categories_path}")
+    logger.info("Chargement du fichier categories : %s", categories_path)
+    df_categories = pd.read_csv(categories_path)
+    _validate_columns(df_categories, CATEGORIES_SCHEMA, "categories")
+    datasets["categories"] = _clean_categories(df_categories)
+
+    if not canaux_path.exists():
+        raise FileNotFoundError(f"Fichier introuvable : {canaux_path}")
+    logger.info("Chargement du fichier canaux : %s", canaux_path)
+    df_canaux = pd.read_csv(canaux_path)
+    _validate_columns(df_canaux, CANAUX_SCHEMA, "canaux")
+    datasets["canaux"] = _clean_canaux(df_canaux)
+
+    if not kpis_path.exists():
+        raise FileNotFoundError(f"Fichier introuvable : {kpis_path}")
+    logger.info("Chargement du fichier kpis : %s", kpis_path)
+    df_kpis = pd.read_csv(kpis_path)
+    _validate_columns(df_kpis, KPIS_SCHEMA, "kpis")
+    datasets["kpis"] = _clean_kpis(df_kpis)
 
     logger.info(
-        "Datasets chargés avec succès — finance: %d lignes | marketing: %d lignes | support: %d lignes",
-        len(datasets["finance"]),
-        len(datasets["marketing"]),
-        len(datasets["support"]),
+        "Datasets chargés avec succès — ventes: %d | regions: %d | categories: %d | canaux: %d | kpis: %d",
+        len(datasets["ventes"]),
+        len(datasets["regions"]),
+        len(datasets["categories"]),
+        len(datasets["canaux"]),
+        len(datasets["kpis"]),
     )
     return datasets
 
 
-def _detect_dataset_type(columns: pd.Index) -> str:
+def _deserialize_datasets(raw_data: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Détecte le type de dataset à partir des colonnes.
+    Convertit les données brutes (dict/list) en DataFrames Pandas.
 
     Args:
-        columns: Colonnes du CSV.
+        raw_data: Dictionnaire contenant les données sérialisées.
 
     Returns:
-        "finance", "marketing", "support" ou "unknown".
+        Dictionnaire avec les DataFrames pour chaque dataset.
     """
-    normalized = {str(col).strip().lower() for col in columns}
+    import pandas as pd
 
-    schemas = {
-        "finance": set(FINANCE_SCHEMA.keys()),
-        "marketing": set(MARKETING_SCHEMA.keys()),
-        "support": set(SUPPORT_SCHEMA.keys()),
-    }
-
-    best_type = "unknown"
-    best_ratio = 0.0
-
-    for dataset_type, expected_columns in schemas.items():
-        ratio = len(normalized & expected_columns) / len(expected_columns)
-        if ratio > best_ratio:
-            best_ratio = ratio
-            best_type = dataset_type
-
-    return best_type if best_ratio >= 0.7 else "unknown"
-
-
-def _find_uploaded_dataset_paths(upload_dir: Path) -> Dict[str, Path]:
-    """
-    Trouve les fichiers uploadés et les mappe vers finance/marketing/support.
-
-    Si plusieurs fichiers matchent le même type, le plus récent est conservé.
-
-    Args:
-        upload_dir: Dossier des uploads.
-
-    Returns:
-        Mapping {"finance": Path, "marketing": Path, "support": Path}.
-    """
-    selected: Dict[str, Path] = {}
-    selected_mtime: Dict[str, float] = {}
-
-    for csv_path in upload_dir.glob("*.csv"):
-        try:
-            preview_df = pd.read_csv(csv_path, nrows=5)
-            dataset_type = _detect_dataset_type(preview_df.columns)
-            if dataset_type == "unknown":
-                continue
-
-            mtime = csv_path.stat().st_mtime
-            current = selected_mtime.get(dataset_type, float("-inf"))
-            if mtime >= current:
-                selected[dataset_type] = csv_path
-                selected_mtime[dataset_type] = mtime
-
-        except Exception as e:
-            logger.warning("Impossible d'analyser le fichier uploadé %s: %s", csv_path, e)
-
-    return selected
+    datasets = {}
+    for key in ["ventes", "regions", "categories", "canaux", "kpis"]:
+        if key in raw_data:
+            data = raw_data[key]
+            if isinstance(data, pd.DataFrame):
+                datasets[key] = data
+            elif isinstance(data, dict):
+                datasets[key] = pd.DataFrame(data)
+            elif isinstance(data, list):
+                datasets[key] = pd.DataFrame(data)
+            else:
+                raise ValueError(f"Format non supporté pour {key}: {type(data)}")
+    return datasets
 
 
 def load_uploaded_datasets(upload_dir: Optional[Path] = None) -> Dict[str, pd.DataFrame]:
@@ -440,52 +348,14 @@ def load_uploaded_datasets(upload_dir: Optional[Path] = None) -> Dict[str, pd.Da
         upload_dir: Dossier des fichiers uploadés. Si None, utilise UPLOADS_DIR.
 
     Returns:
-        dict avec les clés "finance", "marketing", "support".
+        dict avec les clés "ventes", "regions", "categories", "canaux", "kpis".
 
     Raises:
-        FileNotFoundError: Si un des trois datasets est introuvable dans uploads.
+        FileNotFoundError: Si un des cinq datasets est introuvable.
         ValueError: Si un fichier trouvé ne respecte pas le schéma attendu.
     """
-    from backend.config import UPLOADS_DIR
-
     resolved_dir = Path(upload_dir) if upload_dir is not None else UPLOADS_DIR
-    logger.info("Chargement des datasets uploadés depuis : %s", resolved_dir)
-
-    if not resolved_dir.exists():
-        raise FileNotFoundError(f"Dossier uploads introuvable : {resolved_dir}")
-
-    mapped_paths = _find_uploaded_dataset_paths(resolved_dir)
-    missing_types = {"finance", "marketing", "support"} - set(mapped_paths.keys())
-    if missing_types:
-        raise FileNotFoundError(
-            "Fichiers uploadés manquants pour : "
-            f"{', '.join(sorted(missing_types))}. "
-            "Uploadez un CSV pour chaque domaine."
-        )
-
-    datasets: Dict[str, pd.DataFrame] = {}
-
-    finance_path = mapped_paths["finance"]
-    marketing_path = mapped_paths["marketing"]
-    support_path = mapped_paths["support"]
-
-    logger.info("Fichier finance uploadé sélectionné : %s", finance_path.name)
-    logger.info("Fichier marketing uploadé sélectionné : %s", marketing_path.name)
-    logger.info("Fichier support uploadé sélectionné : %s", support_path.name)
-
-    df_finance = pd.read_csv(finance_path)
-    _validate_columns(df_finance, FINANCE_SCHEMA, "finance")
-    datasets["finance"] = _clean_finance(df_finance)
-
-    df_marketing = pd.read_csv(marketing_path)
-    _validate_columns(df_marketing, MARKETING_SCHEMA, "marketing")
-    datasets["marketing"] = _clean_marketing(df_marketing)
-
-    df_support = pd.read_csv(support_path)
-    _validate_columns(df_support, SUPPORT_SCHEMA, "support")
-    datasets["support"] = _clean_support(df_support)
-
-    return datasets
+    return load_datasets(resolved_dir)
 
 
 # ============================================================
@@ -494,20 +364,16 @@ def load_uploaded_datasets(upload_dir: Optional[Path] = None) -> Dict[str, pd.Da
 
 if __name__ == "__main__":
     try:
-        # Priorité : data/ si les fichiers y sont, sinon tunisia_datasets/
-        alt_data_dir = Path(__file__).resolve().parents[2] / "tunisia_datasets"
-        use_alt = not FINANCE_CSV.exists() and alt_data_dir.exists()
-
-        logger.info(
-            "=== Mode debug — répertoire : %s ===",
-            alt_data_dir if use_alt else DATA_DIR,
-        )
-        datasets = load_datasets(alt_data_dir if use_alt else None)
+        resolved_dir = UPLOADS_DIR
+        logger.info("=== Mode debug — répertoire : %s ===", resolved_dir)
+        datasets = load_datasets(resolved_dir)
 
         labels = {
-            "finance": "01_finance_performance.csv",
-            "marketing": "02_marketing_campaigns.csv",
-            "support": "03_customer_support.csv",
+            "ventes": "01_donnees_vente.csv",
+            "regions": "02_analyse_region.csv",
+            "categories": "03_analyse_categorie.csv",
+            "canaux": "04_analyse_canaux.csv",
+            "kpis": "05_kpis_globaux.csv",
         }
 
         for key, df in datasets.items():

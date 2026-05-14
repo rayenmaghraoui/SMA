@@ -1,9 +1,143 @@
 ============================================================
  AI Business Consultant - Rapport de tests
- Date    : 2026-04-30 22:40:37
+ Date    : 2026-05-13
  Python  : Python 3.12.4
  Pytest  : pytest 9.0.2
 ============================================================
+============================================================
+ AI Business Consultant - Rapport de tests
+ Date    : 2026-05-13
+ Python  : Python 3.12.4
+ Pytest  : pytest 9.0.2
+============================================================
+============================= test session starts ==============================
+platform win32 -- Python 3.12.4, pytest-9.0.2, pluggy-1.6.0 -- c:\Users\rayen\Desktop\SMA assistant\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\rayen\Desktop\SMA assistant
+configfile: pytest.ini
+plugins: anyio-4.13.0, langsmith-0.7.22, asyncio-1.3.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 108 items
+
+backend/tests/test_agents.py::TestCreateInitialState::test_initial_state_has_all_keys PASSED                                      [  0%]
+backend/tests/test_agents.py::TestCreateInitialState::test_initial_state_empty_collections PASSED                                 [  1%]
+backend/tests/test_agents.py::TestCreateInitialState::test_initial_state_empty_strings PASSED                                     [  2%]
+backend/tests/test_agents.py::TestCreateInitialState::test_initial_state_with_raw_data PASSED                                     [  3%]
+backend/tests/test_agents.py::TestCreateInitialState::test_initial_state_with_user_question PASSED                                [  4%]
+backend/tests/test_agents.py::TestAnalysisAgent::test_analysis_agent_produces_kpis PASSED                                        [  5%]
+backend/tests/test_agents.py::TestAnalysisAgent::test_analysis_agent_kpis_has_finance_keys PASSED                                 [  6%]
+backend/tests/test_agents.py::TestAnalysisAgent::test_analysis_agent_kpis_has_marketing_keys PASSED                              [  7%]
+backend/tests/test_agents.py::TestAnalysisAgent::test_analysis_agent_kpis_has_support_keys PASSED                                [  8%]
+backend/tests/test_agents.py::TestAnalysisAgent::test_analysis_agent_returns_full_state PASSED                                   [  9%]
+backend/tests/test_agents.py::TestAnalysisAgent::test_analysis_agent_anomalies_is_list PASSED                                    [ 10%]
+backend/tests/test_agents.py::TestAnalysisAgent::test_analysis_agent_with_empty_raw_data PASSED                                  [ 11%]
+backend/tests/test_agents.py::TestAnalysisAgent::test_analysis_agent_errors_is_list PASSED                                       [ 12%]
+backend/tests/test_agents.py::TestPipelineWithMockedLLM::test_interpretation_agent_state_has_all_keys PASSED                     [ 12%]
+backend/tests/test_agents.py::TestPipelineWithMockedLLM::test_kpis_not_empty_after_analysis PASSED                               [ 13%]
+backend/tests/test_agents.py::TestPipelineWithMockedLLM::test_interpretation_agent_no_errors_with_valid_data PASSED              [ 14%]
+backend/tests/test_analysis.py::TestFinanceAnalyzer::test_kpis_keys_present PASSED                                               [ 15%]
+backend/tests/test_analysis.py::TestFinanceAnalyzer::test_revenue_total_correct PASSED                                           [ 16%]
+backend/tests/test_analysis.py::TestFinanceAnalyzer::test_profit_total_correct PASSED                                            [ 17%]
+backend/tests/test_analysis.py::TestFinanceAnalyzer::test_profit_margin_between_0_and_100 PASSED                                 [ 18%]
+backend/tests/test_analysis.py::TestFinanceAnalyzer::test_trend_is_stable PASSED                                                 [ 19%]
+backend/tests/test_analysis.py::TestFinanceAnalyzer::test_missing_column_raises_value_error PASSED                               [ 20%]
+backend/tests/test_analysis.py::TestFinanceAnalyzer::test_single_row_does_not_crash PASSED                                       [ 21%]
+backend/tests/test_analysis.py::TestFinanceAnalyzer::test_zero_revenue_does_not_divide_by_zero PASSED                            [ 22%]
+backend/tests/test_analysis.py::TestMarketingAnalyzer::test_kpis_keys_present PASSED                                             [ 23%]
+backend/tests/test_analysis.py::TestMarketingAnalyzer::test_total_ca_correct PASSED                                              [ 24%]
+backend/tests/test_analysis.py::TestMarketingAnalyzer::test_total_transactions_correct PASSED                                    [ 25%]
+backend/tests/test_analysis.py::TestMarketingAnalyzer::test_best_channel_is_site_web PASSED                                      [ 25%]
+backend/tests/test_analysis.py::TestMarketingAnalyzer::test_ca_by_channel_is_dict PASSED                                         [ 26%]
+backend/tests/test_analysis.py::TestMarketingAnalyzer::test_missing_column_raises_value_error PASSED                             [ 27%]
+backend/tests/test_analysis.py::TestMarketingAnalyzer::test_single_channel_does_not_crash PASSED                                 [ 28%]
+backend/tests/test_analysis.py::TestSupportAnalyzer::test_kpis_keys_present PASSED                                               [ 29%]
+backend/tests/test_analysis.py::TestSupportAnalyzer::test_total_revenue_correct PASSED                                           [ 30%]
+backend/tests/test_analysis.py::TestSupportAnalyzer::test_total_profit_correct PASSED                                            [ 31%]
+backend/tests/test_analysis.py::TestSupportAnalyzer::test_top_category_by_revenue PASSED                                         [ 32%]
+backend/tests/test_analysis.py::TestSupportAnalyzer::test_revenue_by_category_is_dict PASSED                                     [ 33%]
+backend/tests/test_analysis.py::TestSupportAnalyzer::test_missing_column_raises_value_error PASSED                               [ 34%]
+backend/tests/test_analysis.py::TestAnomalyDetector::test_no_anomalies_on_uniform_data PASSED                                    [ 35%]
+backend/tests/test_analysis.py::TestAnomalyDetector::test_detects_obvious_high_anomaly PASSED                                    [ 36%]
+backend/tests/test_analysis.py::TestAnomalyDetector::test_anomaly_dict_has_required_keys PASSED                                  [ 37%]
+backend/tests/test_analysis.py::TestAnomalyDetector::test_anomaly_type_is_high_or_low PASSED                                     [ 37%]
+backend/tests/test_analysis.py::TestAnomalyDetector::test_multiple_datasets_processed PASSED                                     [ 38%]
+backend/tests/test_analysis.py::TestAnomalyDetector::test_low_anomaly_detected PASSED                                            [ 39%]
+backend/tests/test_analysis.py::TestAnomalyDetector::test_empty_dataframe_does_not_crash PASSED                                  [ 40%]
+backend/tests/test_rag.py::TestRetrieverStructure::test_returns_list PASSED                                                      [ 41%]
+backend/tests/test_rag.py::TestRetrieverStructure::test_returns_top_k_results PASSED                                             [ 42%]
+backend/tests/test_rag.py::TestRetrieverStructure::test_custom_k_respected PASSED                                                [ 43%]
+backend/tests/test_rag.py::TestRetrieverStructure::test_result_has_required_keys PASSED                                          [ 44%]
+backend/tests/test_rag.py::TestRetrieverStructure::test_page_content_is_non_empty_string PASSED                                  [ 45%]
+backend/tests/test_rag.py::TestRetrieverStructure::test_score_between_0_and_1 PASSED                                             [ 46%]
+backend/tests/test_rag.py::TestRetrieverStructure::test_source_is_known_guide PASSED                                             [ 47%]
+backend/tests/test_rag.py::TestRetrieverRelevance::test_finance_query_returns_finance_guide PASSED                                [ 48%]
+backend/tests/test_rag.py::TestRetrieverRelevance::test_rh_query_returns_rh_guide PASSED                                         [ 49%]
+backend/tests/test_rag.py::TestRetrieverRelevance::test_logistique_query_returns_logistique_guide PASSED                         [ 50%]
+backend/tests/test_rag.py::TestRetrieverRelevance::test_results_are_ordered_by_score_desc PASSED                                 [ 50%]
+backend/tests/test_rag.py::TestRetrieverRelevance::test_different_queries_return_different_results PASSED                        [ 51%]
+backend/tests/test_rag.py::TestRetrieverRobustness::test_empty_query_does_not_crash PASSED                                       [ 52%]
+backend/tests/test_rag.py::TestRetrieverRobustness::test_very_long_query_does_not_crash PASSED                                   [ 53%]
+backend/tests/test_rag.py::TestRetrieverRobustness::test_arabic_query_does_not_crash PASSED                                      [ 54%]
+backend/tests/test_routes.py::TestHealthRoute::test_health_returns_200 PASSED                                                    [ 55%]
+backend/tests/test_routes.py::TestHealthRoute::test_health_response_has_status_key PASSED                                        [ 56%]
+backend/tests/test_routes.py::TestHealthRoute::test_health_content_type_is_json PASSED                                           [ 57%]
+backend/tests/test_routes.py::TestUploadRoute::test_upload_valid_finance_csv_returns_200 PASSED                                  [ 58%]
+backend/tests/test_routes.py::TestUploadRoute::test_upload_valid_csv_response_has_filename PASSED                                [ 59%]
+backend/tests/test_routes.py::TestUploadRoute::test_upload_valid_csv_response_has_rows PASSED                                    [ 60%]
+backend/tests/test_routes.py::TestUploadRoute::test_upload_valid_csv_response_has_file_type PASSED                               [ 61%]
+backend/tests/test_routes.py::TestUploadRoute::test_upload_non_csv_file_returns_error PASSED                                     [ 62%]
+backend/tests/test_routes.py::TestUploadRoute::test_upload_empty_csv_returns_error PASSED                                        [ 62%]
+backend/tests/test_routes.py::TestUploadRoute::test_upload_marketing_csv_detected_correctly PASSED                               [ 63%]
+backend/tests/test_routes.py::TestAnalyzeRoute::test_analyze_returns_200 PASSED                                                  [ 64%]
+backend/tests/test_routes.py::TestAnalyzeRoute::test_analyze_response_has_kpis PASSED                                            [ 65%]
+backend/tests/test_routes.py::TestAnalyzeRoute::test_analyze_response_has_success_field PASSED                                   [ 66%]
+backend/tests/test_routes.py::TestAnalyzeRoute::test_analyze_invalid_body_returns_422 PASSED                                     [ 67%]
+backend/tests/test_routes.py::TestReportRoute::test_report_returns_200_or_404 PASSED                                             [ 68%]
+backend/tests/test_routes.py::TestReportRoute::test_report_200_has_expected_structure PASSED                                     [ 69%]
+backend/tests/test_sql_agent.py::TestValidateSql::test_valid_select PASSED                                                       [ 70%]
+backend/tests/test_sql_agent.py::TestValidateSql::test_rejects_empty PASSED                                                      [ 71%]
+backend/tests/test_sql_agent.py::TestValidateSql::test_rejects_drop PASSED                                                       [ 72%]
+backend/tests/test_sql_agent.py::TestValidateSql::test_rejects_delete PASSED                                                     [ 73%]
+backend/tests/test_sql_agent.py::TestValidateSql::test_rejects_update PASSED                                                     [ 74%]
+backend/tests/test_sql_agent.py::TestValidateSql::test_rejects_insert PASSED                                                     [ 75%]
+backend/tests/test_sql_agent.py::TestValidateSql::test_rejects_alter PASSED                                                      [ 75%]
+backend/tests/test_sql_agent.py::TestValidateSql::test_rejects_comment_double_dash PASSED                                        [ 76%]
+backend/tests/test_sql_agent.py::TestValidateSql::test_rejects_comment_block PASSED                                              [ 77%]
+backend/tests/test_sql_agent.py::TestValidateSql::test_rejects_multiple_semicolons PASSED                                        [ 78%]
+backend/tests/test_sql_agent.py::TestValidateSql::test_case_insensitive_detection PASSED                                         [ 79%]
+backend/tests/test_sql_agent.py::TestValidateSql::test_complex_select_is_valid PASSED                                            [ 80%]
+backend/tests/test_sql_agent.py::TestEnforceLimit::test_adds_limit_if_absent PASSED                                              [ 81%]
+backend/tests/test_sql_agent.py::TestEnforceLimit::test_respects_smaller_existing_limit PASSED                                   [ 82%]
+backend/tests/test_sql_agent.py::TestEnforceLimit::test_reduces_large_limit PASSED                                               [ 83%]
+backend/tests/test_sql_agent.py::TestEnforceLimit::test_custom_max_rows PASSED                                                   [ 84%]
+backend/tests/test_sql_agent.py::TestEnforceLimit::test_strips_trailing_semicolon PASSED                                         [ 85%]
+backend/tests/test_sql_agent.py::TestClassifyIntent::test_sql_intent_show PASSED                                                 [ 86%]
+backend/tests/test_sql_agent.py::TestClassifyIntent::test_sql_intent_top PASSED                                                  [ 87%]
+backend/tests/test_sql_agent.py::TestClassifyIntent::test_sql_intent_total_par PASSED                                            [ 87%]
+backend/tests/test_sql_agent.py::TestClassifyIntent::test_sql_intent_combien PASSED                                              [ 88%]
+backend/tests/test_sql_agent.py::TestClassifyIntent::test_strategic_intent_recommend PASSED                                      [ 89%]
+backend/tests/test_sql_agent.py::TestClassifyIntent::test_strategic_intent_analyze PASSED                                        [ 90%]
+backend/tests/test_sql_agent.py::TestClassifyIntent::test_strategic_intent_why PASSED                                            [ 91%]
+backend/tests/test_sql_agent.py::TestClassifyIntent::test_strategic_wins_on_tie PASSED                                           [ 92%]
+backend/tests/test_sql_agent.py::TestExecuteSql::test_valid_query_returns_rows PASSED                                            [ 93%]
+backend/tests/test_sql_agent.py::TestExecuteSql::test_invalid_sql_returns_error PASSED                                           [ 94%]
+backend/tests/test_sql_agent.py::TestExecuteSql::test_limit_enforced PASSED                                                      [ 95%]
+backend/tests/test_sql_agent.py::TestExecuteSql::test_result_is_list_of_dicts PASSED                                             [ 96%]
+backend/tests/test_sql_agent.py::TestSqlQueryRoute::test_sql_query_success PASSED                                                [ 97%]
+backend/tests/test_sql_agent.py::TestSqlQueryRoute::test_sql_query_llm_error PASSED                                              [ 98%]
+backend/tests/test_sql_agent.py::TestSqlQueryRoute::test_sql_query_missing_body PASSED                                           [ 99%]
+backend/tests/test_sql_agent.py::TestSqlQueryRoute::test_sql_query_too_short_question PASSED                                     [100%]
+
+========================================================= 108 passed in 30.58s ==========================================================
+
+------------------------------------------------------------
+ RÉSUMÉ
+------------------------------------------------------------
+ Total      : 108 tests
+ Passed     : 108
+ Failed     :   0
+ Durée      : 30.58s
+------------------------------------------------------------
 ============================= test session starts =============================
 platform win32 -- Python 3.12.4, pytest-9.0.2, pluggy-1.6.0 -- C:\Users\rayen\Desktop\SMA assistant\.venv\Scripts\python.exe
 cachedir: .pytest_cache

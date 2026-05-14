@@ -98,11 +98,13 @@ const Upload = () => {
         <h2 className="text-lg font-semibold text-cyan-100 mb-3">
           Formats acceptés
         </h2>
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
           {[
-            { icon: '📊', title: 'Finance', cols: 'Colonnes : date, revenue, cost, profit, growth_rate' },
-            { icon: '📈', title: 'Marketing', cols: 'Colonnes : date, campaign_id, channel, budget, clicks, conversions' },
-            { icon: '🎧', title: 'Support', cols: 'Colonnes : date, ticket_id, issue_type, resolution_hours, satisfaction_score' },
+            { icon: '🛒', title: 'Ventes', cols: 'invoice_id, product_name, category, quantity, unit_price_tnd, revenue_tnd, customer_id, customer_region, sale_date, sales_channel, payment_method, estimated_profit' },
+            { icon: '🗺️', title: 'Régions', cols: 'customer_region, CA_Total, Profit_Total, Nb_Transactions, Panier_Moyen' },
+            { icon: '📦', title: 'Catégories', cols: 'category, CA_Total, Profit_Total, Nb_Transactions, Quantite_Vendue, Prix_Moyen' },
+            { icon: '📡', title: 'Canaux', cols: 'sales_channel, CA_Total, Nb_Transactions, Panier_Moyen' },
+            { icon: '📊', title: 'KPIs Globaux', cols: 'Indicateur, Valeur' },
           ].map((box, i) => (
             <motion.div
               key={box.title}
@@ -115,7 +117,7 @@ const Upload = () => {
               <h3 className="font-medium text-white mb-2">
                 {box.icon} {box.title}
               </h3>
-              <p className="text-sm text-cyan-200/85">{box.cols}</p>
+              <p className="text-xs text-cyan-200/85 leading-relaxed">{box.cols}</p>
             </motion.div>
           ))}
         </div>

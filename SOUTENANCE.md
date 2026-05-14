@@ -7,7 +7,7 @@ AI Business Consultant
 
 ### Objectif principal
 Développer un système intelligent d'aide à la décision pour PME tunisiennes, capable de:
-- analyser automatiquement des données opérationnelles (finance, marketing, support client),
+- analyser automatiquement des données opérationnelles (cinq datasets CSV : ventes, régions, catégories, canaux, KPIs globaux),
 - détecter des anomalies de gestion,
 - générer des recommandations stratégiques contextualisées au marché tunisien.
 
@@ -30,6 +30,29 @@ Application web full-stack avec backend IA:
 - API backend (FastAPI) pour l'orchestration métier.
 - Pipeline multi-agents (LangGraph) pour le raisonnement séquentiel.
 - LLM cloud (DeepSeek-V3.2 via Azure AI Foundry) + RAG (ChromaDB).
+
+### Approche méthodologique complémentaire : CRISP-DM
+En complément de l'approche AGILE SCRUM utilisée pour le pilotage du projet, la démarche CRISP-DM a été retenue pour structurer la partie data science et analyse des données. Cette méthode est particulièrement adaptée à ce projet, car elle permet de relier explicitement le besoin métier, l'exploration des données, leur préparation, la modélisation, l'évaluation des résultats et enfin le déploiement de la solution.
+
+#### Les 6 étapes clés de CRISP-DM appliquées au projet
+
+1. **Compréhension du métier (Business Understanding)**
+  Cette étape consiste à identifier le besoin réel des PME tunisiennes en matière d'aide à la décision. L'objectif est de concevoir un système capable d'analyser les données opérationnelles, de détecter les anomalies de gestion et de produire des recommandations adaptées au contexte économique et réglementaire local.
+
+2. **Compréhension des données (Data Understanding)**
+  Cette phase permet d'explorer les cinq jeux de données utilisés dans le projet afin d'en analyser la structure, le contenu, la cohérence et la qualité. Elle vise à vérifier la pertinence des variables disponibles pour les analyses futures.
+
+3. **Préparation des données (Data Preparation)**
+  Les données sont ensuite nettoyées, normalisées, validées et organisées de manière à être exploitables par les différents modules du système. Cette étape inclut notamment le traitement des valeurs manquantes, la standardisation des formats et la structuration des fichiers pour l'analyse.
+
+4. **Modélisation (Modeling)**
+  Cette étape correspond à la mise en œuvre des traitements analytiques et intelligents. Le projet applique ici le calcul des KPI, la détection des anomalies, l'exécution des requêtes SQL en langage naturel et l'orchestration du pipeline multi-agents.
+
+5. **Évaluation (Evaluation)**
+  Les résultats obtenus sont ensuite évalués afin de vérifier leur cohérence, leur fiabilité et leur valeur métier. Cette étape permet de valider la qualité des KPI calculés, la pertinence des anomalies détectées et la qualité des recommandations générées.
+
+6. **Déploiement (Deployment)**
+  Enfin, la solution est intégrée dans une application web complète accessible à l'utilisateur final. Le déploiement permet de mettre à disposition un outil opérationnel combinant analyse, interaction conversationnelle, visualisation des résultats et génération de rapports.
 
 
 ## 2. Architecture & structure du projet
@@ -143,7 +166,7 @@ Application web full-stack avec backend IA:
 - Ollama + modèle Mistral: exécution locale du LLM pour interprétation et recommandations.
 - Pandas / NumPy: préparation des données et calculs KPI.
 - Scikit-learn: régressions linéaires pour déterminer les tendances temporelles.
-- DuckDB: base de données analytique in-memory. Charge les 3 CSV comme tables SQL (`finance`, `marketing`, `support`) pour l'exploration par langage naturel.
+- DuckDB: base de données analytique in-memory. Charge les 5 CSV comme tables SQL (ex. `ventes`, `regions`, `categories`, `canaux`, `kpis`) pour l'exploration par langage naturel.
 - ChromaDB: base vectorielle locale pour l'indexation et la recherche sémantique.
 - Sentence Transformers (`sentence-transformers/sentence-t5-base`): génération d'embeddings.
 - Pydantic v2: schémas de validation des requêtes/réponses API.
@@ -184,3 +207,70 @@ Application web full-stack avec backend IA:
 - Vite pour exécution locale du frontend.
 - Docker + docker-compose pour la containerisation (Dockerfiles présents pour frontend et backend).
 - Azure AI Foundry pour l'hébergement cloud du modèle LLM (DeepSeek-V3.2).
+
+## 4. Points forts techniques (Arguments Jury)
+
+### 4.1. Base vectorielle et système RAG (Retrieval-Augmented Generation)
+Afin de garantir que les recommandations de l'IA sont pertinentes pour une PME tunisienne, le projet intègre une base vectorielle locale :
+- **Technologie :** Base vectorielle **ChromaDB**.
+- **Modèle d'Embedding :** Utilisation de `sentence-transformers/sentence-t5-base` (transforme les textes en vecteurs mathématiques de 768 dimensions).
+- **Fonctionnement :** 5 guides métiers tunisiens (lois du travail, fiscalité, logistique, etc.) ont été découpés en sous-parties (chunks) et indexés. L'Agent RAG effectue une recherche de "similarité cosinus" pour extraire l'information pertinente.
+- **Pourquoi c'est un point fort :** Cela montre que le système ne se contente pas des connaissances générales du modèle, mais s'appuie sur une vraie base de connaissances métier locale (lois et contextes réels).
+
+### 4.2. Mécanismes Anti-Hallucination
+Dans un système d'aide à la décision (notamment financier), la fiabilité est primordiale. Quatre barrières anti-hallucination ont été implémentées :
+1. **L'ancrage documentaire (RAG) :** Le LLM est "forcé" de baser ses réponses sur les documents extraits de ChromaDB, évitant ainsi l'invention de lois ou de normes.
+2. **Paramétrage restrictif (Température = 0.3) :** Le modèle d'IA a été configuré avec une température basse de `0.3`, favorisant la précision, la cohérence et la logique factuelle plutôt que la créativité.
+3. **Séparation Calcul / Interprétation :** Les LLMs étant sujets aux erreurs mathématiques, ils ne calculent rien. Ce sont des librairies Python déterministes (Pandas, DuckDB) qui font les vrais calculs analytiques. L'IA ne reçoit que les résultats exacts pour les commenter, évitant les hallucinations numériques.
+4. **Validation stricte (Pydantic & Validateur SQL) :** Les données circulant entre les agents sont sécurisées par des schémas Pydantic. De plus, l'Agent SQL intègre un filtre de sécurité qui rejette toute requête contenant des tables inventées ou des commandes interdites (uniquement du `SELECT`).
+
+## 5. Remarques à mettre en avant devant le jury
+
+### 5.1. Pourquoi ce projet est pertinent pour les PME tunisiennes
+- Le projet répond à un besoin concret : transformer des fichiers CSV isolés en un outil d'aide à la décision structuré.
+- Il est conçu pour un contexte local : Dinar Tunisien, TVA à 19%, droit du travail tunisien et pratiques PME tunisiennes.
+- Il combine l'analyse quantitative (KPI, anomalies, SQL) et l'analyse qualitative (interprétation, recommandations, contexte documentaire local).
+
+### 5.2. Rôle des agents et leur valeur ajoutée
+- **analysis_agent** : c'est le socle analytique. Il calcule les KPIs financiers, marketing et support, et détecte les anomalies via IQR. Il garantit des résultats explicables et mesurables.
+- **interpretation_agent** : il transforme les KPIs en insights compréhensibles pour un dirigeant. Il joue le rôle de traducteur entre données chiffrées et langage métier.
+- **rag_agent** : il apporte le contexte métier tunisien. Il utilise la base vectorielle pour récupérer des passages précis des guides et ainsi « ancrer » les recommandations.
+- **recommendation_agent** : il priorise les actions. Il ne donne pas seulement un constat, il propose des actions concrètes et hiérarchisées.
+- **report_agent** : il met en forme un rapport final structuré, prêt à être présenté et consommé par l'utilisateur.
+
+### 5.3. Choix technologiques et justifications
+- **FastAPI** : choix pertinent pour une API moderne, asynchrone et facilement testable avec Pydantic. Il facilite la construction de routes REST et SSE.
+- **React + Vite + Tailwind** : choix adapté pour une interface rapide, réactive et maintenable. Vite permet un développement très rapide tandis que Tailwind assure une UI cohérente.
+- **LangGraph** : il permet d'organiser un pipeline de raisonnement en plusieurs étapes, ce qui rend l'intelligence modulaire et plus simple à déboguer.
+- **ChromaDB + sentence-t5-base** : combinaison adaptée pour un RAG local. ChromaDB est légère et performante, tandis que sentence-t5-base produit des embeddings de qualité pour la similarité sémantique.
+- **DuckDB** : excellent choix pour des requêtes analytiques in-memory sur des CSV. Il autorise un SQL rapide sans nécessiter une base de production lourde.
+- **Azure AI Foundry / DeepSeek-V3.2** : permet d'utiliser un modèle LLM puissant et disponible en cloud, tout en conservant un contrôle sur la température et les entrées.
+- **Pydantic** : renforce la solidité du backend en validant stricte ment les requêtes et les réponses.
+
+### 5.4. Architecture et séparation claire des responsabilités
+- Le frontend reste une couche de présentation et de navigation.
+- Le backend orchestre la logique métier, le calcul et la génération de réponses.
+- La base vectorielle et les documents métier sont séparés du calcul des KPI, ce qui facilite les évolutions futures.
+- L'agent SQL est séparé de l'agent stratégique, ce qui permet de distinguer clairement l'analyse de données et la conversation métier.
+
+### 5.5. Qualité et maîtrise technique
+- L'utilisation de **tests** (`pytest`) permet de valider le comportement du backend et des agents.
+- Le projet respecte des conventions de code : typage Python, docstrings en français, gestion des erreurs, logging.
+- Le dossier `backend/config.py` centralise les chemins, paramètres et variables d'environnement.
+- Le système évite les mauvaises pratiques courantes : pas de calculs faits par le LLM, pas de `print()` en production.
+
+### 5.6. Bonnes pratiques de déploiement
+- **Docker** permet de contenir le backend et le frontend séparément.
+- **docker-compose** permet de lancer l'ensemble de la solution plus facilement.
+- La présentation peut mentionner que la solution est conçue pour être conteneurisée et déployable sur un cloud ou un cluster local.
+
+### 5.7. Limites identifiées et perspectives d'amélioration
+- pour l'instant, le projet est adapté aux PME et aux datasets structurés au format CSV ; une étape suivante serait d'ajouter la prise en charge de fichiers Excel ou d'APIs externes.
+- le modèle RAG fonctionne avec des documents statiques ; une évolution possible est d'ajouter une ingestion automatique de nouvelles sources réglementaires.
+- le backend pourrait être enrichi avec un système de logs utilisateur pour analyser l'utilisation et améliorer les recommandations.
+- la robustesse pourrait être renforcée en ajoutant des tests d'intégration pour le pipeline LangGraph complet.
+
+### 5.8. Argument clé à répéter au jury
+- Le projet n'est pas seulement un chatbot IA : c'est un outil hybride qui associe des calculs analytiques exacts, une base documentaire locale (RAG) et un moteur de recommandations métier.
+- Cette architecture réduit les risques d'hallucination et augmente la confiance du décideur en fournissant des résultats chiffrés et contextualisés.
+- Le travail montre à la fois une maîtrise technique (backend, frontend, IA et DevOps) et une compréhension métier (contexte tunisien, fiscalité, droit du travail, besoins PME).

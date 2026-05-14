@@ -111,6 +111,8 @@ app.add_middleware(
         "http://127.0.0.1:5174",
         "http://localhost:3000",
     ],
+    # Permet tous les sous-domaines Azure Static Web Apps en production
+    allow_origin_regex=r"https://.*\.azurestaticapps\.net",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

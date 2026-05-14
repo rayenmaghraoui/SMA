@@ -1,4 +1,13 @@
-# Plan de Rapport PFE (Méthode AGILE SCRUM)
+# Plan du Mémoire PFE — Niveau Master
+## "Système Multi-Agents d'Aide à la Décision pour PME Tunisiennes"
+### Méthodologie : CRISP-DM (data science) × SCRUM (gestion de projet)
+
+---
+
+> **Note encadrant :** Ce plan intègre deux méthodologies de façon complémentaire et non redondante :
+> - **SCRUM** structure la conduite du projet (sprints, backlog, livrables incrémentaux)
+> - **CRISP-DM** structure la démarche data science (compréhension → préparation → modélisation → évaluation → déploiement)
+> - Le chapitre de réalisation (Chapitre 5) fusionne les deux : chaque sprint est ancré dans une phase CRISP-DM.
 
 ## Page de garde
 - Titre du sujet
@@ -158,9 +167,10 @@ Préparer l'environnement, clarifier le périmètre, définir le backlog.
 Permettre le chargement, la validation et le nettoyage des datasets.
 
 ### Travaux réalisés
-- Loader des CSV
-- Validation schémas
-- Nettoyage et normalisation
+### Travaux réalisés
+- Loader des CSV (adapté au nouveau format : 5 fichiers en `data/uploads/`)
+- Validation des schémas et mapping vers les tables attendues (ventes, régions, catégories, canaux, kpis globaux)
+- Nettoyage, normalisation et contrôle de qualité des données (types, dates, valeurs manquantes)
 
 ### Livrables
 - Module data prêt
@@ -178,7 +188,7 @@ Permettre le chargement, la validation et le nettoyage des datasets.
 Produire des indicateurs métier et détecter les anomalies.
 
 ### Travaux réalisés
-- Analyse finance, marketing, support
+- Analyse finance, canaux de vente, catégories produits
 - Détection anomalies (IQR)
 
 ### Livrables
@@ -375,6 +385,20 @@ Fiabiliser la solution et finaliser les livrables PFE.
 - Captures d'écran de l'application
 - Product backlog détaillé
 - Planning réel des sprints
+
+## Annexes — Exemples de datasets (détail)
+
+Les jeux de données utilisés dans le projet sont placés dans `data/uploads/` et comprennent 5 fichiers principaux :
+
+| Fichier | Colonnes principales | Usage |
+|--------:|---------------------|-------|
+| `01_donnees_vente.csv` | invoice_id, product_name, category, quantity, unit_price_tnd, revenue_tnd, customer_id, customer_region, sale_date, sales_channel, payment_method, estimated_profit | Analyse produits, top produits, meilleure région, meilleur canal |
+| `02_analyse_region.csv` | customer_region, ca_total, profit_total, nb_transactions, panier_moyen | CA par région, top région, panier moyen régional |
+| `03_analyse_categorie.csv` | category, ca_total, profit_total, nb_transactions, quantite_vendue, prix_moyen | Segmentation par catégorie, top catégorie CA/quantité |
+| `04_analyse_canaux.csv` | sales_channel, ca_total, nb_transactions, panier_moyen | Performance par canal, meilleur canal, panier moyen canal |
+| `05_kpis_globaux.csv` | indicateur, valeur | KPIs agrégés : revenue_total, profit_total, profit_margin, nb_transactions, nb_clients |
+
+Ces cinq fichiers couvrent toutes les dimensions de l'analyse : performance globale, détail des ventes, analyse régionale, catégories de produits et canaux de distribution.
 
 ---
 

@@ -105,10 +105,10 @@ export const ChannelChart = ({ data }) => {
             borderRadius: '8px',
             color: '#ecfeff',
           }}
-          formatter={(value) => [`${value.toFixed(1)}%`, 'ROI']}
+          formatter={(value) => [`${value.toLocaleString('fr-FR')} TND`, 'CA']}
         />
         <Legend wrapperStyle={{ color: '#cffafe' }} />
-        <Bar dataKey="roi" name="ROI" radius={[4, 4, 0, 0]}>
+        <Bar dataKey="roi" name="CA (TND)" radius={[4, 4, 0, 0]}>
           {chartData.map((entry, cellIndex) => (
             <Cell key={entry.channel} fill={COLORS[cellIndex % COLORS.length]} />
           ))}

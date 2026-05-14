@@ -2,7 +2,7 @@
 ## Système Multi-Agents d'Aide à la Décision d'Entreprise
 
 ## Résumé
-Ce projet de fin d'études présente la conception et la réalisation d'une plateforme intelligente d'aide à la décision d'entreprise. La solution développée exploite une architecture web full-stack et un pipeline multi-agents pour transformer des données opérationnelles en recommandations stratégiques. Le système ingère des données financières, marketing et support client, calcule des indicateurs de performance (KPI), détecte des anomalies, enrichit l'analyse avec un mécanisme RAG, puis génère un rapport structuré pour la prise de décision.
+Ce projet de fin d'études présente la conception et la réalisation d'une plateforme intelligente d'aide à la décision d'entreprise. La solution développée exploite une architecture web full-stack et un pipeline multi-agents pour transformer des données opérationnelles en recommandations stratégiques. Le système ingère désormais cinq jeux de données CSV (ventes, régions, catégories, canaux, KPIs globaux), calcule des indicateurs de performance (KPI), détecte des anomalies, enrichit l'analyse avec un mécanisme RAG, puis génère un rapport structuré pour la prise de décision.
 
 La mise en oeuvre suit une méthodologie AGILE SCRUM avec des incréments fonctionnels à chaque sprint. Côté technique, le backend est construit avec FastAPI, le pipeline d'agents est orchestré avec LangGraph, l'analyse de données repose sur Pandas/Scikit-learn, le RAG s'appuie sur ChromaDB et sentence-transformers, et l'interface est développée avec React. Le modèle LLM utilisé est DeepSeek-V3.2, accessible via Azure AI Foundry.
 
@@ -13,7 +13,7 @@ Mots-clés: Multi-agents, Aide à la décision, IA, RAG, FastAPI, React, SCRUM, 
 ---
 
 ## Abstract
-This final-year project presents the design and implementation of an intelligent decision-support platform for enterprises. The solution relies on a full-stack web architecture and a multi-agent pipeline to transform operational data into strategic recommendations. The system ingests financial, marketing, and customer support data, computes key performance indicators (KPIs), detects anomalies, enriches interpretation with a RAG mechanism, and generates a structured report for decision-making.
+This final-year project presents the design and implementation of an intelligent decision-support platform for enterprises. The solution relies on a full-stack web architecture and a multi-agent pipeline to transform operational data into strategic recommendations. The system ingests five CSV datasets (sales transactions, regional performance, product categories, sales channels, and global KPIs), computes key performance indicators (KPIs), detects anomalies, enriches interpretation with a RAG mechanism, and generates a structured report for decision-making.
 
 The implementation follows an AGILE SCRUM methodology with functional increments delivered at each sprint. On the technical side, the backend is built with FastAPI, the agent pipeline is orchestrated with LangGraph, data analysis is handled by Pandas/Scikit-learn, RAG relies on ChromaDB and sentence-transformers, and the UI is developed with React. The LLM used is DeepSeek-V3.2, accessed through Azure AI Foundry.
 
@@ -39,7 +39,7 @@ Keywords: Multi-agent systems, Decision support, AI, RAG, FastAPI, React, SCRUM,
 
 # 1. Introduction générale
 
-La transformation numérique des entreprises a conduit à une production massive de données opérationnelles. Malgré cette abondance, la capacité à convertir ces données en décisions concrètes demeure un défi majeur. Les responsables métiers disposent souvent de fichiers hétérogènes (finances, campagnes marketing, support client), mais manquent d'une vue intégrée, interprétable et orientée action.
+La transformation numérique des entreprises a conduit à une production massive de données opérationnelles. Malgré cette abondance, la capacité à convertir ces données en décisions concrètes demeure un défi majeur. Les responsables métiers disposent souvent de fichiers hétérogènes (ventes, régions, catégories de produits, canaux de vente), mais manquent d'une vue intégrée, interprétable et orientée action.
 
 Ce projet répond à cette problématique en proposant une plateforme intelligente d'aide à la décision. La solution combine l'analyse de données, les modèles de langage, et une architecture multi-agents pour automatiser le cycle complet: ingestion des données, extraction d'indicateurs, détection d'anomalies, interprétation métier, génération de recommandations, puis restitution sous forme de rapport.
 
@@ -258,13 +258,19 @@ Sortie principale:
 
 ### 6.3.2 KPI implémentés
 Finance:
-- revenu total, profit total, marge, croissance, tendance, volatilité.
+- revenu total, profit total, marge bénéficiaire, nombre de transactions, panier moyen, nombre de clients.
 
-Marketing:
-- budget total, conversions, taux moyen, canal optimal, ROI par canal, coût/conversion.
+Canaux de vente:
+- CA total canaux, transactions totales, meilleur canal (CA), meilleur canal (panier moyen), CA par canal.
 
-Support:
-- satisfaction moyenne, délai de résolution, taux churn élevé, conformité SLA, tendance satisfaction.
+Catégories produits:
+- CA total catégories, bénéfice total, top catégorie (CA), top catégorie (quantité), CA par catégorie.
+
+Ventes (détail):
+- CA total, quantité totale vendue, meilleur produit, meilleure région, meilleur canal, panier moyen par commande.
+
+Régions:
+- CA total, nombre de commandes, panier moyen global, top région, CA par région.
 
 ### 6.3.3 Détection d'anomalies
 Méthode IQR:

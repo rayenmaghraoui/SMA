@@ -40,41 +40,35 @@ def _build_executive_summary(
     if finance:
         revenue = finance.get("revenue_total", 0)
         margin = finance.get("profit_margin", 0)
-        trend = finance.get("trend", "stable")
-
-        trend_text = {
-            "hausse": "en croissance",
-            "baisse": "en déclin",
-            "stable": "stable"
-        }.get(trend, "non déterminée")
-
         summary_parts.append(
             f"L'entreprise a réalisé un chiffre d'affaires de {revenue:,.0f} TND "
-            f"avec une marge de {margin:.1f}%. La tendance est {trend_text}."
+            f"avec une marge de {margin:.1f}%."
         )
 
-    # Performance marketing
+    # Ventes — meilleur produit et région
+    ventes = kpis.get("ventes", {})
+    if ventes:
+        best_product = ventes.get("best_product", "N/A")
+        best_region = ventes.get("best_region", "N/A")
+        summary_parts.append(
+            f"Le produit le plus vendu est '{best_product}', "
+            f"la région la plus performante est {best_region}."
+        )
+
+    # Canaux — meilleur canal
     marketing = kpis.get("marketing", {})
     if marketing:
-        conv_rate = marketing.get("avg_conversion_rate", 0)
         best_channel = marketing.get("best_channel", "N/A")
-
         summary_parts.append(
-            f"Le taux de conversion marketing moyen est de {conv_rate:.2f}%, "
-            f"avec le canal '{best_channel}' comme meilleur performeur."
+            f"Le meilleur canal de vente par chiffre d'affaires est '{best_channel}'."
         )
 
-    # Service client
-    support = kpis.get("support", {})
-    if support:
-        satisfaction = support.get("avg_satisfaction", 0)
-        churn = support.get("high_churn_rate", 0)
-
-        satisfaction_level = "bon" if satisfaction >= 4 else "moyen" if satisfaction >= 3 else "faible"
-
+    # Catégories — top catégorie
+    categories = kpis.get("categories", {})
+    if categories:
+        top_cat = categories.get("top_category_by_revenue", "N/A")
         summary_parts.append(
-            f"La satisfaction client est {satisfaction_level} ({satisfaction:.1f}/5) "
-            f"avec un risque de churn de {churn:.1f}%."
+            f"La catégorie la plus performante est '{top_cat}'."
         )
 
     # Anomalies
@@ -160,90 +154,89 @@ def _format_kpis_for_report(kpis: Dict[str, Any]) -> Dict[str, Any]:
                     "format": "percent",
                 },
                 {
-                    "label": "Croissance moyenne",
-                    "valeur": finance.get("avg_growth_rate", 0),
-                    "unite": "%",
-                    "format": "percent",
-                },
-                {
-                    "label": "Tendance",
-                    "valeur": finance.get("trend", "N/A"),
-                    "unite": "",
-                    "format": "text",
-                },
-            ],
-            "meilleur_mois": finance.get("best_month", "N/A"),
-            "pire_mois": finance.get("worst_month", "N/A"),
-        }
-
-    # Marketing
-    marketing = kpis.get("marketing", {})
-    if marketing:
-        formatted["marketing"] = {
-            "titre": "Performance Marketing",
-            "indicateurs": [
-                {
-                    "label": "Budget dépensé",
-                    "valeur": marketing.get("total_budget_spent", 0),
-                    "unite": "TND",
-                    "format": "currency",
-                },
-                {
-                    "label": "Conversions totales",
-                    "valeur": marketing.get("total_conversions", 0),
+                    "label": "Nb Transactions",
+                    "valeur": finance.get("nb_transactions", 0),
                     "unite": "",
                     "format": "number",
                 },
                 {
-                    "label": "Taux de conversion",
-                    "valeur": marketing.get("avg_conversion_rate", 0),
-                    "unite": "%",
-                    "format": "percent",
-                },
-                {
-                    "label": "Coût par conversion",
-                    "valeur": marketing.get("cost_per_conversion", 0),
+                    "label": "Panier Moyen",
+                    "valeur": finance.get("panier_moyen", 0),
                     "unite": "TND",
                     "format": "currency",
                 },
             ],
-            "meilleur_canal": marketing.get("best_channel", "N/A"),
-            "meilleure_campagne": marketing.get("top_campaign", "N/A"),
-            "roi_par_canal": marketing.get("roi_by_channel", {}),
+            "meilleur_mois": finance.get("best_period", "N/A"),
+            "pire_mois": finance.get("worst_period", "N/A"),
         }
 
-    # Support
-    support = kpis.get("support", {})
-    if support:
-        formatted["support"] = {
-            "titre": "Service Client",
+    # Marketing (canaux de vente)
+    marketing = kpis.get("marketing", {})
+    if marketing:
+        formatted["marketing"] = {
+            "titre": "Performance par Canal",
             "indicateurs": [
                 {
-                    "label": "Satisfaction moyenne",
-                    "valeur": support.get("avg_satisfaction", 0),
-                    "unite": "/5",
-                    "format": "rating",
+                    "label": "CA Total Canaux",
+                    "valeur": marketing.get("total_ca", 0),
+                    "unite": "TND",
+                    "format": "currency",
                 },
                 {
-                    "label": "Temps de résolution",
-                    "valeur": support.get("avg_resolution_hours", 0),
-                    "unite": "heures",
-                    "format": "duration",
+                    "label": "Transactions Totales",
+                    "valeur": marketing.get("total_transactions", 0),
+                    "unite": "",
+                    "format": "number",
                 },
                 {
-                    "label": "Taux de churn élevé",
-                    "valeur": support.get("high_churn_rate", 0),
-                    "unite": "%",
-                    "format": "percent",
+                    "label": "Meilleur Canal (CA)",
+                    "valeur": marketing.get("best_channel", "N/A"),
+                    "unite": "",
+                    "format": "text",
                 },
                 {
-                    "label": "Conformité SLA",
-                    "valeur": support.get("sla_compliance", 0),
-                    "unite": "%",
-                    "format": "percent",
+                    "label": "Meilleur Panier Moyen",
+                    "valeur": marketing.get("top_panier_channel", "N/A"),
+                    "unite": "",
+                    "format": "text",
                 },
             ],
-            "probleme_frequent": support.get("top_issue_type", "N/A"),
+            "meilleur_canal": marketing.get("best_channel", "N/A"),
+            "ca_par_canal": marketing.get("ca_by_channel", {}),
+        }
+
+    # Catégories produits
+    categories = kpis.get("categories", {})
+    if categories:
+        formatted["categories"] = {
+            "titre": "Performance par Catégorie",
+            "indicateurs": [
+                {
+                    "label": "CA Total Catégories",
+                    "valeur": categories.get("total_revenue", 0),
+                    "unite": "TND",
+                    "format": "currency",
+                },
+                {
+                    "label": "Bénéfice Total",
+                    "valeur": categories.get("total_profit", 0),
+                    "unite": "TND",
+                    "format": "currency",
+                },
+                {
+                    "label": "Top Catégorie (CA)",
+                    "valeur": categories.get("top_category_by_revenue", "N/A"),
+                    "unite": "",
+                    "format": "text",
+                },
+                {
+                    "label": "Top Catégorie (Quantité)",
+                    "valeur": categories.get("top_category_by_quantity", "N/A"),
+                    "unite": "",
+                    "format": "text",
+                },
+            ],
+            "revenue_par_categorie": categories.get("revenue_by_category", {}),
         }
 
     return formatted

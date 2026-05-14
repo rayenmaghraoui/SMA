@@ -154,7 +154,7 @@ const formatTime = (date) => {
 /**
  * Composant ChatMessage.
  */
-const ChatMessage = ({ message }) => {
+const ChatMessage = ({ message, onEdit }) => {
   const { role, content, timestamp, isError, sqlResult } = message;
   const isUser = role === 'user';
 
@@ -162,45 +162,68 @@ const ChatMessage = ({ message }) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`flex items-start gap-4 ${isUser ? 'flex-row-reverse' : ''}`}
+      className={`flex items-start gap-4 group ${isUser ? 'flex-row-reverse' : ''}`}
     >
       {isUser ? <UserAvatar /> : <AssistantAvatar />}
 
-      <div
-        className={`max-w-[80%] rounded-2xl px-4 py-3 shadow-lg ${
-          isUser
-            ? 'bg-gradient-to-br from-cyan-400 to-teal-500 text-cyan-950 rounded-br-none border border-cyan-300/40'
-            : isError
-            ? 'bg-rose-500/25 text-rose-100 border border-rose-400/40 rounded-bl-none'
-            : 'glass-panel-soft text-cyan-50 border-cyan-400/30 rounded-bl-none'
-        }`}
-      >
-        <div className={isUser ? 'whitespace-pre-wrap break-words' : 'break-words'}>
-          {isUser
-            ? (content || null)
-            : (content
-                ? renderMarkdown(content)
-                : (
-                    <span className="flex items-center gap-2">
-                      <span className="animate-pulse text-cyan-200">En cours de rédaction</span>
-                      <span className="flex gap-1">
-                        <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                        <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                        <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+      <div className="flex flex-col gap-1 max-w-[80%]">
+        <div
+          className={`rounded-2xl px-4 py-3 shadow-lg ${
+            isUser
+              ? 'bg-gradient-to-br from-cyan-400 to-teal-500 text-cyan-950 rounded-br-none border border-cyan-300/40'
+              : isError
+              ? 'bg-rose-500/25 text-rose-100 border border-rose-400/40 rounded-bl-none'
+              : 'glass-panel-soft text-cyan-50 border-cyan-400/30 rounded-bl-none'
+          }`}
+        >
+          <div className={isUser ? 'whitespace-pre-wrap break-words' : 'break-words'}>
+            {isUser
+              ? (content || null)
+              : (content
+                  ? renderMarkdown(content)
+                  : (
+                      <span className="flex items-center gap-2">
+                        <span className="animate-pulse text-cyan-200">En cours de rédaction</span>
+                        <span className="flex gap-1">
+                          <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                          <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                          <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                        </span>
                       </span>
-                    </span>
-                  )
-              )
-          }
+                    )
+                )
+            }
+          </div>
+
+          {/* Résultat SQL structuré */}
+          {sqlResult && <SqlResult result={sqlResult} />}
+
+          {timestamp && (
+            <p className={`mt-1 text-xs ${isUser ? 'text-cyan-900/70' : 'text-cyan-300/80'}`}>
+              {formatTime(timestamp)}
+            </p>
+          )}
         </div>
 
-        {/* Résultat SQL structuré */}
-        {sqlResult && <SqlResult result={sqlResult} />}
-
-        {timestamp && (
-          <p className={`mt-1 text-xs ${isUser ? 'text-cyan-900/70' : 'text-cyan-300/80'}`}>
-            {formatTime(timestamp)}
-          </p>
+        {/* Bouton édition — uniquement pour les messages user */}
+        {isUser && onEdit && (
+          <motion.button
+            type="button"
+            onClick={() => onEdit(message.id, content)}
+            initial={{ opacity: 0 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="self-end opacity-0 group-hover:opacity-100 flex items-center gap-1
+                       text-xs text-cyan-400/70 hover:text-cyan-200 transition-all
+                       px-2 py-1 rounded-lg hover:bg-cyan-500/15"
+            title="Modifier ce message"
+          >
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Modifier
+          </motion.button>
         )}
       </div>
     </motion.div>

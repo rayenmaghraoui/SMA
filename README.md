@@ -4,7 +4,7 @@ Projet de Fin d'Études (PFE) — Système d'aide à la décision pour PME tunis
 
 ## Description
 
-Ce système analyse les données opérationnelles d'entreprises tunisiennes (finance, marketing, support client), détecte les problèmes de gestion et produit des recommandations stratégiques adaptées au contexte local.
+Ce système analyse les données opérationnelles d'entreprises tunisiennes (5 jeux CSV : ventes, régions, catégories, canaux, KPIs globaux), détecte les problèmes de gestion et produit des recommandations stratégiques adaptées au contexte local.
 
 ## Architecture
 
@@ -106,15 +106,18 @@ DEBUG=true
 
 ### Étape 4 : Préparer les données
 
-**4.1 — Fichiers CSV (dans `data/`)**
+**4.1 — Fichiers CSV (dans `data/uploads/`)**
 
-Tu dois avoir ces 3 fichiers :
+Le projet utilise désormais 5 jeux de données d'entrée placés dans `data/uploads/` :
 ```
-data/
-├── 01_finance_performance.csv
-├── 02_marketing_campaigns.csv
-└── 03_customer_support.csv
+data/uploads/
+├── 01_donnees_vente.csv        # ventes par produit / transaction
+├── 02_analyse_region.csv       # ventes/région, métriques régionales
+├── 03_analyse_categorie.csv    # analyse par catégorie / produit
+├── 04_analyse_canaux.csv       # performance par canal (online/offline)
+└── 05_kpis_globaux.csv         # KPIs agrégés et métriques globales
 ```
+Ces fichiers remplacent l'ancien format 3-CSV ; l'agent SQL et les loaders ont été adaptés pour charger ces 5 tables.
 
 **4.2 — Guides Markdown (dans `documents/`)**
 
@@ -181,9 +184,11 @@ curl -X POST http://localhost:8000/analyze
 {
   "success": true,
   "kpis": {
-    "finance": { "revenue_total": 1250000, "profit_margin": 15.2, "trend": "hausse" },
-    "marketing": { "avg_conversion_rate": 4.5, "best_channel": "social_media" },
-    "support": { "avg_satisfaction": 3.8, "sla_compliance": 85.0 }
+    "finance": { "revenue_total": 2191187, "profit_total": 547796, "profit_margin": 25.0, "trend": "stable" },
+    "marketing": { "best_channel": "Réseaux sociaux", "top_revenue_channel": "Magasin physique" },
+    "categories": { "top_category_by_revenue": "Mobilier", "top_category_by_conv": "Textile" },
+    "ventes": { "best_product": "Table en Bois", "best_region": "Tunis", "best_channel": "Magasin physique" },
+    "regions": { "top_region": "Tunis", "avg_ticket_global": 1095 }
   },
   "anomalies": [...],
   "recommendations": [...],
@@ -229,7 +234,7 @@ Interroge directement les données en langage naturel (via DuckDB).
 
 ```bash
 curl -X POST -H "Content-Type: application/json" \
-  -d '{"question": "Montre-moi le top 5 des campagnes par conversions"}' \
+  -d '{"question": "Montre-moi le top 5 des régions par chiffre d affaires"}' \
   http://localhost:8000/sql/query
 ```
 
@@ -237,8 +242,8 @@ curl -X POST -H "Content-Type: application/json" \
 ```json
 {
   "success": true,
-  "sql": "SELECT campaign_id, channel, conversions FROM marketing ORDER BY conversions DESC LIMIT 5",
-  "rows_preview": [{"campaign_id": "C042", "channel": "email", "conversions": 95}],
+  "sql": "SELECT customer_region, CA_Total FROM regions ORDER BY CA_Total DESC LIMIT 5",
+  "rows_preview": [{"customer_region": "Tunis", "CA_Total": 598464}],
   "total_rows": 5,
   "chart_data": {"x_key": "campaign_id", "y_keys": ["conversions"], "data": [...]},
   "message": "5 ligne(s) retournée(s).",
@@ -278,10 +283,12 @@ ai-business-consultant/
 ├── CLAUDE.md                     # Instructions pour Claude
 │
 ├── data/                         # Données CSV
-│   ├── uploads/                  # Fichiers uploadés
-│   ├── 01_finance_performance.csv
-│   ├── 02_marketing_campaigns.csv
-│   └── 03_customer_support.csv
+│   ├── uploads/                  # Fichiers uploadés (5 jeux de données ventes/analyses)
+│   │   ├── 01_donnees_vente.csv
+│   │   ├── 02_analyse_region.csv
+│   │   ├── 03_analyse_categorie.csv
+│   │   ├── 04_analyse_canaux.csv
+│   │   └── 05_kpis_globaux.csv
 │
 ├── documents/                    # Guides RAG (Markdown)
 │   └── *.md
@@ -292,9 +299,9 @@ ai-business-consultant/
 │   │
 │   ├── analysis/                 # Analyseurs de données
 │   │   ├── loader.py
-│   │   ├── finance_analyzer.py
-│   │   ├── marketing_analyzer.py
-│   │   ├── support_analyzer.py
+│   │   ├── kpis_analyzer.py
+│   │   ├── canaux_analyzer.py
+│   │   ├── categories_analyzer.py
 │   │   └── anomaly_detector.py
 │   │
 │   ├── agents/                   # Agents LangGraph (5 agents)
@@ -317,7 +324,7 @@ ai-business-consultant/
 │   │   └── response_models.py
 │   │
     ├── sql_agent/               # Agent SQL (exploration données)
-    │   ├── db.py                 # DuckDB — 3 CSV comme tables SQL
+    │   ├── db.py                 # DuckDB — 5 CSV comme tables SQL
     │   ├── validator.py          # Sécurité : SELECT only, mots-clés interdits
     │   ├── generator.py          # DeepSeek : NL → SQL + viz_type
     │   ├── executor.py           # Exécution async, timeout 10s, max 500 lignes

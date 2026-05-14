@@ -1,0 +1,64 @@
+# ============================================================
+# Deploy Backend — Azure Function App (ALTERNATIF)
+#
+# ⚠️  ATTENTION : Ce workflow nécessite un plan PREMIUM (EP1+)
+#    ou DEDICATED (App Service Plan) pour Azure Functions.
+#    Le plan CONSOMMATION (Consumption) est incompatible avec
+#    les dépendances ML lourdes de ce projet.
+#
+# Ce workflow :
+#   1. Installe les dépendances Python
+#   2. Déploie le package zip sur Azure Function App
+#      avec remote build activé (SCM build in Azure)
+#
+# PRÉREQUIS sur le portail Azure — Application Settings :
+#   PYTHON_ENABLE_WORKER_EXTENSIONS = 1
+#   AzureWebJobsStorage              = <connexion_string_storage>
+#   AZURE_OPENAI_API_KEY             = <votre_clé>
+#   AZURE_OPENAI_ENDPOINT            = <votre_endpoint>
+#   AZURE_OPENAI_MODEL               = DeepSeek-V3.2
+#   FRONTEND_URL                     = https://<votre-swa>.azurestaticapps.net
+#
+# SECRETS GitHub à configurer :
+#   AZURE_FUNCTIONAPP_PUBLISH_PROFILE → profil de publication du Function App
+# ============================================================
+
+name: Deploy Backend (Azure Function App)
+
+on:
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.12'
+  AZURE_FUNCTIONAPP_NAME: 'sma-backend-func'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── 1. Checkout du code ────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Configuration Python ───────────────────────────────────────
+      - name: Setup Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      # ── 3. Installation des dépendances ───────────────────────────────
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+
+      # ── 4. Déploiement sur Azure Function App ─────────────────────────
+      - name: Deploy to Azure Function App
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          package: '.'
+          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+          scm-do-build-during-deployment: true
+          enable-oryx-build: true

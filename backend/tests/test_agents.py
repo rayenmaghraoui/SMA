@@ -26,35 +26,56 @@ from backend.agents.state import AgentState, create_initial_state
 
 
 def _make_raw_data() -> Dict[str, Any]:
-    """Produit un raw_data sérialisé à partir des fixtures DataFrame."""
-    finance_df = pd.DataFrame({
-        "date":        pd.date_range("2024-01-01", periods=12, freq="MS").astype(str),
-        "revenue":     [100_000 + i * 5_000 for i in range(12)],
-        "cost":        [70_000] * 12,
-        "profit":      [30_000 + i * 5_000 for i in range(12)],
-        "growth_rate": [5.0] * 12,
+    """Produit un raw_data sérialisé à partir des nouveaux schémas."""
+    ventes_df = pd.DataFrame({
+        "invoice_id":        ["INV001", "INV002", "INV003"],
+        "product_name":      ["Laptop", "T-Shirt", "Chaise"],
+        "category":          ["Electronique", "Vêtements", "Mobilier"],
+        "quantity":          [1, 2, 1],
+        "unit_price_tnd":    [2_000.0, 50.0, 500.0],
+        "revenue_tnd":       [2_000.0, 100.0, 500.0],
+        "customer_id":       ["C001", "C002", "C003"],
+        "customer_region":   ["Tunis", "Sfax", "Sousse"],
+        "sale_date":         ["2024-01-15", "2024-01-16", "2024-01-17"],
+        "sales_channel":     ["Site Web", "Magasin Physique", "Site Web"],
+        "payment_method":    ["Carte", "Espèces", "Virement"],
+        "estimated_profit":  [600.0, 30.0, 150.0],
     })
-    marketing_df = pd.DataFrame({
-        "date":            ["2024-01-01"] * 4,
-        "campaign_id":     ["C001", "C002", "C003", "C004"],
-        "channel":         ["social_media", "email", "SEO", "social_media"],
-        "budget":          [5_000.0, 3_000.0, 2_000.0, 4_000.0],
-        "clicks":          [1_000, 800, 600, 900],
-        "conversions":     [50, 80, 30, 45],
-        "conversion_rate": [5.0, 10.0, 5.0, 5.0],
+    regions_df = pd.DataFrame({
+        "customer_region":  ["Tunis", "Sfax", "Sousse"],
+        "ca_total":         [500_000.0, 350_000.0, 200_000.0],
+        "profit_total":     [125_000.0, 87_500.0, 50_000.0],
+        "nb_transactions":  [500, 300, 200],
+        "panier_moyen":     [1_000.0, 1_166.67, 1_000.0],
     })
-    support_df = pd.DataFrame({
-        "date":               pd.date_range("2024-01-01", periods=6, freq="W").astype(str),
-        "ticket_id":          ["T001", "T002", "T003", "T004", "T005", "T006"],
-        "issue_type":         ["billing", "technical", "billing", "shipping", "technical", "billing"],
-        "resolution_hours":   [12.0, 36.0, 8.0, 20.0, 48.0, 5.0],
-        "satisfaction_score": [4.0, 2.0, 5.0, 3.0, 1.0, 5.0],
-        "churn_risk":         ["low", "high", "low", "medium", "high", "low"],
+    categories_df = pd.DataFrame({
+        "category":        ["Électronique", "Mobilier", "Vêtements"],
+        "ca_total":        [500_000.0, 350_000.0, 200_000.0],
+        "profit_total":    [125_000.0, 87_500.0, 50_000.0],
+        "nb_transactions": [500, 300, 200],
+        "quantite_vendue": [600, 350, 400],
+        "prix_moyen":      [833.33, 1_166.67, 500.0],
+    })
+    canaux_df = pd.DataFrame({
+        "sales_channel":   ["Site Web", "Magasin Physique"],
+        "ca_total":        [450_000.0, 350_000.0],
+        "nb_transactions": [450, 300],
+        "panier_moyen":    [1_000.0, 1_166.67],
+    })
+    kpis_df = pd.DataFrame({
+        "indicateur": [
+            "CA Total (TND)", "Profit Total (TND)", "Marge Beneficiaire (%)",
+            "Nb Transactions", "Panier Moyen (TND)", "Quantite Totale Vendue",
+            "Nb Clients Uniques", "CA Moyen par Client (TND)",
+        ],
+        "valeur": [500_000.0, 125_000.0, 25.0, 500, 1_000.0, 1_500, 350, 1_428.57],
     })
     return {
-        "finance":   finance_df.to_dict(orient="records"),
-        "marketing": marketing_df.to_dict(orient="records"),
-        "support":   support_df.to_dict(orient="records"),
+        "ventes":     ventes_df.to_dict(orient="records"),
+        "regions":    regions_df.to_dict(orient="records"),
+        "categories": categories_df.to_dict(orient="records"),
+        "canaux":     canaux_df.to_dict(orient="records"),
+        "kpis":       kpis_df.to_dict(orient="records"),
     }
 
 
@@ -134,12 +155,12 @@ class TestAnalysisAgent:
         assert expected.issubset(marketing_kpis.keys())
 
     def test_analysis_agent_kpis_has_support_keys(self):
-        """Les KPIs doivent contenir les clés support attendues."""
+        """Les KPIs doivent contenir les clés catégories attendues."""
         state = create_initial_state(raw_data=_make_raw_data())
         result = analysis_agent(state)
-        support_kpis = result["kpis"].get("support", {})
-        expected = {"avg_satisfaction", "high_churn_rate", "sla_compliance"}
-        assert expected.issubset(support_kpis.keys())
+        categories_kpis = result["kpis"].get("categories", {})
+        expected = {"total_revenue", "total_profit", "top_category_by_revenue"}
+        assert expected.issubset(categories_kpis.keys())
 
     def test_analysis_agent_returns_full_state(self):
         """L'agent retourne un état complet (pas seulement les nouvelles clés)."""

@@ -51,9 +51,11 @@ CHROMA_DB_PATH: Path = _resolve_path("CHROMA_DB_PATH", "./backend/rag/chroma_db"
 UPLOADS_DIR: Path = _resolve_path("UPLOADS_DIR", "./data/uploads")
 
 # Fichiers CSV attendus
-FINANCE_CSV: Path = DATA_DIR / "01_finance_performance.csv"
-MARKETING_CSV: Path = DATA_DIR / "02_marketing_campaigns.csv"
-SUPPORT_CSV: Path = DATA_DIR / "03_customer_support.csv"
+VENTES_CSV: Path = UPLOADS_DIR / "01_donnees_vente.csv"
+REGIONS_CSV: Path = UPLOADS_DIR / "02_analyse_region.csv"
+CATEGORIES_CSV: Path = UPLOADS_DIR / "03_analyse_categorie.csv"
+CANAUX_CSV: Path = UPLOADS_DIR / "04_analyse_canaux.csv"
+KPIS_CSV: Path = UPLOADS_DIR / "05_kpis_globaux.csv"
 
 
 # ============================================================
@@ -124,9 +126,11 @@ def get_config() -> Dict[str, Any]:
         "documents_dir": str(DOCUMENTS_DIR),
         "chroma_db_path": str(CHROMA_DB_PATH),
         "uploads_dir": str(UPLOADS_DIR),
-        "finance_csv": str(FINANCE_CSV),
-        "marketing_csv": str(MARKETING_CSV),
-        "support_csv": str(SUPPORT_CSV),
+        "ventes_csv": str(VENTES_CSV),
+        "regions_csv": str(REGIONS_CSV),
+        "categories_csv": str(CATEGORIES_CSV),
+        "canaux_csv": str(CANAUX_CSV),
+        "kpis_csv": str(KPIS_CSV),
         # LLM
         "azure_openai_endpoint": AZURE_OPENAI_ENDPOINT,
         "azure_openai_model": AZURE_OPENAI_MODEL,
@@ -142,7 +146,6 @@ def get_config() -> Dict[str, Any]:
         "api_host": API_HOST,
         "api_port": API_PORT,
         "frontend_url": FRONTEND_URL,
-        # Environnement
         "debug": DEBUG,
     }
 

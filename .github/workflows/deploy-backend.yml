@@ -1,0 +1,91 @@
+# ============================================================
+# Deploy Backend — Azure Web App for Containers (RECOMMANDÉ)
+#
+# Ce workflow :
+#   1. Build l'image Docker du backend
+#   2. La pousse sur GitHub Container Registry (ghcr.io)
+#   3. Déploie l'image sur Azure Web App (Linux, Containers)
+#
+# Pourquoi Azure Web App et non Function App ?
+#   Les dépendances ML lourdes (sentence-transformers ~300 Mo,
+#   ChromaDB) dépassent les limites du plan Consommation Azure
+#   Functions. Azure Web App for Containers n'a pas ces limites.
+#
+# SECRETS GitHub à configurer (Settings → Secrets → Actions) :
+#   AZURE_WEBAPP_PUBLISH_PROFILE  → profil de publication du Web App
+#   AZURE_WEBAPP_NAME             → nom de votre Web App Azure
+#
+# VARIABLES GitHub à configurer :
+#   AZURE_WEBAPP_NAME (optionnel, si non mis en secret)
+#
+# RESSOURCES AZURE à créer au préalable :
+#   1. Azure Web App (Linux) — taille B2 minimum (2 vCPU / 3.5 Go RAM)
+#      Configuration : "Docker Container" comme stack de publication
+#   2. Aucun Azure Container Registry nécessaire (ghcr.io est gratuit)
+# ============================================================
+
+name: Deploy Backend (Azure Web App for Containers)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'requirements.txt'
+      - 'Dockerfile'
+      - 'docker-compose.yml'
+  workflow_dispatch:
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/backend
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      # ── 1. Checkout du code ────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── 2. Connexion à GitHub Container Registry ───────────────────────
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # ── 3. Extraire les métadonnées Docker ─────────────────────────────
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      # ── 4. Build et push de l'image Docker ────────────────────────────
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: backend/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # ── 5. Déploiement sur Azure Web App ──────────────────────────────
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest'

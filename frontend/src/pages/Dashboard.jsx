@@ -21,7 +21,7 @@ const Dashboard = () => {
 
   const financeKpis = kpis.finance?.indicateurs || [];
   const marketingKpis = kpis.marketing?.indicateurs || [];
-  const supportKpis = kpis.support?.indicateurs || [];
+  const categoriesKpis = kpis.categories?.indicateurs || [];
 
   return (
     <div className="min-h-[calc(100vh-4rem)] p-6">
@@ -141,24 +141,24 @@ const Dashboard = () => {
               ))}
             </div>
 
-            {kpis.marketing?.roi_par_canal && (
+            {kpis.marketing?.ca_par_canal && (
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="mt-6 glass-panel p-6"
               >
-                <h3 className="text-lg font-medium text-white mb-4">ROI par Canal</h3>
-                <ChannelChart data={kpis.marketing.roi_par_canal} />
+                <h3 className="text-lg font-medium text-white mb-4">CA par Canal</h3>
+                <ChannelChart data={kpis.marketing.ca_par_canal} />
               </motion.div>
             )}
           </section>
 
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-cyan-100 mb-4 flex items-center gap-2">
-              <span>🎧</span> Service Client
+              <span>📦</span> Performance par Catégorie
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {supportKpis.map((kpi, index) => (
+              {categoriesKpis.map((kpi, index) => (
                 <motion.div
                   key={kpi.label}
                   initial={{ opacity: 0, y: 20 }}
@@ -170,7 +170,6 @@ const Dashboard = () => {
                     value={kpi.valeur}
                     format={kpi.format}
                     unite={kpi.unite}
-                    inverseTrend={kpi.label.includes('churn') || kpi.label.includes('résolution')}
                   />
                 </motion.div>
               ))}

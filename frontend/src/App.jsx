@@ -45,7 +45,7 @@ const Navbar = () => {
             </motion.div>
             <div>
               <h1 className="font-bold text-white tracking-tight">AI Business Consultant</h1>
-              <p className="text-xs text-cyan-200/90">PME Tunisiennes</p>
+              <p className="text-xs text-cyan-200/90">Système Multi-Agents</p>
             </div>
           </motion.div>
 

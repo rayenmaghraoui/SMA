@@ -44,13 +44,13 @@ async def client():
 
 
 def _make_finance_csv_bytes() -> bytes:
-    """Génère un CSV finance valide en mémoire."""
+    """Génère un CSV kpis_globaux valide en mémoire."""
     df = pd.DataFrame({
-        "date":        pd.date_range("2024-01-01", periods=6, freq="MS").astype(str),
-        "revenue":     [100_000.0, 110_000.0, 90_000.0, 120_000.0, 115_000.0, 130_000.0],
-        "cost":        [70_000.0] * 6,
-        "profit":      [30_000.0, 40_000.0, 20_000.0, 50_000.0, 45_000.0, 60_000.0],
-        "growth_rate": [0.0, 10.0, -18.2, 33.3, -4.2, 13.0],
+        "indicateur": [
+            "CA Total (TND)", "Profit Total (TND)", "Marge Beneficiaire (%)",
+            "Nb Transactions", "Panier Moyen (TND)", "Quantite Totale Vendue",
+        ],
+        "valeur": [500_000.0, 125_000.0, 25.0, 500, 1_000.0, 1_500],
     })
     buffer = io.BytesIO()
     df.to_csv(buffer, index=False)
@@ -58,15 +58,12 @@ def _make_finance_csv_bytes() -> bytes:
 
 
 def _make_marketing_csv_bytes() -> bytes:
-    """Génère un CSV marketing valide en mémoire."""
+    """Génère un CSV canaux marketing valide en mémoire."""
     df = pd.DataFrame({
-        "date":            ["2024-01-01"] * 4,
-        "campaign_id":     ["C001", "C002", "C003", "C004"],
-        "channel":         ["social_media", "email", "SEO", "social_media"],
-        "budget":          [5_000.0, 3_000.0, 2_000.0, 4_000.0],
-        "clicks":          [1_000, 800, 600, 900],
-        "conversions":     [50, 80, 30, 45],
-        "conversion_rate": [5.0, 10.0, 5.0, 5.0],
+        "sales_channel":   ["Site Web", "Magasin Physique", "Application Mobile", "Réseaux Sociaux"],
+        "ca_total":        [450_000.0, 350_000.0, 200_000.0, 150_000.0],
+        "nb_transactions": [450, 300, 200, 150],
+        "panier_moyen":    [1_000.0, 1_166.67, 1_000.0, 1_000.0],
     })
     buffer = io.BytesIO()
     df.to_csv(buffer, index=False)
@@ -111,10 +108,10 @@ class TestUploadRoute:
 
     @pytest.mark.asyncio
     async def test_upload_valid_finance_csv_returns_200(self, client):
-        """Un CSV finance valide doit retourner HTTP 200."""
+        """Un CSV kpis valide doit retourner HTTP 200."""
         response = await client.post(
             "/upload",
-            files={"file": ("01_finance_performance.csv", _make_finance_csv_bytes(), "text/csv")},
+            files={"file": ("05_kpis_globaux.csv", _make_finance_csv_bytes(), "text/csv")},
         )
         assert response.status_code == 200
 
@@ -123,7 +120,7 @@ class TestUploadRoute:
         """La réponse /upload doit contenir le nom du fichier."""
         response = await client.post(
             "/upload",
-            files={"file": ("01_finance_performance.csv", _make_finance_csv_bytes(), "text/csv")},
+            files={"file": ("05_kpis_globaux.csv", _make_finance_csv_bytes(), "text/csv")},
         )
         data = response.json()
         assert "filename" in data
@@ -133,7 +130,7 @@ class TestUploadRoute:
         """La réponse /upload doit indiquer le nombre de lignes."""
         response = await client.post(
             "/upload",
-            files={"file": ("01_finance_performance.csv", _make_finance_csv_bytes(), "text/csv")},
+            files={"file": ("05_kpis_globaux.csv", _make_finance_csv_bytes(), "text/csv")},
         )
         data = response.json()
         assert "rows" in data
@@ -144,11 +141,11 @@ class TestUploadRoute:
         """La réponse /upload doit identifier le type du fichier."""
         response = await client.post(
             "/upload",
-            files={"file": ("01_finance_performance.csv", _make_finance_csv_bytes(), "text/csv")},
+            files={"file": ("05_kpis_globaux.csv", _make_finance_csv_bytes(), "text/csv")},
         )
         data = response.json()
         assert "file_type" in data
-        assert data["file_type"] == "finance"
+        assert data["file_type"] == "kpis"
 
     @pytest.mark.asyncio
     async def test_upload_non_csv_file_returns_error(self, client):
@@ -176,14 +173,14 @@ class TestUploadRoute:
 
     @pytest.mark.asyncio
     async def test_upload_marketing_csv_detected_correctly(self, client):
-        """Un CSV marketing doit être identifié comme type 'marketing'."""
+        """Un CSV canaux doit être identifié comme type 'canaux'."""
         response = await client.post(
             "/upload",
-            files={"file": ("02_marketing.csv", _make_marketing_csv_bytes(), "text/csv")},
+            files={"file": ("04_analyse_canaux.csv", _make_marketing_csv_bytes(), "text/csv")},
         )
         assert response.status_code == 200
         data = response.json()
-        assert data.get("file_type") == "marketing"
+        assert data.get("file_type") == "canaux"
 
 
 # ================================================================

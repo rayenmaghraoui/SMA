@@ -1,10 +1,12 @@
 """
-Connexion DuckDB en mémoire — charge les 3 CSV comme tables SQL.
+Connexion DuckDB en mémoire — charge les 5 CSV comme tables SQL.
 
 Tables disponibles :
-    - finance   : données financières (revenue, cost, profit, growth_rate)
-    - marketing : campagnes marketing (channel, budget, clicks, conversions)
-    - support   : tickets support client (issue_type, resolution_hours, satisfaction_score)
+    - ventes     : transactions de vente (product_name, category, revenue_tnd, customer_region...)
+    - regions    : analyse par région (customer_region, CA_Total, Profit_Total...)
+    - categories : analyse par catégorie (category, CA_Total, Profit_Total...)
+    - canaux     : analyse par canal de vente (sales_channel, CA_Total, Nb_Transactions...)
+    - kpis       : indicateurs globaux (Indicateur, Valeur)
 """
 
 import logging
@@ -13,12 +15,21 @@ from typing import Optional
 import duckdb
 import pandas as pd
 
-from backend.config import FINANCE_CSV, MARKETING_CSV, SUPPORT_CSV
+from backend.config import DATA_DIR
 
 logger = logging.getLogger(__name__)
 
 # Connexion singleton
 _connection: Optional[duckdb.DuckDBPyConnection] = None
+
+# Mapping table_name → fichier CSV
+_TABLES = {
+    "ventes":     DATA_DIR / "uploads" / "01_donnees_vente.csv",
+    "regions":    DATA_DIR / "uploads" / "02_analyse_region.csv",
+    "categories": DATA_DIR / "uploads" / "03_analyse_categorie.csv",
+    "canaux":     DATA_DIR / "uploads" / "04_analyse_canaux.csv",
+    "kpis":       DATA_DIR / "uploads" / "05_kpis_globaux.csv",
+}
 
 
 def get_connection() -> duckdb.DuckDBPyConnection:
@@ -33,14 +44,10 @@ def get_connection() -> duckdb.DuckDBPyConnection:
 
 
 def _create_connection() -> duckdb.DuckDBPyConnection:
-    """Crée une base DuckDB en mémoire et charge les 3 CSV."""
+    """Crée une base DuckDB en mémoire et charge les 5 CSV."""
     conn = duckdb.connect(":memory:")
 
-    for table_name, csv_path in [
-        ("finance", FINANCE_CSV),
-        ("marketing", MARKETING_CSV),
-        ("support", SUPPORT_CSV),
-    ]:
+    for table_name, csv_path in _TABLES.items():
         try:
             df = pd.read_csv(csv_path)
             conn.register(table_name, df)
@@ -75,7 +82,7 @@ def get_schema() -> str:
     conn = get_connection()
     lines = []
 
-    for table_name in ("finance", "marketing", "support"):
+    for table_name in _TABLES:
         try:
             result = conn.execute(f"DESCRIBE {table_name}").fetchall()
             cols = ", ".join(f"{row[0]} ({row[1]})" for row in result)

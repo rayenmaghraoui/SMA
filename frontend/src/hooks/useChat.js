@@ -1,185 +1,297 @@
 /**
- * Hook useChat — gestion de l'état du chat.
+ * Hook useChat — gestion de l'état du chat multi-conversations.
+ *
+ * Chaque conversation est stockée dans localStorage sous la clé
+ * "sma_conversations". L'ID de la conversation active est stocké
+ * sous "sma_active_conv".
  */
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { streamChat } from '../services/chatService';
 
-/**
- * Supprime les duplications courantes de réponse LLM.
- * Cas visés: texte complet répété 2x à la suite.
- */
+const STORAGE_KEY = 'sma_conversations';
+const ACTIVE_KEY  = 'sma_active_conv';
+const MAX_MESSAGES = 100;
+
+// ─── Utilitaires localStorage ────────────────────────────────────────────────
+
+const genId    = () => `conv_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+const genTitle = (msg) => {
+  const clean = msg.trim().replace(/\s+/g, ' ');
+  return clean.length > 45 ? clean.slice(0, 45) + '…' : clean;
+};
+
+const createEmptyConv = () => ({
+  id: genId(),
+  title: 'Nouvelle conversation',
+  messages: [],
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+});
+
+const loadConversations = () => {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+};
+
+const loadActiveId = (convs) => {
+  try {
+    const id = localStorage.getItem(ACTIVE_KEY);
+    return (id && convs.find((c) => c.id === id)) ? id : (convs[0]?.id || null);
+  } catch { return convs[0]?.id || null; }
+};
+
+const persist = (convs, activeId) => {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(convs));
+    if (activeId) localStorage.setItem(ACTIVE_KEY, activeId);
+  } catch { /* localStorage plein — pas bloquant */ }
+};
+
+// ─── Dé-duplication LLM ──────────────────────────────────────────────────────
+
 const dedupeAssistantContent = (content) => {
   if (!content || content.length < 200) return content;
-
   const normalized = content.replace(/\s+/g, ' ').trim();
-  const half = Math.floor(normalized.length / 2);
-
-  // Détection "A + A" (ou quasi identique) sur la réponse complète
+  const half  = Math.floor(normalized.length / 2);
   const first = normalized.slice(0, half).trim();
   const second = normalized.slice(half).trim();
-  if (first.length > 100 && (second.startsWith(first) || first === second)) {
-    return first;
-  }
-
-  // Détection via phrase d'ouverture répétée
-  const anchor = 'Analyse de la situation financière';
+  if (first.length > 100 && (second.startsWith(first) || first === second)) return first;
+  const anchor   = 'Analyse de la situation financière';
   const firstIdx = normalized.indexOf(anchor);
   if (firstIdx >= 0) {
     const secondIdx = normalized.indexOf(anchor, firstIdx + anchor.length + 20);
-    if (secondIdx > 0) {
-      return normalized.slice(0, secondIdx).trim();
-    }
+    if (secondIdx > 0) return normalized.slice(0, secondIdx).trim();
   }
-
   return normalized;
 };
 
-/**
- * Hook pour gérer le chat avec streaming.
- *
- * @returns {{
- *   messages: Array,
- *   isLoading: boolean,
- *   currentStep: string,
- *   report: Object|null,
- *   sendMessage: function,
- *   clearMessages: function
- * }}
- */
-export const useChat = () => {
-  const [messages, setMessages] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState('');
-  const [report, setReport] = useState(null);
-  const cancelRef = useRef(null);
-  const isSendingRef = useRef(false); // Protection contre double-envoi
+// ─── Hook ─────────────────────────────────────────────────────────────────────
 
-  /**
-   * Envoie un message et stream la réponse.
-   * @param {string} message
-   */
+export const useChat = () => {
+  const [conversations, setConversations] = useState(() => loadConversations());
+  const [activeId, setActiveId] = useState(() => loadActiveId(loadConversations()));
+  const [isLoading, setIsLoading]   = useState(false);
+  const [currentStep, setCurrentStep] = useState('');
+  const [report, setReport]         = useState(null);
+  const cancelRef    = useRef(null);
+  const isSendingRef = useRef(false);
+
+  // Messages de la conversation active (dérivés)
+  const activeConversation = conversations.find((c) => c.id === activeId) || null;
+  const messages = activeConversation?.messages || [];
+
+  // Sauvegarde automatique après chaque changement (hors stream)
+  useEffect(() => {
+    if (!isLoading) persist(conversations, activeId);
+  }, [conversations, activeId, isLoading]);
+
+  // ── Créer une nouvelle conversation ──────────────────────────────────────
+  const newConversation = useCallback(() => {
+    const conv = createEmptyConv();
+    setConversations((prev) => [conv, ...prev]);
+    setActiveId(conv.id);
+    setReport(null);
+    setCurrentStep('');
+    if (cancelRef.current) {
+      cancelRef.current();
+      setIsLoading(false);
+      isSendingRef.current = false;
+    }
+  }, []);
+
+  // ── Basculer vers une conversation existante ──────────────────────────────
+  const switchConversation = useCallback((id) => {
+    if (isLoading) return;
+    setActiveId(id);
+    setReport(null);
+    setCurrentStep('');
+  }, [isLoading]);
+
+  // ── Supprimer une conversation ────────────────────────────────────────────
+  const deleteConversation = useCallback((id) => {
+    setConversations((prev) => {
+      const updated = prev.filter((c) => c.id !== id);
+      if (id === activeId) {
+        setActiveId(updated[0]?.id || null);
+      }
+      return updated;
+    });
+  }, [activeId]);
+
+  // ── Renommer une conversation ─────────────────────────────────────────────
+  const renameConversation = useCallback((id, newTitle) => {
+    const trimmed = newTitle.trim();
+    if (!trimmed) return;
+    setConversations((prev) =>
+      prev.map((c) => c.id === id ? { ...c, title: trimmed } : c)
+    );
+  }, []);
+
+  // ── Supprimer un message et tout ce qui suit (pour re-édition) ────────────
+  const editMessageUpTo = useCallback((messageId) => {
+    setConversations((prev) =>
+      prev.map((c) => {
+        if (c.id !== activeId) return c;
+        const idx = c.messages.findIndex((m) => m.id === messageId);
+        if (idx === -1) return c;
+        return { ...c, messages: c.messages.slice(0, idx) };
+      })
+    );
+  }, [activeId]);
+
+  // ── Effacer les messages de la conversation active ────────────────────────
+  const clearMessages = useCallback(() => {
+    setConversations((prev) =>
+      prev.map((c) =>
+        c.id === activeId
+          ? { ...c, messages: [], title: 'Nouvelle conversation', updatedAt: new Date().toISOString() }
+          : c
+      )
+    );
+    setReport(null);
+    setCurrentStep('');
+  }, [activeId]);
+
+  // ── Envoyer un message ────────────────────────────────────────────────────
   const sendMessage = useCallback((message) => {
-    // Protection contre double-envoi (StrictMode)
     if (!message.trim() || isLoading || isSendingRef.current) return;
     isSendingRef.current = true;
 
-    // Ajouter le message utilisateur
-    const userMessage = {
+    // Si aucune conversation active, en créer une
+    let targetId = activeId;
+    if (!targetId) {
+      const conv = createEmptyConv();
+      setConversations((prev) => [conv, ...prev]);
+      setActiveId(conv.id);
+      targetId = conv.id;
+    }
+
+    const userMsg = {
       id: Date.now(),
       role: 'user',
       content: message,
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setIsLoading(true);
-    setCurrentStep('Démarrage...');
-
-    // Préparer le message assistant (vide au départ)
-    const assistantMessage = {
+    const assistantMsg = {
       id: Date.now() + 1,
       role: 'assistant',
       content: '',
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
     };
 
-    setMessages((prev) => [...prev, assistantMessage]);
+    // Ajouter les messages + auto-titre si première question
+    setConversations((prev) =>
+      prev.map((c) => {
+        if (c.id !== targetId) return c;
+        const isFirst = c.messages.length === 0;
+        return {
+          ...c,
+          title: isFirst ? genTitle(message) : c.title,
+          messages: [...c.messages.slice(-(MAX_MESSAGES - 2)), userMsg, assistantMsg],
+          updatedAt: new Date().toISOString(),
+        };
+      })
+    );
 
-    // Streamer la réponse
+    setIsLoading(true);
+    setCurrentStep('Démarrage...');
+
     cancelRef.current = streamChat(message, {
-      onStep: (step) => {
-        setCurrentStep(step);
-      },
+      onStep: (step) => setCurrentStep(step),
 
       onToken: (token) => {
-        setMessages((prev) => {
-          const updated = [...prev];
-          const lastMessage = updated[updated.length - 1];
-          if (lastMessage.role === 'assistant') {
-            lastMessage.content += token;
-          }
-          return updated;
-        });
+        setConversations((prev) =>
+          prev.map((c) => {
+            if (c.id !== targetId) return c;
+            const msgs = [...c.messages];
+            const last = msgs[msgs.length - 1];
+            if (last?.role === 'assistant') {
+              msgs[msgs.length - 1] = { ...last, content: last.content + token };
+            }
+            return { ...c, messages: msgs };
+          })
+        );
       },
 
       onSqlResult: (sqlResult) => {
-        // Remplacer le message assistant vide par le résultat SQL structuré
-        setMessages((prev) => {
-          const updated = [...prev];
-          const lastMessage = updated[updated.length - 1];
-          if (lastMessage.role === 'assistant') {
-            lastMessage.sqlResult = sqlResult;
-            lastMessage.content = sqlResult.message || '';
-          }
-          return updated;
-        });
+        setConversations((prev) =>
+          prev.map((c) => {
+            if (c.id !== targetId) return c;
+            const msgs = [...c.messages];
+            const last = msgs[msgs.length - 1];
+            if (last?.role === 'assistant') {
+              msgs[msgs.length - 1] = { ...last, sqlResult, content: sqlResult.message || '' };
+            }
+            return { ...c, messages: msgs };
+          })
+        );
       },
 
-      onReport: (newReport) => {
-        setReport(newReport);
-      },
+      onReport: (newReport) => setReport(newReport),
 
       onDone: () => {
-        // Nettoyage final pour éviter l'affichage d'une réponse dupliquée
-        setMessages((prev) => {
-          const updated = [...prev];
-          const lastMessage = updated[updated.length - 1];
-          if (lastMessage?.role === 'assistant' && lastMessage.content) {
-            lastMessage.content = dedupeAssistantContent(lastMessage.content);
-          }
-          return updated;
-        });
+        setConversations((prev) =>
+          prev.map((c) => {
+            if (c.id !== targetId) return c;
+            const msgs = [...c.messages];
+            const last = msgs[msgs.length - 1];
+            if (last?.role === 'assistant' && last.content) {
+              msgs[msgs.length - 1] = { ...last, content: dedupeAssistantContent(last.content) };
+            }
+            return { ...c, messages: msgs, updatedAt: new Date().toISOString() };
+          })
+        );
         setIsLoading(false);
         setCurrentStep('');
         isSendingRef.current = false;
       },
 
       onError: (error) => {
-        setMessages((prev) => {
-          const updated = [...prev];
-          const lastMessage = updated[updated.length - 1];
-          if (lastMessage.role === 'assistant') {
-            lastMessage.content = `Erreur: ${error}`;
-            lastMessage.isError = true;
-          }
-          return updated;
-        });
+        setConversations((prev) =>
+          prev.map((c) => {
+            if (c.id !== targetId) return c;
+            const msgs = [...c.messages];
+            const last = msgs[msgs.length - 1];
+            if (last?.role === 'assistant') {
+              msgs[msgs.length - 1] = { ...last, content: `Erreur: ${error}`, isError: true };
+            }
+            return { ...c, messages: msgs };
+          })
+        );
         setIsLoading(false);
         setCurrentStep('');
         isSendingRef.current = false;
       },
     });
-  }, [isLoading]);
+  }, [isLoading, activeId]);
 
-  /**
-   * Annule le streaming en cours.
-   */
   const cancelStream = useCallback(() => {
     if (cancelRef.current) {
       cancelRef.current();
       setIsLoading(false);
       setCurrentStep('');
+      isSendingRef.current = false;
     }
-  }, []);
-
-  /**
-   * Efface tous les messages.
-   */
-  const clearMessages = useCallback(() => {
-    setMessages([]);
-    setReport(null);
-    setCurrentStep('');
   }, []);
 
   return {
     messages,
+    conversations,
+    activeConversationId: activeId,
     isLoading,
     currentStep,
     report,
     sendMessage,
     cancelStream,
     clearMessages,
+    newConversation,
+    switchConversation,
+    deleteConversation,
+    renameConversation,
+    editMessageUpTo,
   };
 };
 

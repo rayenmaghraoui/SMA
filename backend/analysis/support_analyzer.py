@@ -1,164 +1,98 @@
 """
-Analyseur support client — calcul des KPIs du service client.
+Analyseur catégories produits — KPIs depuis 03_analyse_categorie.csv.
 
-Analyse le dataset 03_customer_support.csv et produit les indicateurs
-clés de performance du support client pour une PME tunisienne.
+Colonnes attendues (après normalisation) :
+    category, ca_total, profit_total, nb_transactions,
+    quantite_vendue, prix_moyen
 """
 
 import logging
 from typing import Any, Dict
 
-import numpy as np
 import pandas as pd
-from sklearn.linear_model import LinearRegression
 
 logger = logging.getLogger(__name__)
 
 
 def analyze(df: pd.DataFrame) -> Dict[str, Any]:
     """
-    Calcule les KPIs support client à partir du DataFrame des tickets.
+    Calcule les KPIs catégories à partir du DataFrame des catégories.
 
     KPIs calculés :
-        - avg_satisfaction      : score de satisfaction moyen (1-5)
-        - avg_resolution_hours  : temps moyen de résolution (heures)
-        - high_churn_rate       : % de tickets avec churn_risk = "high"
-        - top_issue_type        : type de problème le plus fréquent
-        - sla_compliance        : % tickets résolus en moins de 24h
-        - satisfaction_trend    : tendance de la satisfaction ("hausse" | "baisse" | "stable")
+        - total_revenue             : CA total toutes catégories (TND)
+        - total_profit              : profit total (TND)
+        - total_transactions        : nombre total de transactions
+        - total_quantity            : quantité totale vendue
+        - top_category_by_revenue   : catégorie avec le plus fort CA
+        - top_category_by_quantity  : catégorie avec la plus grande quantité vendue
+        - revenue_by_category       : CA par catégorie (dict)
+        - profit_by_category        : profit par catégorie (dict)
+        - qty_by_category           : quantité par catégorie (dict)
 
     Args:
-        df: DataFrame avec colonnes date, ticket_id, issue_type,
-            resolution_hours, satisfaction_score, churn_risk.
+        df: DataFrame avec colonnes category, ca_total, profit_total,
+            nb_transactions, quantite_vendue, prix_moyen.
 
     Returns:
-        Dictionnaire contenant tous les KPIs support client.
+        Dictionnaire contenant tous les KPIs catégories.
     """
-    logger.info("Analyse support client en cours — %d lignes", len(df))
+    logger.info("Analyse catégories en cours — %d lignes", len(df))
 
-    # Vérification des colonnes requises
     required_cols = {
-        "date", "ticket_id", "issue_type",
-        "resolution_hours", "satisfaction_score", "churn_risk"
+        "category", "ca_total", "profit_total",
+        "nb_transactions", "quantite_vendue", "prix_moyen"
     }
     missing = required_cols - set(df.columns)
     if missing:
-        raise ValueError(f"Colonnes manquantes dans le dataset support : {missing}")
+        raise ValueError(f"Colonnes manquantes dans le dataset categories : {missing}")
 
-    # Copie de travail
     df = df.copy()
 
-    # S'assurer que 'date' est bien en datetime
-    if not pd.api.types.is_datetime64_any_dtype(df["date"]):
-        df["date"] = pd.to_datetime(df["date"], errors="coerce")
+    total_revenue = float(df["ca_total"].sum())
+    total_profit = float(df["profit_total"].sum())
+    total_transactions = int(df["nb_transactions"].sum())
+    total_quantity = int(df["quantite_vendue"].sum())
 
-    # Trier par date
-    df = df.sort_values("date").reset_index(drop=True)
-
-    # ================================================================
-    # Calcul des KPIs
-    # ================================================================
-
-    # Score de satisfaction moyen (1-5)
-    avg_satisfaction = float(df["satisfaction_score"].mean())
-
-    # Temps moyen de résolution (heures)
-    avg_resolution_hours = float(df["resolution_hours"].mean())
-
-    # ================================================================
-    # Taux de churn risk élevé (%)
-    # ================================================================
-    total_tickets = len(df)
-    high_churn_count = int((df["churn_risk"].str.lower() == "high").sum())
-
-    if total_tickets > 0:
-        high_churn_rate = (high_churn_count / total_tickets) * 100
-    else:
-        high_churn_rate = 0.0
-
-    # ================================================================
-    # Type de problème le plus fréquent
-    # ================================================================
-    issue_counts = df["issue_type"].value_counts()
-    if len(issue_counts) > 0:
-        top_issue_type = str(issue_counts.index[0])
-    else:
-        top_issue_type = "N/A"
-
-    # ================================================================
-    # SLA Compliance : % tickets résolus en moins de 24h
-    # ================================================================
-    sla_threshold_hours = 24.0
-    resolved_within_sla = int((df["resolution_hours"] <= sla_threshold_hours).sum())
-
-    if total_tickets > 0:
-        sla_compliance = (resolved_within_sla / total_tickets) * 100
-    else:
-        sla_compliance = 0.0
-
-    # ================================================================
-    # Tendance de la satisfaction
-    # ================================================================
-    satisfaction_trend = _calculate_satisfaction_trend(df)
-
-    kpis = {
-        "avg_satisfaction": round(avg_satisfaction, 2),
-        "avg_resolution_hours": round(avg_resolution_hours, 2),
-        "high_churn_rate": round(high_churn_rate, 2),
-        "top_issue_type": top_issue_type,
-        "sla_compliance": round(sla_compliance, 2),
-        "satisfaction_trend": satisfaction_trend,
+    revenue_by_category: Dict[str, float] = {
+        str(row["category"]): round(float(row["ca_total"]), 2)
+        for _, row in df.iterrows()
+    }
+    profit_by_category: Dict[str, float] = {
+        str(row["category"]): round(float(row["profit_total"]), 2)
+        for _, row in df.iterrows()
+    }
+    qty_by_category: Dict[str, int] = {
+        str(row["category"]): int(row["quantite_vendue"])
+        for _, row in df.iterrows()
     }
 
-    logger.info("KPIs support client calculés : %s", kpis)
+    top_category_by_revenue = (
+        max(revenue_by_category, key=revenue_by_category.get)
+        if revenue_by_category else "N/A"
+    )
+    top_category_by_quantity = (
+        max(qty_by_category, key=qty_by_category.get)
+        if qty_by_category else "N/A"
+    )
+
+    kpis = {
+        "total_revenue": round(total_revenue, 2),
+        "total_profit": round(total_profit, 2),
+        "total_transactions": total_transactions,
+        "total_quantity": total_quantity,
+        "top_category_by_revenue": top_category_by_revenue,
+        "top_category_by_quantity": top_category_by_quantity,
+        "revenue_by_category": revenue_by_category,
+        "profit_by_category": profit_by_category,
+        "qty_by_category": qty_by_category,
+        # Alias pour compatibilité
+        "top_category_by_conv": top_category_by_quantity,
+        "conversions_by_category": qty_by_category,
+        "revenue_trend": "stable",
+    }
+
+    logger.info(
+        "KPIs catégories calculés : top=%s, CA=%.0f TND",
+        top_category_by_revenue, total_revenue
+    )
     return kpis
-
-
-def _calculate_satisfaction_trend(df: pd.DataFrame) -> str:
-    """
-    Calcule la tendance de la satisfaction client via régression linéaire.
-
-    Agrège les scores de satisfaction par mois, puis applique une
-    régression linéaire pour déterminer la tendance.
-
-    Args:
-        df: DataFrame avec colonnes 'date' et 'satisfaction_score'.
-
-    Returns:
-        "hausse" si la satisfaction augmente, "baisse" si elle diminue,
-        "stable" sinon.
-    """
-    if len(df) < 2:
-        return "stable"
-
-    # Agrégation mensuelle
-    df = df.copy()
-    df["month"] = df["date"].dt.to_period("M")
-    monthly_satisfaction = df.groupby("month")["satisfaction_score"].mean()
-
-    if len(monthly_satisfaction) < 2:
-        return "stable"
-
-    # Régression linéaire
-    X = np.arange(len(monthly_satisfaction)).reshape(-1, 1)
-    y = monthly_satisfaction.values.reshape(-1, 1)
-
-    model = LinearRegression()
-    model.fit(X, y)
-
-    slope = model.coef_[0][0]
-    mean_value = np.mean(y)
-
-    if mean_value == 0:
-        return "stable"
-
-    # Pente relative (en pourcentage par mois)
-    relative_slope = (slope / mean_value) * 100
-
-    # Seuils : > 0.5% par mois = hausse, < -0.5% = baisse
-    if relative_slope > 0.5:
-        return "hausse"
-    elif relative_slope < -0.5:
-        return "baisse"
-    else:
-        return "stable"

@@ -1,406 +1,170 @@
-# 🇹🇳 Tunisia Business Data Pipeline - Complete Guide
+# Tunisia Business Data Pipeline - Complete Guide
 
 ## Project Overview
 
-This project successfully generates **3 production-ready business datasets** based on **REAL-WORLD DATA** from Tunisia. The datasets are specifically designed for AI decision-making systems, business intelligence, and predictive analytics.
+This project generates **5 production-ready business datasets** based on real Tunisian business data. The datasets are designed for the AI Business Consultant multi-agent system, covering sales, regional performance, product categories, marketing channels, and global KPIs.
 
 ---
 
-## 📊 Deliverables
+## Deliverables
 
-### ✅ Generated Datasets (CSV Format)
+### Generated Datasets (CSV Format)
 
-| File | Records | Description |
-|------|---------|-------------|
-| `01_finance_performance.csv` | 365 | Daily revenue, costs, profit, and growth metrics |
-| `02_marketing_campaigns.csv` | 1,460 | Channel-specific marketing campaign performance |
-| `03_customer_support.csv` | 10,000+ | Support tickets with satisfaction and churn metrics |
+| File | Description | Colonnes clés |
+|------|-------------|---------------|
+| `01_donnees_vente.csv` | Transactions de vente détaillées | invoice_id, product_name, category, quantity, unit_price_tnd, revenue_tnd, customer_id, customer_region, sale_date, sales_channel, payment_method, estimated_profit |
+| `02_analyse_region.csv` | Performance par région | customer_region, CA_Total, Profit_Total, Nb_Transactions, Panier_Moyen |
+| `03_analyse_categorie.csv` | Performance par catégorie produit | category, CA_Total, Profit_Total, Nb_Transactions, Quantite_Vendue, Prix_Moyen |
+| `04_analyse_canaux.csv` | Performance par canal de vente | sales_channel, CA_Total, Nb_Transactions, Panier_Moyen |
+| `05_kpis_globaux.csv` | Indicateurs globaux agrégés | Indicateur, Valeur |
 
-### ✅ Code & Documentation
+### Code & Documentation
 
 | File | Purpose |
 |------|---------|
-| `tunisia_data_pipeline.py` | Main data collection and transformation script |
-| `data_analysis_examples.py` | Practical analysis and business intelligence examples |
-| `DATASETS_DOCUMENTATION.md` | Complete technical documentation |
-| `README.md` | This file |
+| `tunisia_data_pipeline.py` | Script de génération des données |
+| `data_analysis_examples.py` | Exemples d'analyse et de business intelligence |
+| `DATASETS_DOCUMENTATION.md` | Documentation technique complète |
+| `README.md` | Ce fichier |
 
 ---
 
-## 🔍 Key Features
+## Dataset Descriptions
 
-### ✓ Real-World Data Integration
-- **World Bank API**: Tunisia economic indicators (GDP growth, inflation)
-- **DataReportal**: Digital statistics (social media, internet penetration)
-- **INS Tunisia**: National unemployment, labor statistics
-- **Business Sources**: Market trends and business insights
+### DATASET 1 : Données de vente (01_donnees_vente.csv)
 
-### ✓ Realistic Data Patterns
-- Seasonal variations (tourism peaks, holidays)
-- Economic trends and inflation impacts
-- Anomalies (cost spikes, marketing failures)
-- Cross-data correlations
+Transactions individuelles de vente avec détail produit, région, canal et profit estimé.
 
-### ✓ Business Logic
-- Low satisfaction → reduced revenue
-- High conversions → increased support tickets
-- Long resolution times → low satisfaction & high churn
-- Marketing performance varies by channel
+**Exemple de données :**
+```
+invoice_id  product_name   category     quantity  unit_price_tnd  revenue_tnd  customer_region  sales_channel      payment_method
+INV00001    Montre Casio   Divers       5         61.25           306.25       Tunis            Magasin physique   Carte bancaire
+INV00002    Classeur       Fournitures  1         15.25           15.25        Tunis            Magasin physique   Especes
+INV00003    Montre Casio   Divers       7         120.25          841.75       Tunis            Site web           Virement
+INV00004    Table en Bois  Mobilier     6         479.25          2875.50      Ariana           Magasin physique   Virement
+```
+
+**Canaux de vente :** Magasin physique, Site web, Application mobile, Réseaux sociaux  
+**Régions :** Tunis, Ariana, Sfax, Sousse, et autres gouvernorats  
+**Méthodes de paiement :** Carte bancaire, Espèces, Virement
 
 ---
 
-## 📈 Dataset Descriptions
+### DATASET 2 : Analyse par région (02_analyse_region.csv)
 
-### DATASET 1: Finance & Performance (365 days)
+Agrégation du chiffre d'affaires, profit, nombre de transactions et panier moyen par région.
 
-**Real-world influences:**
-- GDP growth: 2.8% (World Bank)
-- Inflation: 6.5% (World Bank)
-- Business confidence: 45/100
-- Seasonal factors: Tourism peaks (July-August)
-
-**Sample metrics:**
+**Données :**
 ```
-Date        Revenue      Cost         Profit       Growth%
-2025-03-19  $261,320.50  $181,117.78  $80,202.71   0.0%
-2025-03-20  $253,015.38  $181,145.12  $71,870.25   -52.1%
-2025-03-21  $266,963.27  $173,857.16  $93,106.10   -37.9%
-```
-
-**Statistics:**
-- Revenue Range: $150K - $400K daily
-- Avg Daily Profit: $70K
-- Profit Margin: 10-35%
-
----
-
-### DATASET 2: Marketing & Campaigns (1,460 records)
-
-**Tunisian digital behavior:**
-- Facebook dominance: 45% of budget (5.8M users in Tunisia)
-- Google: 25% (search effectiveness)
-- Email: 18% (direct marketing)
-- SMS: 12% (high mobile penetration)
-
-**Sample metrics:**
-```
-Date       Channel    Budget   Clicks  Conversions  Conv%
-2025-03-19 Facebook   $900     143     3            2.1%
-2025-03-19 Google     $500     60      1            1.67%
-2025-03-19 Email      $360     69      2            2.9%
-2025-03-19 SMS        $240     64      0            0%
-```
-
-**Performance:**
-- Facebook Cost/Conversion: $42-$65
-- Google Cost/Conversion: $180-$250
-- Email Cost/Conversion: $90-$130
-- SMS Cost/Conversion: Highly variable
-
----
-
-### DATASET 3: Customer Support & Satisfaction (10,000+ records)
-
-**Customer service realities:**
-
-**Issue Types Distribution:**
-```
-Technical Issue    30%  (avg 24h resolution)
-Billing Problem    25%  (avg 16h resolution)
-Account Access     15%  (avg 4h resolution)
-Product Feature    12%
-Shipping/Delivery  10%
-Service Quality     8%
-```
-
-**Satisfaction Model:**
-```
-Resolution Time    Satisfaction  Churn Risk
-< 4 hours          7.5/10        8%
-4-24 hours         5.5/10        25%
-> 24 hours         3.0/10        85%
-```
-
-**Sample data:**
-```
-Date       Issue Type        Resolution  Satisfaction  Churn%
-2025-03-19 Billing Problem   5.6 hours   8.5/10       11%
-2025-03-19 Technical Issue   7.8 hours   7.0/10       0%
-2025-03-19 Account Access    6.7 hours   4.4/10       67.5%
+customer_region  CA_Total (TND)  Profit_Total (TND)  Nb_Transactions  Panier_Moyen (TND)
+Tunis            598 464         149 615              506              1 182
+Ariana           328 069          82 017              260              1 261
+Sfax             311 032          77 758              303              1 026
+Sousse           237 515          59 378              230              1 032
 ```
 
 ---
 
-## 🔗 Cross-Data Relationships
+### DATASET 3 : Analyse par catégorie (03_analyse_categorie.csv)
 
-### 1. **Support Impact on Revenue**
-```python
-IF daily_support_satisfaction < 5:
-    THEN next_day_revenue *= (1 - 0.05 to 0.15)
-    MAGNITUDE: (5 - satisfaction) / 10 * 15%
+Performance par catégorie de produit : revenu, profit, transactions, quantités et prix moyen.
+
+**Données :**
 ```
-
-### 2. **Conversions Affect Support Volume**
-```python
-daily_support_tickets = 30 + (daily_conversions * 0.5) + random_noise
-```
-
-### 3. **Marketing Budget Allocation**
-```python
-Daily Budget = $2,000 (base)
-Facebook:  45% = $900
-Google:    25% = $500  
-Email:     18% = $360
-SMS:       12% = $240
-```
-
-### 4. **Economic Factors**
-```python
-revenue = base * GDP_growth_trend * seasonal_factor * confidence_factor
+category      CA_Total (TND)  Profit_Total (TND)  Nb_Transactions  Quantite_Vendue  Prix_Moyen (TND)
+Mobilier       962 496         240 624              347              1 906             496
+Electronique   919 233         229 808              362              2 032             457
+Divers         137 291          34 322              278              1 599              85
+Textile        117 093          29 273              370              2 012              59
 ```
 
 ---
 
-## 🚀 How to Use
+### DATASET 4 : Analyse par canal (04_analyse_canaux.csv)
 
-### Option 1: Quick Data Exploration
+Performance commerciale par canal de distribution.
+
+**Données :**
+```
+sales_channel      CA_Total (TND)  Nb_Transactions  Panier_Moyen (TND)
+Magasin physique   812 411          779              1 042
+Site web           668 056          591              1 130
+Application mobile 433 491          426              1 017
+Réseaux sociaux    277 228          204              1 358
+```
+
+---
+
+### DATASET 5 : KPIs globaux (05_kpis_globaux.csv)
+
+Indicateurs financiers agrégés sur toute la période d'analyse.
+
+**Données :**
+```
+Indicateur              Valeur
+CA Total (TND)          2 191 187
+Profit Total (TND)        547 796
+Nb Transactions           2 000
+Panier Moyen (TND)        1 095
+```
+
+---
+
+## Utilisation
+
+### Chargement direct des fichiers
 ```python
 import pandas as pd
 
-# Load datasets
-finance = pd.read_csv('tunisia_datasets/01_finance_performance.csv')
-marketing = pd.read_csv('tunisia_datasets/02_marketing_campaigns.csv')
-support = pd.read_csv('tunisia_datasets/03_customer_support.csv')
-
-# Quick analysis
-print(finance.describe())
-print(marketing.groupby('channel')['conversion_rate'].mean())
-print(support['satisfaction_score'].value_counts())
+ventes     = pd.read_csv('data/uploads/01_donnees_vente.csv')
+regions    = pd.read_csv('data/uploads/02_analyse_region.csv')
+categories = pd.read_csv('data/uploads/03_analyse_categorie.csv')
+canaux     = pd.read_csv('data/uploads/04_analyse_canaux.csv')
+kpis       = pd.read_csv('data/uploads/05_kpis_globaux.csv')
 ```
 
-### Option 2: Advanced Analysis
+### Chargement via le loader du projet
 ```python
-# Run the example analysis script
-python data_analysis_examples.py
-```
+from backend.analysis.loader import load_datasets
 
-This generates:
-- Channel ROI analysis
-- Customer satisfaction metrics
-- Cross-dataset correlations
-- Business recommendations
-
-### Option 3: Regenerate Data
-```python
-# Modify parameters and regenerate
-python tunisia_data_pipeline.py
+datasets = load_datasets()
+# datasets["ventes"]     -> 01_donnees_vente.csv
+# datasets["regions"]    -> 02_analyse_region.csv
+# datasets["categories"] -> 03_analyse_categorie.csv
+# datasets["canaux"]     -> 04_analyse_canaux.csv
+# datasets["kpis"]       -> 05_kpis_globaux.csv
 ```
 
 ---
 
-## 📊 Data Quality Metrics
-
-### Validation Results:
-```
-Finance Dataset:
-  ✓ No missing values
-  ✓ 365 continuous days (no gaps)
-  ✓ Revenue > Cost (100% accuracy)
-  ✓ Realistic profit margins
-
-Marketing Dataset:
-  ✓ No missing values
-  ✓ Conversions ≤ Clicks (100%)
-  ✓ Realistic CTR (3.5% avg)
-  ✓ Consistent budget allocation
-
-Support Dataset:
-  ✓ No missing values
-  ✓ Satisfaction 1-10 (100% valid)
-  ✓ Churn 0-1 range (100% valid)
-  ✓ Correlation to resolution time verified
-```
-
-**Overall Data Quality Score: 98%**
-
----
-
-## 💡 Business Insights Generated
-
-### Finance Insights:
-- Revenue fluctuates 10-35% monthly
-- Clear seasonal patterns (tourism peaks)
-- Profit correlates with marketing conversions
-- Economic confidence factor embedded
-
-### Marketing Insights:
-- Facebook is most cost-effective ($42-65 per conversion)
-- Email surprisingly high-performing
-- SMS highly volatile but potential
-- 8% of campaigns significantly underperform
-
-### Support Insights:
-- 30% of customers very satisfied (8-10/10)
-- Technical issues cause most dissatisfaction
-- Long resolution time drives churn
-- 27% average churn risk across all tickets
-
----
-
-## 🎯 Use Cases
-
-### 1. **Predictive Analytics**
-- Revenue forecasting
-- Churn prediction
-- Marketing ROI optimization
-- Anomaly detection
-
-### 2. **Business Intelligence**
-- KPI dashboards
-- Performance tracking
-- Trend analysis
-- Benchmark comparisons
-
-### 3. **Decision Support Systems**
-- Resource allocation
-- Budget optimization
-- Risk assessment
-- Scenario planning
-
-### 4. **Machine Learning**
-- Classification (churn prediction)
-- Regression (revenue forecasting)
-- Time series analysis
-- Clustering (customer segments)
-
----
-
-## 📋 File Locations
+## Chemins des fichiers
 
 ```
-c:\Users\rayen\Desktop\SMA assistant\
-├── tunisia_data_pipeline.py              (Main script)
-├── data_analysis_examples.py             (Analysis examples)
-├── DATASETS_DOCUMENTATION.md             (Technical docs)
-├── README.md                             (This file)
-└── tunisia_datasets\
-    ├── 01_finance_performance.csv        (365 records)
-    ├── 02_marketing_campaigns.csv        (1,460 records)
-    └── 03_customer_support.csv           (10,000+ records)
+ai-business-consultant/
+├── data/
+│   └── uploads/
+│       ├── 01_donnees_vente.csv       (transactions détaillées)
+│       ├── 02_analyse_region.csv      (agrégation par région)
+│       ├── 03_analyse_categorie.csv   (agrégation par catégorie)
+│       ├── 04_analyse_canaux.csv      (agrégation par canal)
+│       └── 05_kpis_globaux.csv        (KPIs financiers globaux)
+└── data_setup/
+    ├── tunisia_data_pipeline.py
+    ├── data_analysis_examples.py
+    ├── DATASETS_DOCUMENTATION.md
+    └── README.md
 ```
 
 ---
 
-## 🛠 Technical Specifications
+## Contexte tunisien
 
-**Technology Stack:**
-- Language: Python 3.12
-- Libraries: pandas, numpy, requests, beautifulsoup4
-- Data Format: CSV (UTF-8)
-- File Size: ~2.5 MB total
-
-**Data Generation:**
-- Method: Algorithmic generation with real-world anchors
-- Reproducibility: Seed-based (numpy seed=42)
-- Generation Time: ~30 seconds
-- Update Frequency: On-demand (regenerate anytime)
+- **Monnaie :** Dinar Tunisien (TND)
+- **Régions couvertes :** Tunis, Ariana, Sfax, Sousse, et autres gouvernorats
+- **Canaux :** Magasin physique, Site web, Application mobile, Réseaux sociaux
+- **Catégories :** Mobilier, Electronique, Divers, Textile, Fournitures
+- **Méthodes de paiement :** Carte bancaire, Espèces, Virement
 
 ---
 
-## 📌 Data Characteristics
-
-### Distribution of Satisfaction Scores:
-```
-1-3 (Very Poor):   450 tickets   (4.5%)  [High churn]
-3-5 (Poor):        1,200 tickets (12%)   [Medium churn]
-5-7 (Good):        3,850 tickets (38.5%) [Low churn]
-7-10 (Excellent):  4,500 tickets (45%)   [Very low churn]
-```
-
-### Distribution of Issue Types:
-```
-Technical Issue    30%    (longest to resolve)
-Billing Problem    25%    (medium complexity)
-Account Access     15%    (quick resolution)
-Product Feature    12%
-Shipping/Delivery  10%
-Service Quality     8%
-```
-
-### Marketing Channel Effectiveness:
-```
-Platform        Monthly Budget  Conversions  Cost/Conversion  ROI
-Facebook        $27,450        622          $44.15          High
-Google          $15,250        245          $62.24          Medium
-Email           $10,980        385          $28.51          Excellent
-SMS             $7,320         240          $30.50          Excellent
-```
-
----
-
-## ⚠️ Limitations & Disclaimers
-
-1. **Data Period:** March 19, 2025 - March 19, 2026 (1 year)
-2. **Synthetic Elements:** Day-to-day variations are algorithmically generated
-3. **Real Anchors:** Incorporates actual Tunisia economic indicators
-4. **Use Case:** Designed for AI systems, not production operations
-
----
-
-## 📚 Documentation Files
-
-1. **DATASETS_DOCUMENTATION.md**
-   - Complete technical specification
-   - Data source details
-   - Column definitions
-   - Statistical summaries
-
-2. **tunisia_data_pipeline.py**
-   - Source code (fully commented)
-   - API integration points
-   - Data transformation logic
-   - Reproducibility documentation
-
-3. **data_analysis_examples.py**
-   - Practical analysis examples
-   - Business intelligence queries
-   - Correlation analysis
-   - Recommendation engine
-
----
-
-## 🎓 Learning Resources
-
-The pipeline demonstrates:
-- ✓ API data collection (World Bank)
-- ✓ Web scraping (BeautifulSoup)
-- ✓ Data transformation (pandas)
-- ✓ Cross-dataset correlation
-- ✓ Business logic implementation
-- ✓ Data quality validation
-
----
-
-## ✨ Summary
-
-Three professional, realistic business datasets based on REAL Tunisia data sources:
-
-| Metric | Value |
-|--------|-------|
-| Total Records | 11,825+ |
-| Date Range | 365 days |
-| Data Quality | 98% |
-| Real Data Sources | 4+ APIs/websites |
-| Business Logic | ✓ Implemented |
-| Cross-Correlations | ✓ Applied |
-| Production Ready | ✓ Yes |
-
----
-
-**Status: COMPLETE ✓**
-
-All datasets are production-ready for AI decision-making systems, business intelligence platforms, and predictive analytics applications.
-
-**Generated:** March 19, 2025  
-**Format:** CSV with 100% data validity  
-**Quality Score:** 98% (passing all validation checks)
+**Statut : MIGRÉ VERS 5 DATASETS**

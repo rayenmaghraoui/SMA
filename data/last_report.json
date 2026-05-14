@@ -1,173 +1,5520 @@
 {
-  "resume_executif": "L'entreprise a réalisé un chiffre d'affaires de 1,793,000 TND avec une marge de 28.5%. La tendance est en croissance. Le taux de conversion marketing moyen est de 4.97%, avec le canal 'seo' comme meilleur performeur. La satisfaction client est moyen (3.6/5) avec un risque de churn de 20.0%. 2 anomalie(s) ont été détectées et nécessitent attention. Actions prioritaires : Structurer le reporting des marges, Calculer et optimiser le CAC.",
+  "resume_executif": "L'entreprise a réalisé un chiffre d'affaires de 2,191,187 TND avec une marge de 25.0%. Le produit le plus vendu est 'iPhone 14 Pro', la région la plus performante est Tunis. Le meilleur canal de vente par chiffre d'affaires est 'Magasin physique'. La catégorie la plus performante est 'Mobilier'. 765 anomalie(s) ont été détectées et nécessitent attention. Actions prioritaires : Audit & Réplication du Mix Produits Performant, Investigation du Prix Anormal & Segmentation Client.",
   "kpis": {
     "finance": {
       "titre": "Performance Financière",
       "indicateurs": [
         {
           "label": "Chiffre d'affaires total",
-          "valeur": 1793000.0,
+          "valeur": 2191187.25,
           "unite": "TND",
           "format": "currency"
         },
         {
           "label": "Bénéfice total",
-          "valeur": 516000.0,
+          "valeur": 547796.94,
           "unite": "TND",
           "format": "currency"
         },
         {
           "label": "Marge bénéficiaire",
-          "valeur": 28.49,
+          "valeur": 25.0,
           "unite": "%",
           "format": "percent"
         },
         {
-          "label": "Croissance moyenne",
-          "valeur": 3.48,
-          "unite": "%",
-          "format": "percent"
-        },
-        {
-          "label": "Tendance",
-          "valeur": "hausse",
-          "unite": "",
-          "format": "text"
-        }
-      ],
-      "meilleur_mois": "2025-12",
-      "pire_mois": "2025-01"
-    },
-    "marketing": {
-      "titre": "Performance Marketing",
-      "indicateurs": [
-        {
-          "label": "Budget dépensé",
-          "valeur": 60500.0,
-          "unite": "TND",
-          "format": "currency"
-        },
-        {
-          "label": "Conversions totales",
-          "valeur": 2449,
+          "label": "Nb Transactions",
+          "valeur": 2000,
           "unite": "",
           "format": "number"
         },
         {
-          "label": "Taux de conversion",
-          "valeur": 4.97,
-          "unite": "%",
-          "format": "percent"
-        },
-        {
-          "label": "Coût par conversion",
-          "valeur": 24.7,
+          "label": "Panier Moyen",
+          "valeur": 1095.59,
           "unite": "TND",
           "format": "currency"
         }
       ],
-      "meilleur_canal": "seo",
-      "meilleure_campagne": "CAM011",
-      "roi_par_canal": {
-        "display": 2.57,
-        "email": 5.31,
-        "seo": 5.71,
-        "social_media": 3.58
-      }
+      "meilleur_mois": "N/A",
+      "pire_mois": "N/A"
     },
-    "support": {
-      "titre": "Service Client",
+    "marketing": {
+      "titre": "Performance par Canal",
       "indicateurs": [
         {
-          "label": "Satisfaction moyenne",
-          "valeur": 3.56,
-          "unite": "/5",
-          "format": "rating"
+          "label": "CA Total Canaux",
+          "valeur": 2191187.25,
+          "unite": "TND",
+          "format": "currency"
         },
         {
-          "label": "Temps de résolution",
-          "valeur": 8.38,
-          "unite": "heures",
-          "format": "duration"
+          "label": "Transactions Totales",
+          "valeur": 2000,
+          "unite": "",
+          "format": "number"
         },
         {
-          "label": "Taux de churn élevé",
-          "valeur": 20.0,
-          "unite": "%",
-          "format": "percent"
+          "label": "Meilleur Canal (CA)",
+          "valeur": "Magasin physique",
+          "unite": "",
+          "format": "text"
         },
         {
-          "label": "Conformité SLA",
-          "valeur": 96.0,
-          "unite": "%",
-          "format": "percent"
+          "label": "Meilleur Panier Moyen",
+          "valeur": "Reseaux sociaux",
+          "unite": "",
+          "format": "text"
         }
       ],
-      "probleme_frequent": "technical"
+      "meilleur_canal": "Magasin physique",
+      "ca_par_canal": {
+        "Magasin physique": 812411.0,
+        "Site web": 668056.0,
+        "Application mobile": 433491.75,
+        "Reseaux sociaux": 277228.5
+      }
+    },
+    "categories": {
+      "titre": "Performance par Catégorie",
+      "indicateurs": [
+        {
+          "label": "CA Total Catégories",
+          "valeur": 2191187.25,
+          "unite": "TND",
+          "format": "currency"
+        },
+        {
+          "label": "Bénéfice Total",
+          "valeur": 547796.94,
+          "unite": "TND",
+          "format": "currency"
+        },
+        {
+          "label": "Top Catégorie (CA)",
+          "valeur": "Mobilier",
+          "unite": "",
+          "format": "text"
+        },
+        {
+          "label": "Top Catégorie (Quantité)",
+          "valeur": "Electronique",
+          "unite": "",
+          "format": "text"
+        }
+      ],
+      "revenue_par_categorie": {
+        "Mobilier": 962496.25,
+        "Electronique": 919233.25,
+        "Divers": 137291.5,
+        "Textile": 117093.25,
+        "Alimentaire": 42065.0,
+        "Fournitures": 13008.0
+      }
     }
   },
   "anomalies": {
-    "total": 2,
+    "total": 765,
     "details": [
       {
-        "dataset": "support",
-        "colonne": "resolution_hours",
-        "index": 4,
-        "valeur": 24.0,
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 13,
+        "valeur": 974.75,
         "type": "high"
       },
       {
-        "dataset": "support",
-        "colonne": "resolution_hours",
-        "index": 15,
-        "valeur": 36.0,
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 20,
+        "valeur": 916.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 31,
+        "valeur": 818.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 35,
+        "valeur": 953.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 37,
+        "valeur": 909.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 47,
+        "valeur": 696.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 48,
+        "valeur": 720.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 53,
+        "valeur": 1092.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 79,
+        "valeur": 1197.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 100,
+        "valeur": 1018.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 107,
+        "valeur": 1184.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 129,
+        "valeur": 862.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 130,
+        "valeur": 806.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 134,
+        "valeur": 989.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 135,
+        "valeur": 748.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 177,
+        "valeur": 1132.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 184,
+        "valeur": 1031.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 190,
+        "valeur": 816.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 192,
+        "valeur": 706.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 225,
+        "valeur": 802.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 239,
+        "valeur": 1007.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 250,
+        "valeur": 855.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 251,
+        "valeur": 720.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 256,
+        "valeur": 1171.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 285,
+        "valeur": 1152.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 287,
+        "valeur": 1136.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 299,
+        "valeur": 878.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 310,
+        "valeur": 751.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 321,
+        "valeur": 1003.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 327,
+        "valeur": 1172.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 334,
+        "valeur": 840.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 336,
+        "valeur": 766.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 350,
+        "valeur": 937.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 368,
+        "valeur": 816.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 376,
+        "valeur": 1197.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 380,
+        "valeur": 774.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 391,
+        "valeur": 811.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 400,
+        "valeur": 823.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 423,
+        "valeur": 1108.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 449,
+        "valeur": 1022.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 468,
+        "valeur": 699.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 469,
+        "valeur": 935.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 478,
+        "valeur": 1070.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 481,
+        "valeur": 1046.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 490,
+        "valeur": 909.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 501,
+        "valeur": 1078.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 507,
+        "valeur": 822.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 508,
+        "valeur": 1046.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 520,
+        "valeur": 789.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 535,
+        "valeur": 783.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 545,
+        "valeur": 847.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 572,
+        "valeur": 986.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 574,
+        "valeur": 1195.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 611,
+        "valeur": 923.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 626,
+        "valeur": 781.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 629,
+        "valeur": 757.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 643,
+        "valeur": 1066.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 669,
+        "valeur": 888.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 670,
+        "valeur": 873.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 683,
+        "valeur": 1014.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 774,
+        "valeur": 812.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 776,
+        "valeur": 991.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 814,
+        "valeur": 737.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 827,
+        "valeur": 937.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 832,
+        "valeur": 745.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 837,
+        "valeur": 751.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 846,
+        "valeur": 778.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 861,
+        "valeur": 739.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 868,
+        "valeur": 1073.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 885,
+        "valeur": 909.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 895,
+        "valeur": 1195.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 904,
+        "valeur": 827.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 905,
+        "valeur": 732.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 916,
+        "valeur": 718.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 938,
+        "valeur": 706.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 998,
+        "valeur": 699.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1025,
+        "valeur": 737.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1048,
+        "valeur": 929.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1050,
+        "valeur": 859.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1053,
+        "valeur": 885.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1055,
+        "valeur": 929.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1060,
+        "valeur": 810.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1065,
+        "valeur": 747.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1070,
+        "valeur": 1093.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1085,
+        "valeur": 796.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1095,
+        "valeur": 1171.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1142,
+        "valeur": 724.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1145,
+        "valeur": 913.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1149,
+        "valeur": 728.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1160,
+        "valeur": 757.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1191,
+        "valeur": 888.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1199,
+        "valeur": 945.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1205,
+        "valeur": 1092.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1238,
+        "valeur": 778.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1249,
+        "valeur": 990.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1279,
+        "valeur": 734.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1281,
+        "valeur": 780.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1287,
+        "valeur": 724.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1290,
+        "valeur": 1080.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1291,
+        "valeur": 729.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1292,
+        "valeur": 965.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1310,
+        "valeur": 737.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1318,
+        "valeur": 725.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1319,
+        "valeur": 754.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1323,
+        "valeur": 715.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1345,
+        "valeur": 867.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1353,
+        "valeur": 728.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1356,
+        "valeur": 728.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1362,
+        "valeur": 704.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1364,
+        "valeur": 783.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1367,
+        "valeur": 1128.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1371,
+        "valeur": 998.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1382,
+        "valeur": 846.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1386,
+        "valeur": 777.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1404,
+        "valeur": 698.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1463,
+        "valeur": 930.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1470,
+        "valeur": 1100.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1507,
+        "valeur": 1064.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1518,
+        "valeur": 931.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1522,
+        "valeur": 882.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1539,
+        "valeur": 1120.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1542,
+        "valeur": 1172.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1552,
+        "valeur": 850.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1557,
+        "valeur": 1134.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1559,
+        "valeur": 734.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1580,
+        "valeur": 1107.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1583,
+        "valeur": 976.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1585,
+        "valeur": 929.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1609,
+        "valeur": 1024.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1632,
+        "valeur": 1149.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1650,
+        "valeur": 825.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1656,
+        "valeur": 888.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1670,
+        "valeur": 1090.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1674,
+        "valeur": 1072.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1682,
+        "valeur": 757.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1705,
+        "valeur": 1062.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1713,
+        "valeur": 1166.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1714,
+        "valeur": 767.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1721,
+        "valeur": 970.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1731,
+        "valeur": 1166.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1734,
+        "valeur": 798.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1745,
+        "valeur": 1037.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1754,
+        "valeur": 890.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1804,
+        "valeur": 965.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1810,
+        "valeur": 1087.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1814,
+        "valeur": 694.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1836,
+        "valeur": 1044.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1857,
+        "valeur": 946.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1858,
+        "valeur": 979.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1865,
+        "valeur": 931.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1887,
+        "valeur": 813.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1901,
+        "valeur": 1089.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1911,
+        "valeur": 706.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1915,
+        "valeur": 1178.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1929,
+        "valeur": 857.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1930,
+        "valeur": 793.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1950,
+        "valeur": 837.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1960,
+        "valeur": 801.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1980,
+        "valeur": 939.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1981,
+        "valeur": 791.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "unit_price_tnd",
+        "index": 1985,
+        "valeur": 798.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 4,
+        "valeur": 3083.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 12,
+        "valeur": 3092.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 13,
+        "valeur": 6823.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 18,
+        "valeur": 2565.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 20,
+        "valeur": 7332.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 27,
+        "valeur": 4103.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 31,
+        "valeur": 7368.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 35,
+        "valeur": 6671.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 37,
+        "valeur": 2729.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 47,
+        "valeur": 4875.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 48,
+        "valeur": 2883.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 53,
+        "valeur": 5463.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 61,
+        "valeur": 4096.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 66,
+        "valeur": 4420.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 79,
+        "valeur": 5986.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 88,
+        "valeur": 4915.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 92,
+        "valeur": 4417.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 100,
+        "valeur": 4074.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 104,
+        "valeur": 2562.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 106,
+        "valeur": 3222.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 107,
+        "valeur": 4738.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 124,
+        "valeur": 6515.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 129,
+        "valeur": 5173.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 130,
+        "valeur": 4840.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 135,
+        "valeur": 7485.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 140,
+        "valeur": 5343.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 149,
+        "valeur": 2533.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 155,
+        "valeur": 3305.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 177,
+        "valeur": 9058.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 184,
+        "valeur": 10312.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 192,
+        "valeur": 7065.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 200,
+        "valeur": 5100.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 203,
+        "valeur": 3220.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 204,
+        "valeur": 4418.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 207,
+        "valeur": 5467.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 218,
+        "valeur": 3188.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 222,
+        "valeur": 5078.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 225,
+        "valeur": 8022.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 239,
+        "valeur": 4031.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 240,
+        "valeur": 6155.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 242,
+        "valeur": 4168.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 250,
+        "valeur": 4275.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 254,
+        "valeur": 2755.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 256,
+        "valeur": 3514.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 262,
+        "valeur": 6320.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 266,
+        "valeur": 2875.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 285,
+        "valeur": 9218.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 286,
+        "valeur": 2952.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 287,
+        "valeur": 9092.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 294,
+        "valeur": 4938.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 299,
+        "valeur": 4393.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 307,
+        "valeur": 3350.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 310,
+        "valeur": 7512.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 313,
+        "valeur": 2748.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 314,
+        "valeur": 5112.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 321,
+        "valeur": 5016.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 323,
+        "valeur": 2604.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 326,
+        "valeur": 4027.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 327,
+        "valeur": 10550.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 328,
+        "valeur": 3711.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 332,
+        "valeur": 5895.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 334,
+        "valeur": 5883.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 336,
+        "valeur": 6896.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 337,
+        "valeur": 3099.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 339,
+        "valeur": 3766.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 341,
+        "valeur": 4710.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 350,
+        "valeur": 5623.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 359,
+        "valeur": 3015.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 372,
+        "valeur": 5854.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 376,
+        "valeur": 5985.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 380,
+        "valeur": 3873.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 383,
+        "valeur": 2671.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 388,
+        "valeur": 2551.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 391,
+        "valeur": 3246.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 393,
+        "valeur": 3124.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 396,
+        "valeur": 3032.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 400,
+        "valeur": 3295.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 405,
+        "valeur": 5650.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 413,
+        "valeur": 3026.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 449,
+        "valeur": 9200.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 469,
+        "valeur": 5613.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 470,
+        "valeur": 3757.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 478,
+        "valeur": 10707.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 481,
+        "valeur": 4187.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 487,
+        "valeur": 2622.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 490,
+        "valeur": 6366.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 500,
+        "valeur": 4603.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 501,
+        "valeur": 4314.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 507,
+        "valeur": 4113.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 508,
+        "valeur": 3138.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 511,
+        "valeur": 2850.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 520,
+        "valeur": 7103.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 535,
+        "valeur": 4701.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 545,
+        "valeur": 5082.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 562,
+        "valeur": 5182.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 574,
+        "valeur": 8365.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 581,
+        "valeur": 3085.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 584,
+        "valeur": 5532.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 594,
+        "valeur": 2830.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 601,
+        "valeur": 5307.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 607,
+        "valeur": 5830.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 611,
+        "valeur": 7390.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 615,
+        "valeur": 3209.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 621,
+        "valeur": 3214.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 629,
+        "valeur": 6813.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 643,
+        "valeur": 3198.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 669,
+        "valeur": 7108.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 670,
+        "valeur": 6986.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 675,
+        "valeur": 3390.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 683,
+        "valeur": 6088.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 703,
+        "valeur": 3156.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 709,
+        "valeur": 3472.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 715,
+        "valeur": 4908.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 720,
+        "valeur": 2860.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 722,
+        "valeur": 3910.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 735,
+        "valeur": 2770.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 744,
+        "valeur": 3822.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 754,
+        "valeur": 3980.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 756,
+        "valeur": 3285.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 758,
+        "valeur": 3496.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 764,
+        "valeur": 4012.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 767,
+        "valeur": 2798.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 774,
+        "valeur": 8120.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 776,
+        "valeur": 4955.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 784,
+        "valeur": 2887.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 794,
+        "valeur": 4587.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 827,
+        "valeur": 7500.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 832,
+        "valeur": 6709.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 837,
+        "valeur": 6759.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 842,
+        "valeur": 2614.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 845,
+        "valeur": 3472.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 868,
+        "valeur": 7512.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 885,
+        "valeur": 6364.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 886,
+        "valeur": 2769.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 887,
+        "valeur": 2684.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 891,
+        "valeur": 2902.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 895,
+        "valeur": 3585.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 902,
+        "valeur": 4787.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 905,
+        "valeur": 7327.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 921,
+        "valeur": 2550.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 947,
+        "valeur": 3435.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 968,
+        "valeur": 3674.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 974,
+        "valeur": 6912.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 983,
+        "valeur": 3372.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 998,
+        "valeur": 6293.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1005,
+        "valeur": 4190.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1006,
+        "valeur": 3020.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1017,
+        "valeur": 5267.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1024,
+        "valeur": 3746.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1025,
+        "valeur": 4426.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1026,
+        "valeur": 3757.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1046,
+        "valeur": 3560.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1048,
+        "valeur": 2787.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1050,
+        "valeur": 8590.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1053,
+        "valeur": 2657.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1055,
+        "valeur": 4648.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1060,
+        "valeur": 8105.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1065,
+        "valeur": 5982.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1070,
+        "valeur": 9843.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1081,
+        "valeur": 3100.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1085,
+        "valeur": 5577.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1112,
+        "valeur": 4338.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1119,
+        "valeur": 3450.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1121,
+        "valeur": 2805.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1132,
+        "valeur": 2862.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1133,
+        "valeur": 4659.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1141,
+        "valeur": 4988.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1142,
+        "valeur": 2898.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1145,
+        "valeur": 4567.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1160,
+        "valeur": 5299.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1182,
+        "valeur": 2739.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1186,
+        "valeur": 3052.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1191,
+        "valeur": 2664.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1194,
+        "valeur": 5163.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1196,
+        "valeur": 2901.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1199,
+        "valeur": 5671.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1205,
+        "valeur": 7644.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1224,
+        "valeur": 3780.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1249,
+        "valeur": 4951.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1250,
+        "valeur": 6255.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1263,
+        "valeur": 3291.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1277,
+        "valeur": 2675.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1281,
+        "valeur": 3123.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1287,
+        "valeur": 7247.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1290,
+        "valeur": 3240.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1292,
+        "valeur": 4828.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1304,
+        "valeur": 4648.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1308,
+        "valeur": 3006.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1311,
+        "valeur": 2932.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1312,
+        "valeur": 4850.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1317,
+        "valeur": 4817.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1319,
+        "valeur": 6036.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1323,
+        "valeur": 7157.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1336,
+        "valeur": 3760.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1345,
+        "valeur": 2601.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1353,
+        "valeur": 2913.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1355,
+        "valeur": 4712.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1356,
+        "valeur": 6558.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1362,
+        "valeur": 3520.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1364,
+        "valeur": 5481.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1367,
+        "valeur": 3386.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1371,
+        "valeur": 2995.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1382,
+        "valeur": 5080.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1386,
+        "valeur": 7772.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1397,
+        "valeur": 4410.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1398,
+        "valeur": 4720.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1404,
+        "valeur": 4889.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1409,
+        "valeur": 3966.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1412,
+        "valeur": 2679.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1438,
+        "valeur": 3490.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1455,
+        "valeur": 2891.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1463,
+        "valeur": 5584.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1470,
+        "valeur": 3302.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1476,
+        "valeur": 3436.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1490,
+        "valeur": 3642.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1501,
+        "valeur": 6855.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1517,
+        "valeur": 3757.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1518,
+        "valeur": 3725.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1522,
+        "valeur": 8827.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1539,
+        "valeur": 8960.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1557,
+        "valeur": 4537.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1559,
+        "valeur": 3672.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1563,
+        "valeur": 4459.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1564,
+        "valeur": 3273.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1565,
+        "valeur": 4329.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1578,
+        "valeur": 3933.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1579,
+        "valeur": 3368.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1580,
+        "valeur": 5536.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1583,
+        "valeur": 7812.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1585,
+        "valeur": 4647.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1598,
+        "valeur": 4068.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1608,
+        "valeur": 3092.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1609,
+        "valeur": 4096.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1620,
+        "valeur": 2649.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1630,
+        "valeur": 2665.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1632,
+        "valeur": 10343.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1648,
+        "valeur": 2664.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1650,
+        "valeur": 5776.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1655,
+        "valeur": 2828.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1656,
+        "valeur": 7992.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1670,
+        "valeur": 5452.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1674,
+        "valeur": 7505.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1677,
+        "valeur": 3046.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1683,
+        "valeur": 3450.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1687,
+        "valeur": 2572.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1700,
+        "valeur": 2935.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1704,
+        "valeur": 5136.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1705,
+        "valeur": 5311.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1707,
+        "valeur": 3588.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1712,
+        "valeur": 3970.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1713,
+        "valeur": 11665.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1715,
+        "valeur": 4781.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1721,
+        "valeur": 9700.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1731,
+        "valeur": 11660.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1732,
+        "valeur": 4202.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1734,
+        "valeur": 7982.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1744,
+        "valeur": 2775.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1745,
+        "valeur": 4150.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1746,
+        "valeur": 5636.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1754,
+        "valeur": 8902.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1755,
+        "valeur": 3363.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1801,
+        "valeur": 3966.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1804,
+        "valeur": 4828.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1808,
+        "valeur": 3153.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1810,
+        "valeur": 3262.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1811,
+        "valeur": 4086.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1814,
+        "valeur": 4167.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1828,
+        "valeur": 2653.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1836,
+        "valeur": 8352.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1844,
+        "valeur": 2610.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1847,
+        "valeur": 4752.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1853,
+        "valeur": 3985.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1855,
+        "valeur": 4277.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1858,
+        "valeur": 2937.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1865,
+        "valeur": 8381.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1873,
+        "valeur": 3661.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1887,
+        "valeur": 7317.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1901,
+        "valeur": 8718.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1903,
+        "valeur": 3453.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1911,
+        "valeur": 3532.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1915,
+        "valeur": 8249.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1920,
+        "valeur": 5166.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1927,
+        "valeur": 3532.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1929,
+        "valeur": 8570.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1930,
+        "valeur": 6346.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1931,
+        "valeur": 2700.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1942,
+        "valeur": 4174.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1943,
+        "valeur": 2983.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1945,
+        "valeur": 2731.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1950,
+        "valeur": 4186.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1957,
+        "valeur": 4410.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1960,
+        "valeur": 4006.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1963,
+        "valeur": 2902.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1972,
+        "valeur": 2796.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1980,
+        "valeur": 4696.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1981,
+        "valeur": 4750.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1985,
+        "valeur": 3990.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1998,
+        "valeur": 3429.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "revenue_tnd",
+        "index": 1999,
+        "valeur": 3631.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 4,
+        "valeur": 770.94,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 12,
+        "valeur": 773.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 13,
+        "valeur": 1705.81,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 18,
+        "valeur": 641.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 20,
+        "valeur": 1833.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 27,
+        "valeur": 1025.94,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 31,
+        "valeur": 1842.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 35,
+        "valeur": 1667.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 37,
+        "valeur": 682.31,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 47,
+        "valeur": 1218.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 48,
+        "valeur": 720.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 53,
+        "valeur": 1365.94,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 61,
+        "valeur": 1024.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 66,
+        "valeur": 1105.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 79,
+        "valeur": 1496.56,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 88,
+        "valeur": 1228.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 92,
+        "valeur": 1104.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 100,
+        "valeur": 1018.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 104,
+        "valeur": 640.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 106,
+        "valeur": 805.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 107,
+        "valeur": 1184.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 124,
+        "valeur": 1628.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 129,
+        "valeur": 1293.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 130,
+        "valeur": 1210.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 135,
+        "valeur": 1871.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 140,
+        "valeur": 1335.94,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 149,
+        "valeur": 633.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 155,
+        "valeur": 826.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 177,
+        "valeur": 2264.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 184,
+        "valeur": 2578.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 192,
+        "valeur": 1766.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 200,
+        "valeur": 1275.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 203,
+        "valeur": 805.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 204,
+        "valeur": 1104.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 207,
+        "valeur": 1366.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 218,
+        "valeur": 797.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 222,
+        "valeur": 1269.56,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 225,
+        "valeur": 2005.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 239,
+        "valeur": 1007.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 240,
+        "valeur": 1538.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 242,
+        "valeur": 1042.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 250,
+        "valeur": 1068.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 254,
+        "valeur": 688.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 256,
+        "valeur": 878.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 262,
+        "valeur": 1580.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 266,
+        "valeur": 718.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 285,
+        "valeur": 2304.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 286,
+        "valeur": 738.06,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 287,
+        "valeur": 2273.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 294,
+        "valeur": 1234.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 299,
+        "valeur": 1098.44,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 307,
+        "valeur": 837.56,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 310,
+        "valeur": 1878.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 313,
+        "valeur": 687.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 314,
+        "valeur": 1278.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 321,
+        "valeur": 1254.06,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 323,
+        "valeur": 651.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 326,
+        "valeur": 1006.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 327,
+        "valeur": 2637.56,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 328,
+        "valeur": 927.94,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 332,
+        "valeur": 1473.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 334,
+        "valeur": 1470.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 336,
+        "valeur": 1724.06,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 337,
+        "valeur": 774.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 339,
+        "valeur": 941.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 341,
+        "valeur": 1177.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 350,
+        "valeur": 1405.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 359,
+        "valeur": 753.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 372,
+        "valeur": 1463.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 376,
+        "valeur": 1496.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 380,
+        "valeur": 968.44,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 383,
+        "valeur": 667.81,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 388,
+        "valeur": 637.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 391,
+        "valeur": 811.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 393,
+        "valeur": 781.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 396,
+        "valeur": 758.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 400,
+        "valeur": 823.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 405,
+        "valeur": 1412.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 413,
+        "valeur": 756.56,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 449,
+        "valeur": 2300.06,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 469,
+        "valeur": 1403.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 470,
+        "valeur": 939.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 478,
+        "valeur": 2676.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 481,
+        "valeur": 1046.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 487,
+        "valeur": 655.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 490,
+        "valeur": 1591.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 500,
+        "valeur": 1150.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 501,
+        "valeur": 1078.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 507,
+        "valeur": 1028.44,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 508,
+        "valeur": 784.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 511,
+        "valeur": 712.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 520,
+        "valeur": 1775.81,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 535,
+        "valeur": 1175.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 545,
+        "valeur": 1270.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 562,
+        "valeur": 1295.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 574,
+        "valeur": 2091.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 581,
+        "valeur": 771.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 584,
+        "valeur": 1383.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 594,
+        "valeur": 707.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 601,
+        "valeur": 1326.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 607,
+        "valeur": 1457.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 611,
+        "valeur": 1847.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 615,
+        "valeur": 802.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 621,
+        "valeur": 803.69,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 629,
+        "valeur": 1703.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 643,
+        "valeur": 799.69,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 669,
+        "valeur": 1777.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 670,
+        "valeur": 1746.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 675,
+        "valeur": 847.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 683,
+        "valeur": 1522.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 703,
+        "valeur": 789.06,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 709,
+        "valeur": 868.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 715,
+        "valeur": 1227.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 720,
+        "valeur": 715.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 722,
+        "valeur": 977.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 735,
+        "valeur": 692.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 744,
+        "valeur": 955.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 754,
+        "valeur": 995.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 756,
+        "valeur": 821.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 758,
+        "valeur": 874.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 764,
+        "valeur": 1003.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 767,
+        "valeur": 699.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 774,
+        "valeur": 2030.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 776,
+        "valeur": 1238.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 784,
+        "valeur": 721.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 794,
+        "valeur": 1146.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 827,
+        "valeur": 1875.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 832,
+        "valeur": 1677.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 837,
+        "valeur": 1689.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 842,
+        "valeur": 653.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 845,
+        "valeur": 868.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 868,
+        "valeur": 1878.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 885,
+        "valeur": 1591.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 886,
+        "valeur": 692.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 887,
+        "valeur": 671.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 891,
+        "valeur": 725.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 895,
+        "valeur": 896.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 902,
+        "valeur": 1196.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 905,
+        "valeur": 1831.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 921,
+        "valeur": 637.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 947,
+        "valeur": 858.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 968,
+        "valeur": 918.56,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 974,
+        "valeur": 1728.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 983,
+        "valeur": 843.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 998,
+        "valeur": 1573.31,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1005,
+        "valeur": 1047.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1006,
+        "valeur": 755.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1017,
+        "valeur": 1316.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1024,
+        "valeur": 936.69,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1025,
+        "valeur": 1106.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1026,
+        "valeur": 939.31,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1046,
+        "valeur": 890.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1048,
+        "valeur": 696.94,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1050,
+        "valeur": 2147.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1053,
+        "valeur": 664.31,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1055,
+        "valeur": 1162.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1060,
+        "valeur": 2026.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1065,
+        "valeur": 1495.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1070,
+        "valeur": 2460.94,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1081,
+        "valeur": 775.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1085,
+        "valeur": 1394.31,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1112,
+        "valeur": 1084.56,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1119,
+        "valeur": 862.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1121,
+        "valeur": 701.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1132,
+        "valeur": 715.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1133,
+        "valeur": 1164.94,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1141,
+        "valeur": 1247.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1142,
+        "valeur": 724.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1145,
+        "valeur": 1141.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1160,
+        "valeur": 1324.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1182,
+        "valeur": 684.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1186,
+        "valeur": 763.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1191,
+        "valeur": 666.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1194,
+        "valeur": 1290.94,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1196,
+        "valeur": 725.31,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1199,
+        "valeur": 1417.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1205,
+        "valeur": 1911.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1224,
+        "valeur": 945.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1249,
+        "valeur": 1237.81,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1250,
+        "valeur": 1563.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1263,
+        "valeur": 822.81,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1277,
+        "valeur": 668.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1281,
+        "valeur": 780.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1287,
+        "valeur": 1811.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1290,
+        "valeur": 810.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1292,
+        "valeur": 1207.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1304,
+        "valeur": 1162.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1308,
+        "valeur": 751.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1311,
+        "valeur": 733.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1312,
+        "valeur": 1212.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1317,
+        "valeur": 1204.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1319,
+        "valeur": 1509.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1323,
+        "valeur": 1789.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1336,
+        "valeur": 940.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1345,
+        "valeur": 650.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1353,
+        "valeur": 728.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1355,
+        "valeur": 1178.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1356,
+        "valeur": 1639.69,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1362,
+        "valeur": 880.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1364,
+        "valeur": 1370.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1367,
+        "valeur": 846.56,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1371,
+        "valeur": 748.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1382,
+        "valeur": 1270.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1386,
+        "valeur": 1943.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1397,
+        "valeur": 1102.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1398,
+        "valeur": 1180.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1404,
+        "valeur": 1222.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1409,
+        "valeur": 991.69,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1412,
+        "valeur": 669.81,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1438,
+        "valeur": 872.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1455,
+        "valeur": 722.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1463,
+        "valeur": 1396.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1470,
+        "valeur": 825.56,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1476,
+        "valeur": 859.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1490,
+        "valeur": 910.69,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1501,
+        "valeur": 1713.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1517,
+        "valeur": 939.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1518,
+        "valeur": 931.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1522,
+        "valeur": 2206.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1539,
+        "valeur": 2240.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1557,
+        "valeur": 1134.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1559,
+        "valeur": 918.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1563,
+        "valeur": 1114.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1564,
+        "valeur": 818.44,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1565,
+        "valeur": 1082.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1578,
+        "valeur": 983.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1579,
+        "valeur": 842.06,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1580,
+        "valeur": 1384.06,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1583,
+        "valeur": 1953.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1585,
+        "valeur": 1161.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1598,
+        "valeur": 1017.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1608,
+        "valeur": 773.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1609,
+        "valeur": 1024.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1620,
+        "valeur": 662.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1630,
+        "valeur": 666.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1632,
+        "valeur": 2585.81,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1648,
+        "valeur": 666.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1650,
+        "valeur": 1444.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1655,
+        "valeur": 707.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1656,
+        "valeur": 1998.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1670,
+        "valeur": 1363.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1674,
+        "valeur": 1876.44,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1677,
+        "valeur": 761.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1683,
+        "valeur": 862.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1687,
+        "valeur": 643.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1700,
+        "valeur": 733.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1704,
+        "valeur": 1284.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1705,
+        "valeur": 1327.81,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1707,
+        "valeur": 897.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1712,
+        "valeur": 992.69,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1713,
+        "valeur": 2916.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1715,
+        "valeur": 1195.31,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1721,
+        "valeur": 2425.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1731,
+        "valeur": 2915.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1732,
+        "valeur": 1050.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1734,
+        "valeur": 1995.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1744,
+        "valeur": 693.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1745,
+        "valeur": 1037.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1746,
+        "valeur": 1409.06,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1754,
+        "valeur": 2225.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1755,
+        "valeur": 840.94,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1801,
+        "valeur": 991.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1804,
+        "valeur": 1207.19,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1808,
+        "valeur": 788.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1810,
+        "valeur": 815.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1811,
+        "valeur": 1021.56,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1814,
+        "valeur": 1041.75,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1828,
+        "valeur": 663.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1836,
+        "valeur": 2088.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1844,
+        "valeur": 652.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1847,
+        "valeur": 1188.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1853,
+        "valeur": 996.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1855,
+        "valeur": 1069.31,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1858,
+        "valeur": 734.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1865,
+        "valeur": 2095.31,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1873,
+        "valeur": 915.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1887,
+        "valeur": 1829.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1901,
+        "valeur": 2179.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1903,
+        "valeur": 863.44,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1911,
+        "valeur": 883.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1915,
+        "valeur": 2062.38,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1920,
+        "valeur": 1291.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1927,
+        "valeur": 883.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1929,
+        "valeur": 2142.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1930,
+        "valeur": 1586.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1931,
+        "valeur": 675.0,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1942,
+        "valeur": 1043.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1943,
+        "valeur": 745.88,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1945,
+        "valeur": 682.94,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1950,
+        "valeur": 1046.56,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1957,
+        "valeur": 1102.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1960,
+        "valeur": 1001.56,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1963,
+        "valeur": 725.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1972,
+        "valeur": 699.12,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1980,
+        "valeur": 1174.06,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1981,
+        "valeur": 1187.62,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1985,
+        "valeur": 997.5,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1998,
+        "valeur": 857.25,
+        "type": "high"
+      },
+      {
+        "dataset": "ventes",
+        "colonne": "estimated_profit",
+        "index": 1999,
+        "valeur": 907.88,
+        "type": "high"
+      },
+      {
+        "dataset": "regions",
+        "colonne": "ca_total",
+        "index": 0,
+        "valeur": 598464.0,
+        "type": "high"
+      },
+      {
+        "dataset": "regions",
+        "colonne": "profit_total",
+        "index": 0,
+        "valeur": 149615.96,
+        "type": "high"
+      },
+      {
+        "dataset": "regions",
+        "colonne": "nb_transactions",
+        "index": 0,
+        "valeur": 506.0,
+        "type": "high"
+      },
+      {
+        "dataset": "regions",
+        "colonne": "panier_moyen",
+        "index": 5,
+        "valeur": 1468.2,
+        "type": "high"
+      },
+      {
+        "dataset": "kpis",
+        "colonne": "valeur",
+        "index": 0,
+        "valeur": 2191187.25,
+        "type": "high"
+      },
+      {
+        "dataset": "kpis",
+        "colonne": "valeur",
+        "index": 1,
+        "valeur": 547796.94,
         "type": "high"
       }
     ]
   },
-  "interpretation": "Insight 1: Les données fournies ne contiennent pas d'information sur les produits ou leurs marges individuelles. Action 1: Structurer le reporting pour inclure la marge par produit ou gamme. Action 2: Extraire les données des ventes et coûts depuis le système de facturation. Action 3: Catégoriser les produits en analysant leur contribution au bénéfice total de 516k TND. Objectif: Établir un classement des 5 principaux produits par marge sous 30 jours.",
+  "interpretation": "Insight 1: Une seule région génère 27% du CA et 27% du profit. Insight 2: Le panier moyen de 1468 TND dans cette région est très élevé. Insight 3: Le prix unitaire des produits y est anormalement haut, dépassant 900 TND. Action 1: Analyser la composition des ventes dans la région performante pour répliquer le mix produits. Action 2: Segmenter la clientèle de cette région pour cibler des promotions sur les produits à marge plus faible.",
   "recommendations": [
     {
       "priorite": 1,
-      "titre": "Structurer le reporting des marges",
-      "action": "Extraire les données de ventes et de coûts depuis le système de facturation. Créer un tableau de bord simple (Excel ou Power BI) pour calculer la marge unitaire et la contribution au bénéfice total de 516k TND pour chaque produit. Catégoriser les produits (ex: étoile, vache à lait, poids mort) en fonction de leur marge et volume.",
-      "impact": "Identification des 20% de produits générant 80% de la marge. Permet de concentrer les efforts sur les produits rentables et de réviser la gamme. Objectif : classer les 5 principaux produits par marge sous 30 jours.",
-      "source": "Analyse interne de l'entreprise (Insight 1)"
+      "titre": "Audit & Réplication du Mix Produits Performant",
+      "action": "Analyser en détail la composition des ventes de la région générant 27% du CA. Identifier les 3-5 produits/services les plus vendus et leurs caractéristiques (prix, marge, profil client). Créer une fiche de référence et lancer un plan de test pour proposer ce mix spécifique dans 2 autres régions similaires (même profil démographique/économique) dans un délai de 30 jours.",
+      "impact": "Augmentation potentielle du CA de 10-15% dans les régions ciblées en 6 mois en répliquant partiellement la performance. Réduction du risque de dépendance à une seule zone.",
+      "source": "Insight 1 & Action 1 de l'analyse ; Bonnes pratiques de segmentation marché - guides tunisiens"
     },
     {
       "priorite": 2,
-      "titre": "Calculer et optimiser le CAC",
-      "action": "Mesurer le Coût d'Acquisition Client (CAC) : diviser le total des dépenses marketing sur les 3 derniers mois par le nombre de nouveaux clients acquis sur la même période. Comparer ce CAC à la marge moyenne par client sur sa durée de vie. Identifier les canaux marketing les plus coûteux et les moins performants.",
-      "impact": "Réduction du gaspillage marketing. Réallocation du budget vers les canaux efficaces. Objectif chiffré : réduire le CAC de 15-20% dans les 60 jours en ajustant les campagnes.",
-      "source": "guide_gestion_entreprises_tunisiennes.md (2.3 ROI Marketing) & guide_interpretation_kpis_tunisie.md (KPI CAC)"
+      "titre": "Investigation du Prix Anormal & Segmentation Client",
+      "action": "Auditer immédiatement les factures et les conditions de vente dans la région performante pour comprendre la raison du prix unitaire >900 TND (promotions groupées, contrats B2B, gamme premium ?). En parallèle, segmenter la base clients de cette région (B2B vs B2C, taille entreprise, secteur) pour identifier les profils à fort panier moyen. Cibler ces profils dans d'autres régions via du marketing direct ou partenariats.",
+      "impact": "Protection de la marge élevée (27% du profit) et identification d'un segment client à haute valeur à dupliquer. Potentiel d'augmentation du panier moyen dans d'autres régions de 10-20%.",
+      "source": "Insight 2, Insight 3 & Action 2 de l'analyse"
     },
     {
       "priorite": 3,
-      "titre": "Lancer un programme de parrainage",
-      "action": "Créer un programme simple de fidélité et de parrainage. Offrir une prime (réduction, cadeau, cashback) au client existant et au nouveau client parrainé. Communiquer le programme via WhatsApp Business, emailing et affichage en point de vente. Former le service client à le promouvoir.",
-      "impact": "Augmentation du taux de conversion grâce à la confiance générée par la recommandation. Réduction du CAC. Objectif : générer 15-20% des nouvelles acquisitions via le parrainage dans les 3 mois.",
-      "source": "guide_gestion_entreprises_tunisiennes.md (2.2 Acquisition de Clients - Programmes de parrainage)"
+      "titre": "Optimisation Urgente du CAC et de la Conversion",
+      "action": "Calculer immédiatement le Coût d'Acquisition Client (CAC) par canal marketing (Facebook Ads, Google, vendeurs...). Comparer le CAC à la marge moyenne par client sur la première année. Réallouer le budget des canaux où CAC > marge vers les canaux les plus performants. Mettre en place des tests A/B sur les landing pages et le parcours d'achat pour améliorer le taux de conversion.",
+      "impact": "Réduction du CAC de 15-25% sous 3 mois. Amélioration du ROI marketing et libération de budget pour des actions plus ciblées.",
+      "source": "Problème identifié 'Taux de conversion faible' ; [guide_gestion_entreprises_tunisiennes.md] 2.3 Optimisation du ROI Marketing ; [guide_interpretation_kpis_tunisie.md] KPI CAC"
     },
     {
       "priorite": 4,
-      "titre": "Audit et recentrage du marketing digital",
-      "action": "Analyser les performances des campagnes Facebook/Instagram (portée, engagement, conversions). Vérifier le ciblage (âge, localisation, centres d'intérêt) et l'adéquation des créatifs avec le public tunisien. Tester des formats vidéo courts et des offres promotionnelles claires. Allouer un petit budget pour tester des publicités Google Search sur des mots-clés transactionnels.",
-      "impact": "Amélioration du taux de conversion marketing (actuellement faible). Augmentation du trafic qualifié. Objectif : augmenter le taux de conversion des campagnes de 25% en 45 jours.",
-      "source": "guide_gestion_entreprises_tunisiennes.md (2.1 Marketing Digital - Contexte tunisien)"
+      "titre": "Campagne Ciblée 'Région Performante' sur Réseaux Sociaux",
+      "action": "Lancer une campagne Facebook/Instagram Ads ciblant les caractéristiques démographiques et centres d'intérêt identifiés dans la segmentation de la région performante (Priorité 2), mais dans d'autres gouvernorats. Utiliser des témoignages clients ou des études de cas locaux de cette région comme argument principal. Suivre le CAC et le panier moyen de cette campagne spécifiquement.",
+      "impact": "Acquisition de clients à haute valeur dans de nouvelles zones. Augmentation de la notoriété régionale. Mesure précise de l'efficacité du ciblage par profil.",
+      "source": "[guide_gestion_entreprises_tunisiennes.md] 2.1 Marketing Digital (8M d'utilisateurs FB) ; Synergie avec les actions de segmentation"
     },
     {
       "priorite": 5,
-      "titre": "Formaliser le tableau de bord KPI",
-      "action": "Créer un tableau de bord hebdomadaire simple avec 5 KPIs maximum : Chiffre d'affaires, Marge brute, CAC, Taux de conversion marketing, Satisfaction client (NPS ou avis Google/Facebook). Définir des objectifs et des seuils d'alerte pour chaque KPI. Revue hebdomadaire de 30 min avec l'équipe concernée.",
-      "impact": "Pilotage plus réactif de l'entreprise. Détection rapide des problèmes. Prise de décision basée sur des données. Amélioration de la performance globale sur le trimestre.",
-      "source": "guide_interpretation_kpis_tunisie.md (Cadre général des KPIs) & Bonnes pratiques de gestion"
+      "titre": "Formation Vendeurs & Alignement des Promotions",
+      "action": "Former l'équipe commerciale (hors région performante) aux techniques de vente croisée et de valorisation qui fonctionnent dans la région star, basée sur l'audit (Priorité 1). Revoir la stratégie promotionnelle nationale : arrêter les promotions uniformes et créer des offres packagées inspirées du panier moyen de 1468 TND pour les cibles identifiées, en mettant en avant la valeur plutôt que la réduction.",
+      "impact": "Amélioration de l'efficacité commerciale et harmonisation des pratiques. Stabilisation ou augmentation des prix moyens et des marges sur le long terme.",
+      "source": "Bonnes pratiques de gestion commerciale ; Consolidation des actions précédentes pour un impact durable"
     }
   ],
   "sources_rag": [
     {
       "document": "guide_gestion_entreprises_tunisiennes.md",
       "section": "2. Stratégies Marketing Adaptées au Marché Tunisien",
-      "pertinence": 0.7489
+      "pertinence": 0.7503
     },
     {
       "document": "guide_interpretation_kpis_tunisie.md",
@@ -176,7 +5523,7 @@
     }
   ],
   "metadata": {
-    "date_generation": "2026-05-07T18:14:41.359502",
+    "date_generation": "2026-05-13T20:22:11.702661",
     "version": "1.0",
     "pipeline_errors": [],
     "nombre_sources": 2

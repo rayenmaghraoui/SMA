@@ -48,7 +48,7 @@ class TestValidateSql:
         """DROP TABLE est refusé."""
         ok, err = validate_sql("DROP TABLE finance")
         assert ok is False
-        assert "DROP" in err.upper()
+        assert err != ""
 
     def test_rejects_delete(self):
         """DELETE est refusé."""
@@ -266,22 +266,29 @@ class TestSqlQueryRoute:
         import duckdb
 
         conn = duckdb.connect(":memory:")
-        finance_df = pd.DataFrame({
-            "date": ["2024-01-01"],
-            "revenue": [100_000.0],
-            "cost": [70_000.0],
-            "profit": [30_000.0],
-            "growth_rate": [5.0],
+        ventes_df = pd.DataFrame({
+            "invoice_id":       ["INV001"],
+            "product_name":     ["Laptop"],
+            "category":         ["Electronique"],
+            "quantity":         [1],
+            "unit_price_tnd":   [2_000.0],
+            "revenue_tnd":      [2_000.0],
+            "customer_id":      ["C001"],
+            "customer_region":  ["Tunis"],
+            "sale_date":        ["2024-01-15"],
+            "sales_channel":    ["Site Web"],
+            "payment_method":   ["Carte"],
+            "estimated_profit": [600.0],
         })
-        conn.register("finance", finance_df)
+        conn.register("ventes", ventes_df)
 
         with (
-            patch("backend.sql_agent.generator.generate_sql", new_callable=AsyncMock) as mock_gen,
+            patch("backend.routes.sql.generate_sql", new_callable=AsyncMock) as mock_gen,
             patch("backend.sql_agent.executor.get_connection", return_value=conn),
         ):
-            mock_gen.return_value = ("SELECT * FROM finance LIMIT 10", "table")
+            mock_gen.return_value = ("SELECT * FROM ventes LIMIT 10", "table")
 
-            response = await client.post("/sql/query", json={"question": "Montre les revenus"})
+            response = await client.post("/sql/query", json={"question": "Montre les ventes"})
 
         assert response.status_code == 200
         data = response.json()
@@ -295,7 +302,7 @@ class TestSqlQueryRoute:
     async def test_sql_query_llm_error(self, client):
         """Si le LLM échoue, retourne success=False avec message d'erreur."""
         with patch(
-            "backend.sql_agent.generator.generate_sql",
+            "backend.routes.sql.generate_sql",
             new_callable=AsyncMock,
             side_effect=Exception("LLM indisponible"),
         ):

@@ -57,12 +57,19 @@ const SqlChart = ({ chartData }) => {
   if (type === 'line') {
     return (
       <ResponsiveContainer width="100%" height={280}>
-        <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 60 }}>
+        <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 90 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#164e63" />
-          <XAxis dataKey={x_key} tick={{ fill: '#94a3b8', fontSize: 11 }} angle={-30} textAnchor="end" />
-          <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
+          <XAxis
+            dataKey={x_key}
+            tick={{ fill: '#94a3b8', fontSize: 11 }}
+            angle={-45}
+            textAnchor="end"
+            interval={0}
+            tickFormatter={(v) => String(v).length > 15 ? String(v).slice(0, 14) + '…' : v}
+          />
+          <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} tickFormatter={(v) => v >= 1000000 ? `${(v/1000000).toFixed(1)}M` : v >= 1000 ? `${(v/1000).toFixed(0)}k` : v} />
           <Tooltip contentStyle={{ background: '#0c1a2e', border: '1px solid #0e7490' }} />
-          <Legend />
+          <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: 8, color: '#94a3b8' }} />
           {y_keys.map((key, i) => (
             <Line key={key} type="monotone" dataKey={key} stroke={COLORS[i % COLORS.length]} dot={false} />
           ))}
@@ -87,13 +94,23 @@ const SqlChart = ({ chartData }) => {
 
   // Bar chart par défaut
   return (
-    <ResponsiveContainer width="100%" height={280}>
-      <BarChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 60 }}>
+    <ResponsiveContainer width="100%" height={360}>
+      <BarChart data={data} margin={{ top: 10, right: 20, left: 10, bottom: 90 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="#164e63" />
-        <XAxis dataKey={x_key} tick={{ fill: '#94a3b8', fontSize: 11 }} angle={-30} textAnchor="end" />
-        <YAxis tick={{ fill: '#94a3b8', fontSize: 11 }} />
+        <XAxis
+          dataKey={x_key}
+          tick={{ fill: '#94a3b8', fontSize: 11 }}
+          angle={-45}
+          textAnchor="end"
+          interval={0}
+          tickFormatter={(v) => String(v).length > 15 ? String(v).slice(0, 14) + '…' : v}
+        />
+        <YAxis
+          tick={{ fill: '#94a3b8', fontSize: 11 }}
+          tickFormatter={(v) => v >= 1000000 ? `${(v/1000000).toFixed(1)}M` : v >= 1000 ? `${(v/1000).toFixed(0)}k` : v}
+        />
         <Tooltip contentStyle={{ background: '#0c1a2e', border: '1px solid #0e7490' }} />
-        <Legend />
+        <Legend verticalAlign="top" wrapperStyle={{ paddingBottom: 8, color: '#94a3b8' }} />
         {y_keys.map((key, i) => (
           <Bar key={key} dataKey={key} fill={COLORS[i % COLORS.length]} radius={[3, 3, 0, 0]} />
         ))}
