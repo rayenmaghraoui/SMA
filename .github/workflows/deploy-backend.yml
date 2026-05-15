@@ -86,11 +86,18 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-      # ── 6. Déploiement sur Azure Web App ──────────────────────────────
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+      # ── 6. Login Azure via Service Principal ──────────────────────────
+      - name: Login to Azure
+        uses: azure/login@v2
         with:
-          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          images: '${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest'
-          os-type: linux
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # ── 7. Déploiement — mise à jour image container ──────────────────
+      - name: Deploy container to Azure Web App
+        run: |
+          az webapp config container set \
+            --name ${{ secrets.AZURE_WEBAPP_NAME }} \
+            --resource-group sma-pfe-rg \
+            --container-image-name ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
+            --container-registry-url https://${{ env.REGISTRY }}
+          az webapp restart --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group sma-pfe-rg
