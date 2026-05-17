@@ -1,5 +1,5 @@
 # ============================================================
-# Deploy Backend — Azure Web App for Containers (RECOMMANDÉ)
+# Deploy Backend — Azure Web App for Containers
 #
 # Ce workflow :
 #   1. Build l'image Docker du backend
@@ -12,11 +12,9 @@
 #   Functions. Azure Web App for Containers n'a pas ces limites.
 #
 # SECRETS GitHub à configurer (Settings → Secrets → Actions) :
-#   AZURE_WEBAPP_PUBLISH_PROFILE  → profil de publication du Web App
-#   AZURE_WEBAPP_NAME             → nom de votre Web App Azure
-#
-# VARIABLES GitHub à configurer :
-#   AZURE_WEBAPP_NAME (optionnel, si non mis en secret)
+#   AZURE_CREDENTIALS   → JSON du Service Principal (az ad sp create-for-rbac --sdk-auth)
+#   AZURE_WEBAPP_NAME   → nom du Web App Azure (sma-backend-8361)
+#   GHCR_PAT            → GitHub PAT avec read:packages (pour que Azure pull depuis ghcr.io)
 #
 # RESSOURCES AZURE à créer au préalable :
 #   1. Azure Web App (Linux) — taille B2 minimum (2 vCPU / 3.5 Go RAM)
@@ -32,7 +30,7 @@ on:
     paths:
       - 'backend/**'
       - 'requirements.txt'
-      - 'Dockerfile'
+      - 'backend/Dockerfile'
       - 'docker-compose.yml'
   workflow_dispatch:
 
@@ -47,7 +45,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      actions: write
 
     steps:
       # ── 1. Checkout du code ────────────────────────────────────────────
@@ -85,6 +82,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # ── 6. Login Azure via Service Principal ──────────────────────────
       - name: Login to Azure
@@ -99,5 +98,20 @@ jobs:
             --name ${{ secrets.AZURE_WEBAPP_NAME }} \
             --resource-group sma-pfe-rg \
             --container-image-name ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
-            --container-registry-url https://${{ env.REGISTRY }}
-          az webapp restart --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group sma-pfe-rg
+            --container-registry-url https://${{ env.REGISTRY }} \
+            --container-registry-user ${{ github.actor }} \
+            --container-registry-password ${{ secrets.GHCR_PAT }}
+
+      # ── 8. Redémarrer le Web App pour pull la nouvelle image ──────────
+      - name: Restart Azure Web App
+        run: |
+          az webapp restart \
+            --name ${{ secrets.AZURE_WEBAPP_NAME }} \
+            --resource-group sma-pfe-rg
+
+      # ── 9. Vérification du déploiement ─────────────────────────────────
+      - name: Verify deployment
+        run: |
+          echo "✅ Image deployed: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+          echo "🌐 App URL: https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net"
+          echo "📋 Health check: https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net/health"
