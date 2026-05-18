@@ -46,6 +46,9 @@ RUN pip install --upgrade pip && \
     pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu && \
     pip install --no-cache-dir -r requirements.txt
 
+# Pré-télécharger le modèle sentence-t5-base pour éviter le timeout au démarrage Azure
+RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('sentence-transformers/sentence-t5-base')"
+
 # ============================================================
 # Copie du code source
 # ============================================================
