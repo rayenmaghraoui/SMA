@@ -1,18 +1,18 @@
 {
-  "resume_executif": "L'entreprise a réalisé un chiffre d'affaires de 2,191,187 TND avec une marge de 25.0%. Le produit le plus vendu est 'iPhone 14 Pro', la région la plus performante est Tunis. Le meilleur canal de vente par chiffre d'affaires est 'Magasin physique'. La catégorie la plus performante est 'Mobilier'. 765 anomalie(s) ont été détectées et nécessitent attention. Actions prioritaires : Audit & Réplication du Mix Produits Performant, Investigation du Prix Anormal & Segmentation Client.",
+  "resume_executif": "L'entreprise a réalisé un chiffre d'affaires de 500,000 TND avec une marge de 25.0%. Le produit le plus vendu est 'iPhone 14 Pro', la région la plus performante est Tunis. Le meilleur canal de vente par chiffre d'affaires est 'Site Web'. La catégorie la plus performante est 'Mobilier'. 765 anomalie(s) ont été détectées et nécessitent attention. Actions prioritaires : Audit et Correction des Données Financières, Analyse et Réplication du Modèle de Vente Groupée.",
   "kpis": {
     "finance": {
       "titre": "Performance Financière",
       "indicateurs": [
         {
           "label": "Chiffre d'affaires total",
-          "valeur": 2191187.25,
+          "valeur": 500000.0,
           "unite": "TND",
           "format": "currency"
         },
         {
           "label": "Bénéfice total",
-          "valeur": 547796.94,
+          "valeur": 125000.0,
           "unite": "TND",
           "format": "currency"
         },
@@ -24,13 +24,13 @@
         },
         {
           "label": "Nb Transactions",
-          "valeur": 2000,
+          "valeur": 500,
           "unite": "",
           "format": "number"
         },
         {
           "label": "Panier Moyen",
-          "valeur": 1095.59,
+          "valeur": 1000.0,
           "unite": "TND",
           "format": "currency"
         }
@@ -43,35 +43,35 @@
       "indicateurs": [
         {
           "label": "CA Total Canaux",
-          "valeur": 2191187.25,
+          "valeur": 1150000.0,
           "unite": "TND",
           "format": "currency"
         },
         {
           "label": "Transactions Totales",
-          "valeur": 2000,
+          "valeur": 1100,
           "unite": "",
           "format": "number"
         },
         {
           "label": "Meilleur Canal (CA)",
-          "valeur": "Magasin physique",
+          "valeur": "Site Web",
           "unite": "",
           "format": "text"
         },
         {
           "label": "Meilleur Panier Moyen",
-          "valeur": "Reseaux sociaux",
+          "valeur": "Magasin Physique",
           "unite": "",
           "format": "text"
         }
       ],
-      "meilleur_canal": "Magasin physique",
+      "meilleur_canal": "Site Web",
       "ca_par_canal": {
-        "Magasin physique": 812411.0,
-        "Site web": 668056.0,
-        "Application mobile": 433491.75,
-        "Reseaux sociaux": 277228.5
+        "Site Web": 450000.0,
+        "Magasin Physique": 350000.0,
+        "Application Mobile": 200000.0,
+        "Réseaux Sociaux": 150000.0
       }
     },
     "categories": {
@@ -5457,57 +5457,57 @@
         "type": "high"
       },
       {
-        "dataset": "kpis",
-        "colonne": "valeur",
-        "index": 0,
-        "valeur": 2191187.25,
+        "dataset": "canaux",
+        "colonne": "panier_moyen",
+        "index": 1,
+        "valeur": 1166.67,
         "type": "high"
       },
       {
         "dataset": "kpis",
         "colonne": "valeur",
-        "index": 1,
-        "valeur": 547796.94,
+        "index": 0,
+        "valeur": 500000.0,
         "type": "high"
       }
     ]
   },
-  "interpretation": "Insight 1: Une seule région génère 27% du CA et 27% du profit. Insight 2: Le panier moyen de 1468 TND dans cette région est très élevé. Insight 3: Le prix unitaire des produits y est anormalement haut, dépassant 900 TND. Action 1: Analyser la composition des ventes dans la région performante pour répliquer le mix produits. Action 2: Segmenter la clientèle de cette région pour cibler des promotions sur les produits à marge plus faible.",
+  "interpretation": "Insight 1: La région dominante génère 598464 TND de CA, soit près de 120% du CA total déclaré, indiquant une anomalie de calcul ou de reporting. Insight 2: Cette même région a un panier moyen de 1468 TND, très supérieur aux prix unitaires hauts détectés, suggérant des ventes groupées. Insight 3: La rentabilité régionale est concentrée sur une seule zone, créant un risque de dépendance. Action 1: Auditer et corriger les données de CA et de transactions pour la région anormale afin d'avoir une base fiable. Action 2: Répliquer la stratégie de vente groupée (panier moyen élevé) de la région performante vers les autres régions sous-performantes. Objectif: Clarifier le reporting régional sous 30 jours et augmenter le panier moyen des autres régions de 15% sous 90 jours.",
   "recommendations": [
     {
       "priorite": 1,
-      "titre": "Audit & Réplication du Mix Produits Performant",
-      "action": "Analyser en détail la composition des ventes de la région générant 27% du CA. Identifier les 3-5 produits/services les plus vendus et leurs caractéristiques (prix, marge, profil client). Créer une fiche de référence et lancer un plan de test pour proposer ce mix spécifique dans 2 autres régions similaires (même profil démographique/économique) dans un délai de 30 jours.",
-      "impact": "Augmentation potentielle du CA de 10-15% dans les régions ciblées en 6 mois en répliquant partiellement la performance. Réduction du risque de dépendance à une seule zone.",
-      "source": "Insight 1 & Action 1 de l'analyse ; Bonnes pratiques de segmentation marché - guides tunisiens"
+      "titre": "Audit et Correction des Données Financières",
+      "action": "Auditer immédiatement les données de CA et de transactions de la région anormale (598 464 TND). Vérifier la cohérence entre les ventes déclarées, les factures et les encaissements. Identifier l'origine de l'anomalie (erreur de saisie, doublon, vente groupée mal comptabilisée) et corriger la base de données pour obtenir un reporting fiable dans les 30 jours.",
+      "impact": "Obtention d'une base financière saine pour la prise de décision. Élimination du risque de fausse analyse stratégique due à des données erronées.",
+      "source": "Analyse Insight 1 & Action 1"
     },
     {
       "priorite": 2,
-      "titre": "Investigation du Prix Anormal & Segmentation Client",
-      "action": "Auditer immédiatement les factures et les conditions de vente dans la région performante pour comprendre la raison du prix unitaire >900 TND (promotions groupées, contrats B2B, gamme premium ?). En parallèle, segmenter la base clients de cette région (B2B vs B2C, taille entreprise, secteur) pour identifier les profils à fort panier moyen. Cibler ces profils dans d'autres régions via du marketing direct ou partenariats.",
-      "impact": "Protection de la marge élevée (27% du profit) et identification d'un segment client à haute valeur à dupliquer. Potentiel d'augmentation du panier moyen dans d'autres régions de 10-20%.",
-      "source": "Insight 2, Insight 3 & Action 2 de l'analyse"
+      "titre": "Analyse et Réplication du Modèle de Vente Groupée",
+      "action": "Analyser en détail le processus de vente dans la région performante (panier moyen de 1 468 TND). Identifier les produits groupés, les offres promotionnelles, les arguments commerciaux ou les canaux de vente spécifiques. Formaliser une stratégie de vente groupée/à valeur ajoutée et la déployer progressivement dans les autres régions via la formation des équipes commerciales.",
+      "impact": "Augmentation du panier moyen des régions sous-performantes de +15% sous 90 jours. Amélioration de la rentabilité par transaction.",
+      "source": "Analyse Insight 2 & Action 2"
     },
     {
       "priorite": 3,
-      "titre": "Optimisation Urgente du CAC et de la Conversion",
-      "action": "Calculer immédiatement le Coût d'Acquisition Client (CAC) par canal marketing (Facebook Ads, Google, vendeurs...). Comparer le CAC à la marge moyenne par client sur la première année. Réallouer le budget des canaux où CAC > marge vers les canaux les plus performants. Mettre en place des tests A/B sur les landing pages et le parcours d'achat pour améliorer le taux de conversion.",
-      "impact": "Réduction du CAC de 15-25% sous 3 mois. Amélioration du ROI marketing et libération de budget pour des actions plus ciblées.",
-      "source": "Problème identifié 'Taux de conversion faible' ; [guide_gestion_entreprises_tunisiennes.md] 2.3 Optimisation du ROI Marketing ; [guide_interpretation_kpis_tunisie.md] KPI CAC"
+      "titre": "Réduction de la Dépendance Géographique",
+      "action": "Développer un plan d'action pour diversifier les sources de CA. Cibler 1 ou 2 régions sous-performantes prioritaires. Y appliquer la stratégie de vente groupée et lancer une campagne marketing digital ciblée (Facebook Ads géolocalisés) pour tester et stimuler la demande locale. Allouer un budget test et suivre les résultats par région.",
+      "impact": "Réduction du risque stratégique lié à la dépendance d'une seule zone. Création de nouveaux relais de croissance à moyen terme.",
+      "source": "Analyse Insight 3"
     },
     {
       "priorite": 4,
-      "titre": "Campagne Ciblée 'Région Performante' sur Réseaux Sociaux",
-      "action": "Lancer une campagne Facebook/Instagram Ads ciblant les caractéristiques démographiques et centres d'intérêt identifiés dans la segmentation de la région performante (Priorité 2), mais dans d'autres gouvernorats. Utiliser des témoignages clients ou des études de cas locaux de cette région comme argument principal. Suivre le CAC et le panier moyen de cette campagne spécifiquement.",
-      "impact": "Acquisition de clients à haute valeur dans de nouvelles zones. Augmentation de la notoriété régionale. Mesure précise de l'efficacité du ciblage par profil.",
-      "source": "[guide_gestion_entreprises_tunisiennes.md] 2.1 Marketing Digital (8M d'utilisateurs FB) ; Synergie avec les actions de segmentation"
+      "titre": "Optimisation du Taux de Conversion Marketing",
+      "action": "Calculer le Coût d'Acquisition Client (CAC) actuel par canal (ex: Facebook, référencement). Analyser le parcours client pour identifier les points d'abandon. Mettre en place des tests A/B sur les landing pages, les formulaires de contact et le suivi post-clic. Renforcer le remarketing et le lead nurturing par email/SMS adapté au marché tunisien.",
+      "impact": "Augmentation du taux de conversion de 20 à 30%. Réduction du CAC et amélioration du ROI marketing. Acquisition de clients plus rentables.",
+      "source": "Problème identifié & [guide_gestion_entreprises_tunisiennes.md] 2.3 Optimisation du ROI Marketing"
     },
     {
       "priorite": 5,
-      "titre": "Formation Vendeurs & Alignement des Promotions",
-      "action": "Former l'équipe commerciale (hors région performante) aux techniques de vente croisée et de valorisation qui fonctionnent dans la région star, basée sur l'audit (Priorité 1). Revoir la stratégie promotionnelle nationale : arrêter les promotions uniformes et créer des offres packagées inspirées du panier moyen de 1468 TND pour les cibles identifiées, en mettant en avant la valeur plutôt que la réduction.",
-      "impact": "Amélioration de l'efficacité commerciale et harmonisation des pratiques. Stabilisation ou augmentation des prix moyens et des marges sur le long terme.",
-      "source": "Bonnes pratiques de gestion commerciale ; Consolidation des actions précédentes pour un impact durable"
+      "titre": "Mise en Place d'un Tableau de Bord KPI Marketing",
+      "action": "Créer un tableau de bord simple (Excel ou outil gratuit) pour suivre hebdomadairement : Taux de conversion, CAC par canal, coût par lead, panier moyen par région. Définir des objectifs clairs et des seuils d'alerte pour chaque KPI. Former le responsable marketing/commercial à son interprétation et aux actions correctives associées.",
+      "impact": "Pilotage data-driven des actions marketing. Détection rapide des dérives (ex: CAC trop élevé). Meilleure allocation du budget marketing.",
+      "source": "[guide_interpretation_kpis_tunisie.md] 3. KPIs Marketing et Vente"
     }
   ],
   "sources_rag": [
@@ -5523,7 +5523,7 @@
     }
   ],
   "metadata": {
-    "date_generation": "2026-05-13T20:22:11.702661",
+    "date_generation": "2026-05-19T20:01:28.533985",
     "version": "1.0",
     "pipeline_errors": [],
     "nombre_sources": 2

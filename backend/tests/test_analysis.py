@@ -2,9 +2,9 @@
 Tests unitaires — analyse des données (KPIs + anomalies).
 
 Couverture :
-    - finance_analyzer.analyze()
-    - marketing_analyzer.analyze()
-    - support_analyzer.analyze()
+    - kpis_analyzer.analyze()
+    - canaux_analyzer.analyze()
+    - categories_analyzer.analyze()
     - anomaly_detector.detect()
     - loader._validate_columns()
 
@@ -15,11 +15,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from backend.analysis import anomaly_detector, finance_analyzer, marketing_analyzer, support_analyzer
+from backend.analysis import anomaly_detector, kpis_analyzer, canaux_analyzer, categories_analyzer
 
 
 # ================================================================
-# Tests finance_analyzer
+# Tests kpis_analyzer
 # ================================================================
 
 
@@ -28,7 +28,7 @@ class TestFinanceAnalyzer:
 
     def test_kpis_keys_present(self, finance_df):
         """Tous les KPIs attendus sont présents dans le résultat."""
-        kpis = finance_analyzer.analyze(finance_df)
+        kpis = kpis_analyzer.analyze(finance_df)
         expected_keys = {
             "revenue_total", "profit_total", "profit_margin",
             "nb_transactions", "panier_moyen",
@@ -37,29 +37,29 @@ class TestFinanceAnalyzer:
 
     def test_revenue_total_correct(self, finance_df):
         """revenue_total = valeur CA Total (TND) du DataFrame."""
-        kpis = finance_analyzer.analyze(finance_df)
+        kpis = kpis_analyzer.analyze(finance_df)
         assert kpis["revenue_total"] == 500_000.0
 
     def test_profit_total_correct(self, finance_df):
         """profit_total = valeur Profit Total (TND) du DataFrame."""
-        kpis = finance_analyzer.analyze(finance_df)
+        kpis = kpis_analyzer.analyze(finance_df)
         assert kpis["profit_total"] == 125_000.0
 
     def test_profit_margin_between_0_and_100(self, finance_df):
         """La marge bénéficiaire doit être entre 0% et 100%."""
-        kpis = finance_analyzer.analyze(finance_df)
+        kpis = kpis_analyzer.analyze(finance_df)
         assert 0.0 <= kpis["profit_margin"] <= 100.0
 
     def test_trend_is_stable(self, finance_df):
         """trend est toujours 'stable' pour le format kpis_globaux."""
-        kpis = finance_analyzer.analyze(finance_df)
+        kpis = kpis_analyzer.analyze(finance_df)
         assert kpis["trend"] == "stable"
 
     def test_missing_column_raises_value_error(self):
         """Une colonne manquante doit lever ValueError."""
         df = pd.DataFrame({"col": [1]})
         with pytest.raises(ValueError, match="Colonnes manquantes"):
-            finance_analyzer.analyze(df)
+            kpis_analyzer.analyze(df)
 
     def test_single_row_does_not_crash(self):
         """Un DataFrame d'une seule ligne ne doit pas provoquer d'erreur."""
@@ -67,7 +67,7 @@ class TestFinanceAnalyzer:
             "indicateur": ["CA Total (TND)"],
             "valeur":     [100_000.0],
         })
-        kpis = finance_analyzer.analyze(df)
+        kpis = kpis_analyzer.analyze(df)
         assert kpis["revenue_total"] == 100_000.0
 
     def test_zero_revenue_does_not_divide_by_zero(self):
@@ -76,12 +76,12 @@ class TestFinanceAnalyzer:
             "indicateur": ["CA Total (TND)", "Profit Total (TND)", "Marge Beneficiaire (%)"],
             "valeur":     [0.0, 0.0, 0.0],
         })
-        kpis = finance_analyzer.analyze(df)
+        kpis = kpis_analyzer.analyze(df)
         assert kpis["profit_margin"] == 0.0
 
 
 # ================================================================
-# Tests marketing_analyzer
+# Tests canaux_analyzer
 # ================================================================
 
 
@@ -90,7 +90,7 @@ class TestMarketingAnalyzer:
 
     def test_kpis_keys_present(self, marketing_df):
         """Tous les KPIs canaux attendus sont présents."""
-        kpis = marketing_analyzer.analyze(marketing_df)
+        kpis = canaux_analyzer.analyze(marketing_df)
         expected_keys = {
             "total_ca", "total_transactions", "best_channel",
             "top_panier_channel", "ca_by_channel", "transactions_by_channel",
@@ -99,23 +99,23 @@ class TestMarketingAnalyzer:
 
     def test_total_ca_correct(self, marketing_df):
         """total_ca = somme exacte des ca_total."""
-        kpis = marketing_analyzer.analyze(marketing_df)
+        kpis = canaux_analyzer.analyze(marketing_df)
         expected = round(float(marketing_df["ca_total"].sum()), 2)
         assert kpis["total_ca"] == expected
 
     def test_total_transactions_correct(self, marketing_df):
         """total_transactions = somme exacte des nb_transactions."""
-        kpis = marketing_analyzer.analyze(marketing_df)
+        kpis = canaux_analyzer.analyze(marketing_df)
         assert kpis["total_transactions"] == int(marketing_df["nb_transactions"].sum())
 
     def test_best_channel_is_site_web(self, marketing_df):
         """Site Web a le CA le plus élevé (450 000 TND)."""
-        kpis = marketing_analyzer.analyze(marketing_df)
+        kpis = canaux_analyzer.analyze(marketing_df)
         assert kpis["best_channel"] == "Site Web"
 
     def test_ca_by_channel_is_dict(self, marketing_df):
         """ca_by_channel doit être un dictionnaire non vide."""
-        kpis = marketing_analyzer.analyze(marketing_df)
+        kpis = canaux_analyzer.analyze(marketing_df)
         assert isinstance(kpis["ca_by_channel"], dict)
         assert len(kpis["ca_by_channel"]) > 0
 
@@ -123,7 +123,7 @@ class TestMarketingAnalyzer:
         """Une colonne manquante doit lever ValueError."""
         df = pd.DataFrame({"sales_channel": ["Site Web"]})
         with pytest.raises(ValueError, match="Colonnes manquantes"):
-            marketing_analyzer.analyze(df)
+            canaux_analyzer.analyze(df)
 
     def test_single_channel_does_not_crash(self):
         """Un seul canal ne doit pas provoquer d'erreur."""
@@ -133,13 +133,13 @@ class TestMarketingAnalyzer:
             "nb_transactions": [300],
             "panier_moyen":    [1_000.0],
         })
-        kpis = marketing_analyzer.analyze(df)
+        kpis = canaux_analyzer.analyze(df)
         assert kpis["total_ca"] == 300_000.0
         assert kpis["best_channel"] == "Site Web"
 
 
 # ================================================================
-# Tests support_analyzer
+# Tests categories_analyzer
 # ================================================================
 
 
@@ -148,7 +148,7 @@ class TestSupportAnalyzer:
 
     def test_kpis_keys_present(self, support_df):
         """Tous les KPIs catégories attendus sont présents."""
-        kpis = support_analyzer.analyze(support_df)
+        kpis = categories_analyzer.analyze(support_df)
         expected_keys = {
             "total_revenue", "total_profit", "total_transactions",
             "total_quantity", "top_category_by_revenue", "revenue_by_category",
@@ -157,24 +157,24 @@ class TestSupportAnalyzer:
 
     def test_total_revenue_correct(self, support_df):
         """total_revenue = somme exacte des ca_total."""
-        kpis = support_analyzer.analyze(support_df)
+        kpis = categories_analyzer.analyze(support_df)
         expected = round(float(support_df["ca_total"].sum()), 2)
         assert kpis["total_revenue"] == expected
 
     def test_total_profit_correct(self, support_df):
         """total_profit = somme exacte des profit_total."""
-        kpis = support_analyzer.analyze(support_df)
+        kpis = categories_analyzer.analyze(support_df)
         expected = round(float(support_df["profit_total"].sum()), 2)
         assert kpis["total_profit"] == expected
 
     def test_top_category_by_revenue(self, support_df):
         """Électronique a le CA le plus élevé (500 000 TND)."""
-        kpis = support_analyzer.analyze(support_df)
+        kpis = categories_analyzer.analyze(support_df)
         assert kpis["top_category_by_revenue"] == "Électronique"
 
     def test_revenue_by_category_is_dict(self, support_df):
         """revenue_by_category doit être un dictionnaire non vide."""
-        kpis = support_analyzer.analyze(support_df)
+        kpis = categories_analyzer.analyze(support_df)
         assert isinstance(kpis["revenue_by_category"], dict)
         assert len(kpis["revenue_by_category"]) > 0
 
@@ -182,7 +182,7 @@ class TestSupportAnalyzer:
         """Une colonne manquante doit lever ValueError."""
         df = pd.DataFrame({"category": ["Électronique"]})
         with pytest.raises(ValueError, match="Colonnes manquantes"):
-            support_analyzer.analyze(df)
+            categories_analyzer.analyze(df)
 
 
 # ================================================================
