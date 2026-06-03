@@ -10,7 +10,7 @@ Pipeline final :
 """
 
 import logging
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from langgraph.graph import StateGraph, END
 
@@ -129,7 +129,8 @@ def run_graph(
 
 async def run_graph_async(
     raw_data: Optional[Dict[str, Any]] = None,
-    user_question: Optional[str] = None
+    user_question: Optional[str] = None,
+    conversation_history: Optional[List[Dict[str, str]]] = None,
 ) -> AgentState:
     """
     Version asynchrone de run_graph.
@@ -147,7 +148,8 @@ async def run_graph_async(
 
     initial_state = create_initial_state(
         raw_data=raw_data,
-        user_question=user_question
+        user_question=user_question,
+        conversation_history=conversation_history,
     )
 
     try:
@@ -166,7 +168,8 @@ async def run_graph_async(
 
 async def run_graph_streaming(
     raw_data: Optional[Dict[str, Any]] = None,
-    user_question: Optional[str] = None
+    user_question: Optional[str] = None,
+    conversation_history: Optional[List[Dict[str, str]]] = None,
 ):
     """
     Générateur asynchrone pour le streaming du pipeline.
@@ -184,7 +187,8 @@ async def run_graph_streaming(
 
     initial_state = create_initial_state(
         raw_data=raw_data,
-        user_question=user_question
+        user_question=user_question,
+        conversation_history=conversation_history,
     )
 
     try:

@@ -4,6 +4,7 @@
 
 import { useState, useCallback } from 'react';
 import api from '../services/api';
+import { toast } from '../services/toast';
 
 /**
  * Hook pour gérer l'analyse des données.
@@ -25,30 +26,50 @@ export const useAnalysis = () => {
   const [report, setReport] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  // true après la tentative initiale de chargement du rapport
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   /**
    * Lance l'analyse complète des données.
    * @param {boolean} useDefaults - Utiliser les données par défaut
    */
-  const triggerAnalysis = useCallback(async (useDefaults = true) => {
+  const triggerAnalysis = useCallback(async (useDefaults = true, force = false) => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await api.post('/analyze', { use_defaults: useDefaults });
+      const response = await api.post('/analyze', { use_defaults: useDefaults, force });
       const data = response.data;
 
       if (data.success) {
-        setKpis(data.kpis || {});
         setAnomalies(data.anomalies || []);
-        setReport(data.report || null);
+
+        // Le rapport sauvegardé contient les kpis au format "indicateurs"
+        // attendu par le Dashboard (kpis.finance.indicateurs, etc.).
+        // Le /analyze retourne le format brut du pipeline — on recharge
+        // le rapport pour avoir la structure correcte.
+        try {
+          const reportResp = await api.get('/report/latest');
+          const rd = reportResp.data;
+          if (rd?.success && rd?.has_report) {
+            setReport(rd.report);
+            setKpis(rd.report?.kpis || {});
+          } else {
+            setKpis(data.kpis || {});
+          }
+        } catch {
+          setKpis(data.kpis || {});
+        }
+        toast.success('Analyse terminée — rapport disponible.');
       } else {
-        setError(data.errors?.join(', ') || 'Erreur inconnue');
+        const errMsg = data.errors?.join(', ') || 'Erreur inconnue';
+        setError(errMsg);
+        toast.error(`Analyse échouée : ${errMsg}`);
       }
     } catch (err) {
       const message = err.response?.data?.detail || err.message || 'Erreur serveur';
       setError(message);
-      console.error('Erreur analyse:', err);
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -77,6 +98,7 @@ export const useAnalysis = () => {
       setError(message);
     } finally {
       setIsLoading(false);
+      setInitialLoadDone(true);   // signale que la tentative initiale est terminée
     }
   }, []);
 
@@ -110,6 +132,7 @@ export const useAnalysis = () => {
     report,
     isLoading,
     error,
+    initialLoadDone,
     triggerAnalysis,
     fetchReport,
     fetchKpis,

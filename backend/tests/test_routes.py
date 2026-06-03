@@ -57,8 +57,8 @@ def _make_finance_csv_bytes() -> bytes:
     return buffer.getvalue()
 
 
-def _make_marketing_csv_bytes() -> bytes:
-    """Génère un CSV canaux marketing valide en mémoire."""
+def _make_canaux_csv_bytes() -> bytes:
+    """Génère un CSV canaux de vente valide en mémoire (04_analyse_canaux.csv)."""
     df = pd.DataFrame({
         "sales_channel":   ["Site Web", "Magasin Physique", "Application Mobile", "Réseaux Sociaux"],
         "ca_total":        [450_000.0, 350_000.0, 200_000.0, 150_000.0],
@@ -172,11 +172,11 @@ class TestUploadRoute:
             assert response.status_code in (400, 422)
 
     @pytest.mark.asyncio
-    async def test_upload_marketing_csv_detected_correctly(self, client):
+    async def test_upload_canaux_csv_detected_correctly(self, client):
         """Un CSV canaux doit être identifié comme type 'canaux'."""
         response = await client.post(
             "/upload",
-            files={"file": ("04_analyse_canaux.csv", _make_marketing_csv_bytes(), "text/csv")},
+            files={"file": ("04_analyse_canaux.csv", _make_canaux_csv_bytes(), "text/csv")},
         )
         assert response.status_code == 200
         data = response.json()

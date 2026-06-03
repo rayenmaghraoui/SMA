@@ -85,8 +85,8 @@ class TestFinanceAnalyzer:
 # ================================================================
 
 
-class TestMarketingAnalyzer:
-    """Tests du calculateur de KPIs canaux marketing."""
+class TestCanauxAnalyzer:
+    """Tests du calculateur de KPIs canaux de vente (canaux_analyzer)."""
 
     def test_kpis_keys_present(self, marketing_df):
         """Tous les KPIs canaux attendus sont présents."""
@@ -143,8 +143,8 @@ class TestMarketingAnalyzer:
 # ================================================================
 
 
-class TestSupportAnalyzer:
-    """Tests du calculateur de KPIs catégories produits."""
+class TestCategoriesAnalyzer:
+    """Tests du calculateur de KPIs catégories produits (categories_analyzer)."""
 
     def test_kpis_keys_present(self, support_df):
         """Tous les KPIs catégories attendus sont présents."""

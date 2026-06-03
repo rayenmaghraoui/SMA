@@ -20,6 +20,40 @@ logger = logging.getLogger(__name__)
 
 IntentType = Literal["sql", "strategic"]
 
+# ── Opérations destructives ou de modification — toujours refusées ──────────
+# Détectées AVANT le routage pour retourner un message de refus immédiat.
+_DESTRUCTIVE_PATTERNS: list = [
+    # DDL (structure)
+    r"\b(drop|alter|truncate)\b",
+    r"\bsupprimer?\s+(la\s+)?(colonne|table|base|champ|index)\b",
+    r"\bsupprime[z\s]\s+(la\s+)?(colonne|table|base|champ)\b",
+    r"\befface[z\s]?\s+(la\s+)?(colonne|table|base)\b",
+    r"\bmodifi[eé][z\s]?\s+(la\s+)?(colonne|table|structure)\b",
+    r"\brenomnr?e[z\s]?\s+(la\s+)?(colonne|table)\b",
+    r"\bajoute[z\s]?\s+une?\s+(colonne|champ)\b",
+    r"\bcr[eé][eé][z\s]?\s+(une?\s+)?(table|base|index)\b",
+    # DML (données)
+    r"\b(delete|update|insert)\b",
+    r"\bsupprimer?\s+(les?\s+)?(lignes?|enregistrements?|donn[eé]es?)\b",
+    r"\beffac[eé]?\s+(les?\s+)?(lignes?|enregistrements?|donn[eé]es?)\b",
+    r"\bmodifi[eé][z\s]?\s+(les?\s+)?(lignes?|valeurs?|donn[eé]es?)\b",
+    r"\bmettre?\s+[aà]\s+jour\b",
+    r"\binsérer?\b",
+    r"\bvider?\s+(la\s+)?(table|base)\b",
+]
+
+
+def is_destructive_operation(question: str) -> bool:
+    """
+    Détecte si la question demande une opération destructive ou de modification.
+
+    Returns:
+        True si l'opération doit être refusée (non-SELECT).
+    """
+    q_lower = question.lower()
+    return any(re.search(p, q_lower) for p in _DESTRUCTIVE_PATTERNS)
+
+
 # Patterns qui suggèrent une exploration de données → SQL agent
 _SQL_PATTERNS: list = [
     r"\bmontre[z\s-]",

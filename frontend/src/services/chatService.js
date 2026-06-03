@@ -17,7 +17,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
  * @param {function} callbacks.onError     - Appelé en cas d'erreur
  * @returns {function} Fonction pour annuler le stream
  */
-export const streamChat = (message, callbacks) => {
+export const streamChat = (message, callbacks, history = []) => {
   const { onStep, onToken, onReport, onSqlResult, onDone, onError } = callbacks;
 
   const controller = new AbortController();
@@ -25,7 +25,7 @@ export const streamChat = (message, callbacks) => {
   fetch(`${API_URL}/chat`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify({ message, history }),
     signal: controller.signal,
   })
     .then(async (response) => {
@@ -116,7 +116,44 @@ export const sendChatMessage = async (message) => {
   return response.json();
 };
 
+/**
+ * Sauvegarde toutes les conversations sur le serveur.
+ *
+ * @param {Array} conversations - Liste des conversations à sauvegarder
+ * @returns {Promise<void>}
+ */
+export const saveConversationsToServer = async (conversations) => {
+  try {
+    await fetch(`${API_URL}/conversations`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ conversations }),
+    });
+  } catch (e) {
+    console.warn('Sauvegarde backend conversations échouée (non bloquant):', e);
+  }
+};
+
+/**
+ * Charge les conversations depuis le serveur.
+ *
+ * @returns {Promise<Array>} Liste des conversations ou [] en cas d'erreur
+ */
+export const loadConversationsFromServer = async () => {
+  try {
+    const res = await fetch(`${API_URL}/conversations`);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.conversations || [];
+  } catch (e) {
+    console.warn('Chargement backend conversations échoué (fallback localStorage):', e);
+    return [];
+  }
+};
+
 export default {
   streamChat,
   sendChatMessage,
+  saveConversationsToServer,
+  loadConversationsFromServer,
 };

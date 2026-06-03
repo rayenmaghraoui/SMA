@@ -111,9 +111,12 @@ ai-business-consultant/
 │
 ├── data/                           # données
 │   ├── uploads/                    # fichiers uploadés par l'utilisateur
-│   ├── 01_finance_performance.csv
-│   ├── 02_marketing_campaigns.csv
-│   └── 03_customer_support.csv
+│   │   ├── 01_donnees_vente.csv
+│   │   ├── 02_analyse_region.csv
+│   │   ├── 03_analyse_categorie.csv
+│   │   ├── 04_analyse_canaux.csv
+│   │   └── 05_kpis_globaux.csv
+│   └── last_report.json
 │
 ├── documents/                      # base de connaissances RAG
 │   ├── guide_gestion_entreprises_tunisiennes.md
@@ -145,10 +148,10 @@ ai-business-consultant/
     │
     ├── analysis/                   # analyse des données
     │   ├── __init__.py
-    │   ├── loader.py               # chargement + validation + nettoyage des CSV
-    │   ├── finance_analyzer.py     # KPIs financiers
-    │   ├── marketing_analyzer.py   # KPIs marketing
-    │   ├── support_analyzer.py     # KPIs support client
+    │   ├── loader.py               # chargement + validation + nettoyage des 5 CSV
+    │   ├── kpis_analyzer.py        # KPIs financiers globaux (05_kpis_globaux.csv)
+    │   ├── canaux_analyzer.py      # KPIs canaux de vente (04_analyse_canaux.csv)
+    │   ├── categories_analyzer.py  # KPIs catégories produits (03_analyse_categorie.csv)
     │   └── anomaly_detector.py     # détection anomalies (méthode IQR)
     │
     ├── routes/                     # endpoints FastAPI
@@ -161,7 +164,7 @@ ai-business-consultant/
     │
     ├── sql_agent/                  # agent SQL — exploration données NL→SQL
     │   ├── __init__.py
-    │   ├── db.py                   # DuckDB in-memory, 3 CSV comme tables
+    │   ├── db.py                   # DuckDB in-memory, 5 CSV comme tables
     │   ├── validator.py            # sécurité : SELECT only, mots-clés interdits
     │   ├── generator.py            # DeepSeek NL→SQL + viz_type
     │   ├── executor.py             # exécution async, timeout 10s, max 500 lignes
@@ -185,34 +188,66 @@ ai-business-consultant/
 
 ## 5. Datasets — schéma exact des CSV
 
-### 01_finance_performance.csv
+Les 5 fichiers sont chargés depuis `data/uploads/` via `loader.py`.
+Les clés dans `raw_data` (état LangGraph) : `"ventes"`, `"regions"`, `"categories"`, `"canaux"`, `"kpis"`.
+
+### 01_donnees_vente.csv — Transactions individuelles
 ```
-date          : string  → format YYYY-MM-DD
-revenue       : float   → chiffre d'affaires mensuel (TND)
-cost          : float   → charges totales (TND)
-profit        : float   → bénéfice net = revenue - cost (TND)
-growth_rate   : float   → taux de croissance vs mois précédent (%)
+invoice_id       : string  → identifiant unique de la facture (ex: INV00001)
+product_name     : string  → nom du produit vendu
+category         : string  → catégorie (Mobilier, Electronique, Fournitures, Divers…)
+quantity         : int     → quantité vendue
+unit_price_tnd   : float   → prix unitaire (TND)
+revenue_tnd      : float   → chiffre d'affaires = quantity × unit_price_tnd (TND)
+customer_id      : string  → identifiant client (ex: CUS1356)
+customer_region  : string  → région (Tunis, Ariana, Sfax, Sousse…)
+sale_date        : string  → date de vente, format YYYY-MM-DD
+sales_channel    : string  → canal (Magasin physique, Site Web, Téléphone…)
+payment_method   : string  → moyen de paiement (Carte bancaire, Especes, Virement…)
+estimated_profit : float   → profit estimé (TND)
 ```
 
-### 02_marketing_campaigns.csv
+### 02_analyse_region.csv — Agrégation par région géographique
 ```
-date             : string  → format YYYY-MM-DD
-campaign_id      : string  → identifiant unique de la campagne
-channel          : string  → canal (social_media, email, SEO, display...)
-budget           : float   → budget dépensé (TND)
-clicks           : int     → nombre de clics
-conversions      : int     → nombre de conversions
-conversion_rate  : float   → taux de conversion = conversions/clicks (%)
+customer_region  : string  → région tunisienne (Tunis, Ariana, Sfax…)
+CA_Total         : float   → chiffre d'affaires total de la région (TND)
+Profit_Total     : float   → profit total de la région (TND)
+Nb_Transactions  : int     → nombre de transactions dans la région
+Panier_Moyen     : float   → panier moyen = CA_Total / Nb_Transactions (TND)
 ```
 
-### 03_customer_support.csv
+### 03_analyse_categorie.csv — Agrégation par catégorie de produit
 ```
-date               : string  → format YYYY-MM-DD
-ticket_id          : string  → identifiant unique du ticket
-issue_type         : string  → type de problème (billing, technical, shipping...)
-resolution_hours   : float   → temps de résolution en heures
-satisfaction_score : float   → score satisfaction 1-5
-churn_risk         : string  → niveau de risque (low, medium, high)
+category         : string  → catégorie de produit
+CA_Total         : float   → chiffre d'affaires total de la catégorie (TND)
+Profit_Total     : float   → profit total de la catégorie (TND)
+Nb_Transactions  : int     → nombre de transactions
+Quantite_Vendue  : int     → quantité totale vendue
+Prix_Moyen       : float   → prix moyen par unité (TND)
+```
+
+### 04_analyse_canaux.csv — Agrégation par canal de vente
+```
+sales_channel    : string  → canal de vente (Site Web, Magasin Physique…)
+ca_total         : float   → chiffre d'affaires total du canal (TND)
+nb_transactions  : int     → nombre de transactions par canal
+panier_moyen     : float   → panier moyen par canal (TND)
+```
+
+### 05_kpis_globaux.csv — KPIs globaux (format clé-valeur)
+```
+indicateur       : string  → nom de l'indicateur (ex: "CA Total (TND)")
+valeur           : float   → valeur numérique de l'indicateur
+
+Indicateurs présents :
+  CA Total (TND)             → chiffre d'affaires global
+  Profit Total (TND)         → profit global
+  Marge Beneficiaire (%)     → marge bénéficiaire moyenne
+  Nb Transactions            → nombre total de transactions
+  Panier Moyen (TND)         → panier moyen global
+  Quantite Totale Vendue     → quantité totale vendue
+  Nb Clients Uniques         → nombre de clients distincts
+  CA Moyen par Client (TND)  → CA moyen par client
 ```
 
 ---
@@ -226,7 +261,8 @@ Chaque agent lit l'état, le complète, et le passe au suivant.
 # Structure de référence — à implémenter dans agents/state.py
 class AgentState(TypedDict):
     # Entrée
-    raw_data: Dict[str, Any]        # DataFrames sérialisés des 3 CSV
+    raw_data: Dict[str, Any]        # DataFrames sérialisés des 5 CSV
+                                    # clés : "ventes", "regions", "categories", "canaux", "kpis"
     user_question: Optional[str]    # question posée via le chat
 
     # Résultats Analysis Agent
@@ -254,32 +290,38 @@ class AgentState(TypedDict):
 
 ## 7. KPIs calculés par domaine
 
-### Finance (finance_analyzer.py)
-- `revenue_total` : somme du chiffre d'affaires sur la période
-- `profit_total` : somme des bénéfices
-- `profit_margin` : marge bénéficiaire moyenne (%)
-- `avg_growth_rate` : taux de croissance moyen (%)
-- `best_month` : mois le plus rentable
-- `worst_month` : mois le moins rentable
-- `trend` : "hausse" | "baisse" | "stable" (basé sur régression linéaire)
-- `revenue_volatility` : écart-type du revenue (mesure de stabilité)
+### KPIs financiers globaux (kpis_analyzer.py) — source : 05_kpis_globaux.csv
+- `revenue_total` : chiffre d'affaires global (TND)
+- `profit_total` : profit global (TND)
+- `profit_margin` : marge bénéficiaire (%)
+- `nb_transactions` : nombre total de transactions
+- `panier_moyen` : panier moyen global (TND)
+- `quantite_totale` : quantité totale vendue
+- `nb_clients` : nombre de clients uniques
+- `ca_moyen_client` : CA moyen par client (TND)
 
-### Marketing (marketing_analyzer.py)
-- `total_budget_spent` : budget total dépensé (TND)
-- `total_conversions` : nombre total de conversions
-- `avg_conversion_rate` : taux de conversion moyen (%)
-- `best_channel` : canal avec le meilleur ROI
-- `roi_by_channel` : ROI par canal = conversions/budget × 100
-- `cost_per_conversion` : coût moyen par conversion
-- `top_campaign` : campagne la plus performante
+### KPIs canaux de vente (canaux_analyzer.py) — source : 04_analyse_canaux.csv
+- `total_ca` : CA total tous canaux confondus (TND)
+- `total_transactions` : nombre total de transactions
+- `best_channel` : canal avec le plus fort CA
+- `top_panier_channel` : canal avec le panier moyen le plus élevé
+- `ca_by_channel` : CA par canal (dict)
+- `transactions_by_channel` : transactions par canal (dict)
+- `panier_by_channel` : panier moyen par canal (dict)
 
-### Support client (support_analyzer.py)
-- `avg_satisfaction` : score de satisfaction moyen (1-5)
-- `avg_resolution_hours` : temps moyen de résolution (heures)
-- `high_churn_rate` : % de tickets avec churn_risk = "high"
-- `top_issue_type` : type de problème le plus fréquent
-- `sla_compliance` : % tickets résolus en moins de 24h
-- `satisfaction_trend` : évolution de la satisfaction dans le temps
+### KPIs catégories produits (categories_analyzer.py) — source : 03_analyse_categorie.csv
+- `total_revenue` : CA total toutes catégories (TND)
+- `total_profit` : profit total toutes catégories (TND)
+- `total_transactions` : nombre total de transactions
+- `total_quantity` : quantité totale vendue
+- `top_category_by_revenue` : catégorie avec le plus fort CA
+- `top_category_by_quantity` : catégorie avec la plus grande quantité vendue
+- `revenue_by_category` : CA par catégorie (dict)
+- `profit_by_category` : profit par catégorie (dict)
+- `qty_by_category` : quantité vendue par catégorie (dict)
+
+> Note : `01_donnees_vente.csv` et `02_analyse_region.csv` sont disponibles dans
+> `raw_data` pour l'agent SQL (DuckDB) mais ne font pas l'objet d'un analyzer dédié.
 
 ---
 
@@ -434,7 +476,7 @@ DB      : ChromaDB (stockage local → backend/rag/chroma_db/)
 async def analysis_agent(state: AgentState) -> AgentState:
     """
     Agent d'analyse des données.
-    Calcule les KPIs financiers, marketing et support client.
+    Calcule les KPIs financiers globaux, canaux et catégories produits.
     """
     try:
         # ... logique
@@ -459,7 +501,8 @@ Quand tu génères les prompts système pour les agents LLM, tiens compte de :
 - **Monnaie :** Dinar Tunisien (TND) — ne pas utiliser EUR ou USD
 - **Réglementation :** Code du travail tunisien, loi 2016-71 sur l'investissement
 - **Fiscalité :** TVA 19%, IS 15% pour les PME (taux standard)
-- **Marché :** contexte PME tunisienne, secteurs dominants (tourisme, textile, agro)
+- **Marché :** contexte PME tunisienne du secteur retail/commerce — ventes multi-canaux
+  (magasin physique, site web, téléphone), produits : Mobilier, Electronique, Fournitures
 - **Langue :** recommandations en français, termes techniques acceptés en anglais
 - **Saisonnalité :** tenir compte du mois de Ramadan dans les analyses marketing
 - **BFPME / SOTUGAR :** organismes de financement locaux à mentionner si pertinent

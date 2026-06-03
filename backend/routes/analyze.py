@@ -1,8 +1,8 @@
 """
-Route /analyze \u2014 lance l'analyse compl\u00e8te des donn\u00e9es.
+Route /analyze — lance l'analyse complète des données.
 
-Cette route d\u00e9clenche le pipeline LangGraph et retourne les KPIs
-calcul\u00e9s ainsi que les anomalies d\u00e9tect\u00e9es.
+Cette route déclenche le pipeline LangGraph et retourne les KPIs
+calculés ainsi que les anomalies détectées.
 """
 
 import logging
@@ -11,6 +11,7 @@ from fastapi import APIRouter, HTTPException
 
 from backend.agents.graph import run_graph_async
 from backend.analysis import loader
+from backend.analysis.cache import get_cached_result, save_to_cache
 from backend.models.request_models import AnalyzeRequest
 from backend.models.response_models import AnalyzeResponse
 from backend.routes.report import save_report
@@ -23,46 +24,55 @@ router = APIRouter(tags=["Analyse"])
 @router.post("/analyze", response_model=AnalyzeResponse)
 async def analyze_data(request: AnalyzeRequest = AnalyzeRequest()) -> AnalyzeResponse:
     """
-    Lance l'analyse compl\u00e8te des donn\u00e9es d'entreprise.
+    Lance l'analyse complète des données d'entreprise.
 
     Cette route :
-        1. Charge les trois datasets (finance, marketing, support)
-        2. Calcule les KPIs de chaque domaine
-        3. D\u00e9tecte les anomalies via la m\u00e9thode IQR
-        4. Retourne les r\u00e9sultats en JSON
+        1. Vérifie le cache (retourne immédiatement si les CSV n'ont pas changé)
+        2. Sinon, lance le pipeline LangGraph (5 agents)
+        3. Calcule les KPIs de chaque domaine
+        4. Détecte les anomalies via la méthode IQR
+        5. Sauvegarde le résultat en cache et retourne les résultats en JSON
 
     Args:
         request: Configuration de l'analyse.
                  - use_defaults=True : utilise les CSV dans data/
-                 - use_defaults=False : utilise les fichiers upload\u00e9s
-
-    Returns:
-            # Utiliser les CSV uploadés depuis data/uploads/.
-            uploaded_datasets = loader.load_uploaded_datasets()
-            serialized_raw_data = {
-                key: df.to_dict(orient="records")
-                for key, df in uploaded_datasets.items()
-            }
-            final_state = await run_graph_async(raw_data=serialized_raw_data)
+                 - use_defaults=False : utilise les fichiers uploadés
     """
-    logger.info("Re\u00e7u POST /analyze \u2014 use_defaults=%s", request.use_defaults)
+    logger.info("Reçu POST /analyze — use_defaults=%s", request.use_defaults)
 
     try:
-        # Lancer le pipeline LangGraph (version async)
+        # ── Cache hit : retourner immédiatement sans relancer le pipeline ──
+        # Ignoré si force=True (l'utilisateur demande explicitement une re-analyse)
+        cached = None if request.force else get_cached_result()
+        if cached:
+            kpis      = cached.get("kpis", {})
+            anomalies = cached.get("anomalies", [])
+            report    = cached.get("report", {})
+            if report:
+                try:
+                    save_report(report)
+                except Exception:
+                    pass
+            return AnalyzeResponse(
+                success=True,
+                kpis=kpis,
+                anomalies=anomalies,
+                errors=[],
+                message=f"Résultats chargés depuis le cache. {len(anomalies)} anomalie(s) détectée(s).",
+            )
+
+        # ── Cache miss : lancer le pipeline LangGraph ──
         if request.use_defaults:
-            # Utiliser les donn\u00e9es par d\u00e9faut
             final_state = await run_graph_async(raw_data=None)
         else:
-            # TODO Phase 3 : supporter les fichiers upload\u00e9s
-            # Pour l'instant, m\u00eame comportement que use_defaults=True
-            logger.warning("use_defaults=False non impl\u00e9ment\u00e9, utilisation des d\u00e9fauts")
+            logger.warning("use_defaults=False non implémenté, utilisation des défauts")
             final_state = await run_graph_async(raw_data=None)
 
-        # V\u00e9rifier s'il y a eu des erreurs bloquantes
-        errors = final_state.get("errors", [])
-        kpis = final_state.get("kpis", {})
+        # Extraire les résultats
+        errors    = final_state.get("errors", [])
+        kpis      = final_state.get("kpis", {})
         anomalies = final_state.get("anomalies", [])
-        report = final_state.get("report", {})
+        report    = final_state.get("report", {})
 
         if report:
             try:
@@ -70,19 +80,23 @@ async def analyze_data(request: AnalyzeRequest = AnalyzeRequest()) -> AnalyzeRes
             except Exception as e:
                 logger.warning("Impossible de sauvegarder le rapport après /analyze: %s", e)
 
-        # D\u00e9terminer le succ\u00e8s
+        # Déterminer le succès (has_kpis doit être défini AVANT save_to_cache)
         has_kpis = bool(kpis)
-        success = has_kpis and len(errors) == 0
+        success  = has_kpis and len(errors) == 0
+
+        # Mettre en cache si le pipeline a produit des KPIs
+        if has_kpis:
+            save_to_cache(final_state)
 
         # Message descriptif
         if success:
-            message = f"Analyse termin\u00e9e avec succ\u00e8s. {len(anomalies)} anomalie(s) d\u00e9tect\u00e9e(s)."
+            message = f"Analyse terminée avec succès. {len(anomalies)} anomalie(s) détectée(s)."
         elif has_kpis:
-            message = f"Analyse termin\u00e9e avec {len(errors)} avertissement(s)."
+            message = f"Analyse terminée avec {len(errors)} avertissement(s)."
         else:
-            message = "L'analyse a \u00e9chou\u00e9. V\u00e9rifiez les erreurs."
+            message = "L'analyse a échoué. Vérifiez les erreurs."
 
-        logger.info("Analyse termin\u00e9e \u2014 success=%s, anomalies=%d", success, len(anomalies))
+        logger.info("Analyse terminée — success=%s, anomalies=%d", success, len(anomalies))
 
         return AnalyzeResponse(
             success=success,
@@ -96,7 +110,7 @@ async def analyze_data(request: AnalyzeRequest = AnalyzeRequest()) -> AnalyzeRes
         logger.error("Fichier introuvable : %s", e)
         raise HTTPException(
             status_code=404,
-            detail=f"Fichier de donn\u00e9es introuvable : {e}"
+            detail=f"Fichier de données introuvable : {e}"
         )
 
     except Exception as e:

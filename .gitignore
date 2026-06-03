@@ -44,5 +44,12 @@ dist-ssr/
 .DS_Store
 Thumbs.db
 
-# Documentation Markdown
+# Rapport PFE (LaTeX)
+rapport_pfe_rayen_finale/
+
+# Mémoire Claude (fichiers internes)
+.claude/
+
+# Documentation Markdown (sauf README)
 *.md
+!README.md

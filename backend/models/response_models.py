@@ -104,6 +104,9 @@ class UploadResponse(BaseModel):
     dataset_type: Optional[str] = Field(None, description="Alias legacy de file_type")
     rows: int = Field(default=0, description="Alias legacy de row_count")
     message: str = Field(default="", description="Message descriptif")
+    # Champs d'explicabilit\u00e9 de la couche de normalisation s\u00e9mantique
+    normalization_summary: str = Field(default="", description="Explication user-friendly de la normalisation")
+    mappings: List[Dict[str, Any]] = Field(default_factory=list, description="D\u00e9tail des mappings colonne\u2192concept appliqu\u00e9s")
 
 
 class ReportResponse(BaseModel):

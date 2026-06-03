@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Évite un flash blanc au chargement (aligné sur le thème cyan) */
+/* Évite un flash blanc au chargement */
 html,
 body {
-  background-color: #0c4a6e;
+  background-color: #0f0c29;
 }
 
 /* Font par défaut */
@@ -23,15 +23,15 @@ body {
   }
 }
 
-/* Fond animé cyan / teal (appliqué sur la coque App) */
+/* Fond animé slate / violet */
 .app-shell-bg {
   background: linear-gradient(
     125deg,
-    #0c4a6e 0%,
-    #0e7490 25%,
-    #0891b2 50%,
-    #0d9488 75%,
-    #155e75 100%
+    #0f0c29 0%,
+    #1e1b4b 25%,
+    #2e1065 50%,
+    #1e1b4b 75%,
+    #0f0c29 100%
   );
   background-size: 280% 280%;
   animation: gradient-shift 18s ease infinite;
@@ -39,32 +39,38 @@ body {
 
 @layer utilities {
   .glass-panel {
-    @apply bg-cyan-950/45 backdrop-blur-xl border border-cyan-400/25 shadow-xl shadow-cyan-950/40 rounded-2xl;
+    @apply bg-slate-900/80 backdrop-blur-xl border border-violet-500/20 shadow-xl shadow-slate-950/50 rounded-2xl;
   }
 
   .glass-panel-soft {
-    @apply bg-teal-950/35 backdrop-blur-md border border-cyan-300/15 rounded-xl;
+    @apply bg-slate-800/50 backdrop-blur-md border border-violet-400/15 rounded-xl;
+  }
+
+  /* Dot-grid subtil en arrière-plan */
+  .dot-grid {
+    background-image: radial-gradient(circle, rgba(139, 92, 246, 0.18) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
 }
 
-/* Scrollbar — thème cyan */
+/* Scrollbar — thème violet */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(8, 51, 68, 0.6);
+  background: rgba(15, 12, 41, 0.7);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #22d3ee, #14b8a6);
+  background: linear-gradient(180deg, #8b5cf6, #7c3aed);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #67e8f9;
+  background: #a78bfa;
 }
 
 /* Animation pour le chat */
@@ -83,22 +89,79 @@ body {
   animation: pulse-dot 1.4s infinite ease-in-out both;
 }
 
-/* Print styles */
+/* ============================================================
+   Print / Export PDF
+   ============================================================ */
 @media print {
-  nav {
-    display: none;
+  /* Masquer tout ce qui n'est pas le rapport */
+  nav,
+  aside,
+  canvas,
+  button,
+  .no-print,
+  [aria-hidden="true"] {
+    display: none !important;
   }
 
-  .no-print {
-    display: none;
-  }
-
+  /* Reset fond sombre → blanc */
+  html,
   body {
-    background: white;
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 11pt;
   }
 
   .app-shell-bg {
-    animation: none;
-    background: white;
+    animation: none !important;
+    background: #ffffff !important;
+  }
+
+  /* Contenu principal pleine largeur */
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Panels : fond blanc, bordure légère, pas de flou */
+  .glass-panel,
+  .glass-panel-soft {
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    border: 1px solid #d1d5db !important;
+    box-shadow: none !important;
+    border-radius: 8px !important;
+  }
+
+  /* Texte lisible en noir */
+  h1, h2, h3, p, li, td, th, span {
+    color: #111827 !important;
+  }
+
+  /* Tableaux */
+  table {
+    border-collapse: collapse;
+    width: 100%;
+  }
+  th, td {
+    border: 1px solid #e5e7eb !important;
+    padding: 6px 10px !important;
+  }
+
+  /* Éviter les coupures de page dans les sections */
+  section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin-bottom: 16pt;
+  }
+
+  /* Sauts de page entre sections principales */
+  .print-page-break {
+    page-break-before: always;
+  }
+
+  /* Marges d'impression */
+  @page {
+    margin: 18mm 15mm;
+    size: A4;
   }
 }

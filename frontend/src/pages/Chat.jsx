@@ -1,6 +1,7 @@
 /**
  * Chat — interface de conversation avec l'assistant IA.
  * Layout : sidebar conversations (gauche) + zone de chat (droite).
+ * Le fond 3D animé vient du composant global ParticleField3D (App.jsx).
  */
 
 import { useState, useRef, useEffect } from 'react';
@@ -10,7 +11,7 @@ import AgentProgress from '../components/AgentProgress';
 import useChat from '../hooks/useChat';
 
 /**
- * Formate une date en texte relatif (aujourd'hui, hier, date).
+ * Formate une date en texte relatif.
  */
 const formatDate = (isoString) => {
   if (!isoString) return '';
@@ -80,12 +81,12 @@ const ConversationSidebar = ({
       animate={{ x: isOpen ? 0 : '-100%' }}
       transition={{ type: 'spring', stiffness: 320, damping: 35 }}
       className="fixed top-16 left-0 bottom-0 z-30 w-72 flex flex-col
-                 border-r border-cyan-400/20 bg-cyan-950/80 backdrop-blur-xl
+                 border-r border-violet-500/15 bg-slate-950/90 backdrop-blur-xl
                  lg:static lg:translate-x-0 lg:z-auto"
     >
       {/* Header sidebar */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-cyan-400/20">
-        <span className="text-sm font-semibold text-cyan-100 tracking-wide">Conversations</span>
+      <div className="flex items-center justify-between px-4 py-3 border-b border-violet-500/15">
+        <span className="text-sm font-semibold text-violet-100 tracking-wide">Conversations</span>
         <motion.button
           type="button"
           onClick={onNew}
@@ -93,7 +94,7 @@ const ConversationSidebar = ({
           whileTap={{ scale: 0.94 }}
           title="Nouvelle conversation"
           className="w-8 h-8 rounded-lg flex items-center justify-center
-                     bg-cyan-500/20 hover:bg-cyan-500/40 text-cyan-300
+                     bg-violet-500/20 hover:bg-violet-500/40 text-violet-300
                      hover:text-white transition-colors"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,13 +106,13 @@ const ConversationSidebar = ({
       {/* Liste des conversations */}
       <div className="flex-1 overflow-y-auto py-2 space-y-0.5 px-2">
         {conversations.length === 0 && (
-          <p className="text-xs text-cyan-400/60 text-center mt-6">
+          <p className="text-xs text-violet-400/60 text-center mt-6">
             Aucune conversation
           </p>
         )}
         <AnimatePresence initial={false}>
           {conversations.map((conv) => {
-            const isActive = conv.id === activeConversationId;
+            const isActive  = conv.id === activeConversationId;
             const isEditing = editingId === conv.id;
             return (
               <motion.div
@@ -120,20 +121,18 @@ const ConversationSidebar = ({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
                 className={`group flex items-center gap-2 rounded-lg px-3 py-2 cursor-pointer
-                            transition-colors ${
+                            transition-all border-l-2 ${
                               isActive
-                                ? 'bg-cyan-500/25 text-white'
-                                : 'text-cyan-200/80 hover:bg-cyan-500/15 hover:text-white'
+                                ? 'bg-violet-500/20 text-white border-violet-400'
+                                : 'text-violet-200/80 hover:bg-violet-500/10 hover:text-white border-transparent'
                             }`}
                 onClick={() => { if (!isEditing) { onSwitch(conv.id); onClose(); } }}
               >
-                {/* Icône */}
                 <svg className="w-4 h-4 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
                     d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
                 </svg>
 
-                {/* Titre — input si en cours de renommage, sinon texte */}
                 <div className="flex-1 min-w-0">
                   {isEditing ? (
                     <input
@@ -144,18 +143,17 @@ const ConversationSidebar = ({
                       onBlur={commitRename}
                       onKeyDown={handleRenameKey}
                       onClick={(e) => e.stopPropagation()}
-                      className="w-full text-sm bg-cyan-900/60 border border-cyan-400/50
-                                 rounded px-1 py-0.5 text-white outline-none focus:border-cyan-300"
+                      className="w-full text-sm bg-slate-800/60 border border-violet-400/50
+                                 rounded px-1 py-0.5 text-white outline-none focus:border-violet-300"
                     />
                   ) : (
                     <>
                       <p className="text-sm truncate">{conv.title}</p>
-                      <p className="text-xs text-cyan-400/60">{formatDate(conv.updatedAt)}</p>
+                      <p className="text-xs text-violet-400/60">{formatDate(conv.updatedAt)}</p>
                     </>
                   )}
                 </div>
 
-                {/* Actions : renommer + supprimer */}
                 {!isEditing && (
                   <div className="opacity-0 group-hover:opacity-100 flex items-center gap-1 flex-shrink-0 transition-all">
                     <motion.button
@@ -165,7 +163,7 @@ const ConversationSidebar = ({
                       whileTap={{ scale: 0.9 }}
                       title="Renommer"
                       className="w-6 h-6 flex items-center justify-center rounded
-                                 text-cyan-400/70 hover:text-cyan-200"
+                                 text-violet-400/70 hover:text-violet-200"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -179,7 +177,7 @@ const ConversationSidebar = ({
                       whileTap={{ scale: 0.9 }}
                       title="Supprimer"
                       className="w-6 h-6 flex items-center justify-center rounded
-                                 text-cyan-400/70 hover:text-rose-400"
+                                 text-violet-400/70 hover:text-rose-400"
                     >
                       <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
@@ -220,6 +218,7 @@ const Chat = () => {
     deleteConversation,
     renameConversation,
     editMessageUpTo,
+    exportTxt,
   } = useChat();
 
   useEffect(() => {
@@ -276,18 +275,17 @@ const Chat = () => {
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="border-b border-cyan-400/25 bg-cyan-950/40 backdrop-blur-xl px-4 py-3 flex-shrink-0"
+          className="border-b border-violet-500/15 bg-slate-950/60 backdrop-blur-xl px-4 py-3 flex-shrink-0"
         >
           <div className="flex items-center justify-between max-w-4xl mx-auto">
             <div className="flex items-center gap-3">
-              {/* Toggle sidebar (mobile + desktop) */}
               <motion.button
                 type="button"
                 onClick={() => setSidebarOpen((v) => !v)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 className="lg:flex w-8 h-8 rounded-lg flex items-center justify-center
-                           text-cyan-300 hover:bg-cyan-500/25 hover:text-white transition-colors"
+                           text-violet-300 hover:bg-violet-500/20 hover:text-white transition-colors"
                 title="Conversations"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -299,19 +297,37 @@ const Chat = () => {
                 <h1 className="text-base font-bold text-white truncate max-w-[200px] sm:max-w-xs">
                   {conversations.find((c) => c.id === activeConversationId)?.title || 'Assistant IA'}
                 </h1>
-                <p className="text-xs text-cyan-200/70">
+                <p className="text-xs text-violet-200/70">
                   {conversations.length} conversation{conversations.length !== 1 ? 's' : ''} sauvegardée{conversations.length !== 1 ? 's' : ''}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
+              {conversations.length > 0 && (
+                <motion.button
+                  type="button"
+                  onClick={exportTxt}
+                  title="Télécharger toutes les conversations en .txt"
+                  className="text-xs text-violet-300 hover:text-white px-3 py-1.5 rounded-lg
+                             hover:bg-violet-500/20 transition-colors border border-violet-400/20
+                             flex items-center gap-1.5"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                  </svg>
+                  Exporter
+                </motion.button>
+              )}
               {messages.length > 0 && (
                 <motion.button
                   type="button"
                   onClick={clearMessages}
-                  className="text-xs text-cyan-300 hover:text-white px-3 py-1.5 rounded-lg
-                             hover:bg-cyan-500/25 transition-colors border border-cyan-400/20"
+                  className="text-xs text-violet-300 hover:text-white px-3 py-1.5 rounded-lg
+                             hover:bg-violet-500/20 transition-colors border border-violet-400/20"
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                 >
@@ -321,8 +337,10 @@ const Chat = () => {
               <motion.button
                 type="button"
                 onClick={newConversation}
-                className="text-xs text-cyan-950 font-medium px-3 py-1.5 rounded-lg
-                           bg-gradient-to-r from-cyan-300 to-teal-300 hover:opacity-90 transition-opacity"
+                className="text-xs text-white font-medium px-3 py-1.5 rounded-lg
+                           bg-gradient-to-r from-violet-500 to-purple-500
+                           hover:opacity-90 transition-opacity
+                           hover:ring-2 hover:ring-violet-400/50 hover:ring-offset-1 hover:ring-offset-slate-950"
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
@@ -334,7 +352,7 @@ const Chat = () => {
 
         {/* Barre de progression agent */}
         {isLoading && (
-          <div className="border-b border-cyan-400/20 bg-cyan-950/35 backdrop-blur-md px-4 py-3 flex-shrink-0">
+          <div className="border-b border-violet-500/15 bg-slate-950/50 backdrop-blur-md px-4 py-3 flex-shrink-0">
             <div className="max-w-4xl mx-auto">
               <AgentProgress currentStep={currentStep} isLoading={isLoading} />
             </div>
@@ -347,7 +365,8 @@ const Chat = () => {
             <div className="max-w-2xl mx-auto">
               <div className="text-center mb-8">
                 <motion.div
-                  className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center bg-gradient-to-br from-cyan-400 to-teal-500 shadow-lg shadow-cyan-500/35"
+                  className="w-16 h-16 mx-auto mb-4 rounded-2xl flex items-center justify-center
+                             bg-gradient-to-br from-violet-500 to-purple-600 shadow-lg shadow-violet-500/35"
                   animate={{ rotate: [0, 2, -2, 0] }}
                   transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                 >
@@ -359,7 +378,7 @@ const Chat = () => {
                 <h2 className="text-2xl font-bold text-white mb-2">
                   Comment puis-je vous aider ?
                 </h2>
-                <p className="text-cyan-200/90">
+                <p className="text-violet-200/90">
                   Je peux analyser vos données et vous fournir des recommandations personnalisées.
                 </p>
               </div>
@@ -372,21 +391,31 @@ const Chat = () => {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.08 }}
-                    whileHover={{ scale: 1.02, borderColor: 'rgba(34, 211, 238, 0.55)' }}
+                    whileHover={{ scale: 1.02, borderColor: 'rgba(167, 139, 250, 0.55)' }}
                     whileTap={{ scale: 0.99 }}
                     onClick={() => { setInput(suggestion.text); inputRef.current?.focus(); }}
-                    className="p-4 text-left glass-panel-soft border border-cyan-400/25 hover:shadow-lg hover:shadow-cyan-500/10 transition-shadow"
+                    className="p-4 text-left glass-panel-soft border border-violet-400/20
+                               hover:shadow-lg hover:shadow-violet-500/10 transition-shadow"
                   >
-                    <span className="text-xs font-medium text-cyan-400 mb-1 block">{suggestion.label}</span>
-                    <p className="text-cyan-100">{suggestion.text}</p>
+                    <span className="text-xs font-medium text-violet-400 mb-1 block">{suggestion.label}</span>
+                    <p className="text-violet-100">{suggestion.text}</p>
                   </motion.button>
                 ))}
               </div>
             </div>
           ) : (
             <div className="max-w-3xl mx-auto space-y-6">
-              {messages.map((message) => (
-                <ChatMessage key={message.id} message={message} onEdit={handleEditMessage} />
+              {messages.map((message, idx) => (
+                <ChatMessage
+                  key={message.id}
+                  message={message}
+                  onEdit={handleEditMessage}
+                  isStreaming={
+                    isLoading &&
+                    idx === messages.length - 1 &&
+                    message.role === 'assistant'
+                  }
+                />
               ))}
               <div ref={messagesEndRef} />
             </div>
@@ -397,7 +426,7 @@ const Chat = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="border-t border-cyan-400/25 bg-cyan-950/45 backdrop-blur-xl p-4 flex-shrink-0"
+          className="border-t border-violet-500/15 bg-slate-950/60 backdrop-blur-xl p-4 flex-shrink-0"
         >
           <form onSubmit={handleSubmit} className="max-w-3xl mx-auto">
             <div className="flex gap-3">
@@ -408,18 +437,19 @@ const Chat = () => {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Posez votre question..."
                 disabled={isLoading}
-                className="flex-1 px-4 py-3 rounded-xl border border-cyan-400/35
-                           bg-cyan-950/50 text-white placeholder:text-cyan-400/60
-                           focus:outline-none focus:ring-2 focus:ring-cyan-400/60
+                className="flex-1 px-4 py-3 rounded-xl border border-violet-500/30
+                           bg-slate-900/60 text-white placeholder:text-violet-400/60
+                           focus:outline-none focus:ring-2 focus:ring-violet-400/60
                            focus:border-transparent disabled:opacity-60"
               />
               <motion.button
                 type="submit"
                 disabled={isLoading || !input.trim()}
-                className="px-6 py-3 rounded-xl font-medium text-cyan-950
-                           bg-gradient-to-r from-cyan-300 to-teal-300
-                           shadow-md shadow-cyan-900/30
-                           disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-6 py-3 rounded-xl font-medium text-white
+                           bg-gradient-to-r from-violet-500 to-purple-500
+                           shadow-md shadow-violet-900/30
+                           hover:ring-2 hover:ring-violet-400/50 hover:ring-offset-1 hover:ring-offset-slate-950
+                           disabled:opacity-50 disabled:cursor-not-allowed transition-shadow"
                 whileHover={{ scale: isLoading || !input.trim() ? 1 : 1.05 }}
                 whileTap={{ scale: isLoading || !input.trim() ? 1 : 0.96 }}
               >

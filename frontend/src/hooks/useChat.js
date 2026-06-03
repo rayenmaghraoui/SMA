@@ -7,7 +7,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { streamChat } from '../services/chatService';
+import { streamChat, saveConversationsToServer, loadConversationsFromServer } from '../services/chatService';
 
 const STORAGE_KEY = 'sma_conversations';
 const ACTIVE_KEY  = 'sma_active_conv';
@@ -68,6 +68,57 @@ const dedupeAssistantContent = (content) => {
   return normalized;
 };
 
+// ─── Export TXT ──────────────────────────────────────────────────────────────
+
+const formatDateTime = (iso) => {
+  if (!iso) return '';
+  const d = new Date(iso);
+  return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    + ' à ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+};
+
+export const exportConversationsAsTxt = (conversations) => {
+  const sep  = '═'.repeat(65);
+  const dash = '─'.repeat(65);
+  const now  = formatDateTime(new Date().toISOString());
+  const lines = [];
+
+  lines.push('='.repeat(65));
+  lines.push('AI BUSINESS CONSULTANT — HISTORIQUE DES CONVERSATIONS');
+  lines.push(`Exporté le : ${now}`);
+  lines.push(`Nombre de conversations : ${conversations.length}`);
+  lines.push('='.repeat(65));
+
+  conversations.forEach((conv, idx) => {
+    lines.push('');
+    lines.push(sep);
+    lines.push(`CONVERSATION ${idx + 1}/${conversations.length} — "${conv.title}"`);
+    lines.push(`Créée le : ${formatDateTime(conv.createdAt)}`);
+    lines.push(`Dernière activité : ${formatDateTime(conv.updatedAt)}`);
+    lines.push(sep);
+
+    if (!conv.messages || conv.messages.length === 0) {
+      lines.push('(conversation vide)');
+    } else {
+      conv.messages.forEach((msg) => {
+        lines.push('');
+        const role = msg.role === 'user' ? 'VOUS' : 'ASSISTANT';
+        lines.push(`[${role} — ${formatDateTime(msg.timestamp)}]`);
+        lines.push(msg.content || '');
+        lines.push(dash);
+      });
+    }
+  });
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `conversations_${new Date().toISOString().slice(0, 10)}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
 // ─── Hook ─────────────────────────────────────────────────────────────────────
 
 export const useChat = () => {
@@ -78,14 +129,41 @@ export const useChat = () => {
   const [report, setReport]         = useState(null);
   const cancelRef    = useRef(null);
   const isSendingRef = useRef(false);
+  const saveTimerRef = useRef(null);
+  // Ref pour capturer les messages courants sans les ajouter aux deps de sendMessage
+  const messagesRef  = useRef([]);
 
   // Messages de la conversation active (dérivés)
   const activeConversation = conversations.find((c) => c.id === activeId) || null;
   const messages = activeConversation?.messages || [];
 
-  // Sauvegarde automatique après chaque changement (hors stream)
+  // Synchronise le ref avec les messages courants
+  messagesRef.current = messages;
+
+  // Chargement initial depuis le backend (priorité sur localStorage)
   useEffect(() => {
-    if (!isLoading) persist(conversations, activeId);
+    loadConversationsFromServer().then((serverConvs) => {
+      if (serverConvs.length > 0) {
+        setConversations(serverConvs);
+        setActiveId((prev) => {
+          const found = serverConvs.find((c) => c.id === prev);
+          return found ? prev : (serverConvs[0]?.id || null);
+        });
+        persist(serverConvs, null);
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Sauvegarde localStorage + backend (debounced 2s, hors stream)
+  useEffect(() => {
+    if (!isLoading) {
+      persist(conversations, activeId);
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => {
+        saveConversationsToServer(conversations);
+      }, 2000);
+    }
   }, [conversations, activeId, isLoading]);
 
   // ── Créer une nouvelle conversation ──────────────────────────────────────
@@ -199,8 +277,14 @@ export const useChat = () => {
     setIsLoading(true);
     setCurrentStep('Démarrage...');
 
+    // Extraire les 3 derniers tours AVANT le nouveau message (6 msgs max)
+    const history = messagesRef.current
+      .slice(-6)
+      .filter((m) => m.content && !m.isError)
+      .map((m) => ({ role: m.role, content: m.content.slice(0, 500) }));
+
     cancelRef.current = streamChat(message, {
-      onStep: (step) => setCurrentStep(step),
+      onStep:  (step) => setCurrentStep(step),
 
       onToken: (token) => {
         setConversations((prev) =>
@@ -265,7 +349,7 @@ export const useChat = () => {
         setCurrentStep('');
         isSendingRef.current = false;
       },
-    });
+    }, history);
   }, [isLoading, activeId]);
 
   const cancelStream = useCallback(() => {
@@ -276,6 +360,10 @@ export const useChat = () => {
       isSendingRef.current = false;
     }
   }, []);
+
+  const exportTxt = useCallback(() => {
+    exportConversationsAsTxt(conversations);
+  }, [conversations]);
 
   return {
     messages,
@@ -292,6 +380,7 @@ export const useChat = () => {
     deleteConversation,
     renameConversation,
     editMessageUpTo,
+    exportTxt,
   };
 };
 

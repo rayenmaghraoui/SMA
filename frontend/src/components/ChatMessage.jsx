@@ -6,27 +6,37 @@ import { motion } from 'framer-motion';
 import SqlResult from './SqlResult';
 
 /**
- * Avatar utilisateur.
+ * Avatar utilisateur — gradient cyan avec initiale.
  */
 const UserAvatar = () => (
-  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500 flex items-center justify-center text-cyan-950 font-bold shadow-md shadow-cyan-500/30">
+  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-400 to-teal-500
+                  flex items-center justify-center text-cyan-950 font-bold text-sm
+                  shadow-md shadow-cyan-500/30 ring-2 ring-cyan-400/20 flex-shrink-0">
     U
   </div>
 );
 
 /**
- * Avatar assistant.
+ * Avatar assistant — gradient violet avec icône IA + point actif.
  */
 const AssistantAvatar = () => (
-  <motion.div
-    className="w-10 h-10 rounded-full bg-gradient-to-br from-teal-400 to-cyan-600 flex items-center justify-center shadow-lg shadow-cyan-500/35"
-    animate={{ scale: [1, 1.05, 1] }}
-    transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-  >
-    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-    </svg>
-  </motion.div>
+  <div className="relative flex-shrink-0">
+    <motion.div
+      className="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-700
+                 flex items-center justify-center shadow-lg shadow-violet-500/40
+                 ring-2 ring-violet-400/25"
+      animate={{ scale: [1, 1.04, 1] }}
+      transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+    >
+      {/* Icône étincelle / IA */}
+      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+          d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+      </svg>
+    </motion.div>
+    {/* Point vert "en ligne" */}
+    <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-slate-900" />
+  </div>
 );
 
 /**
@@ -154,7 +164,7 @@ const formatTime = (date) => {
 /**
  * Composant ChatMessage.
  */
-const ChatMessage = ({ message, onEdit }) => {
+const ChatMessage = ({ message, onEdit, isStreaming = false }) => {
   const { role, content, timestamp, isError, sqlResult } = message;
   const isUser = role === 'user';
 
@@ -180,15 +190,27 @@ const ChatMessage = ({ message, onEdit }) => {
             {isUser
               ? (content || null)
               : (content
-                  ? renderMarkdown(content)
+                  ? (
+                    <>
+                      {renderMarkdown(content)}
+                      {/* Curseur clignotant pendant le streaming */}
+                      {isStreaming && (
+                        <motion.span
+                          className="inline-block w-0.5 h-4 bg-violet-400 ml-0.5 align-middle"
+                          animate={{ opacity: [1, 0, 1] }}
+                          transition={{ duration: 0.75, repeat: Infinity }}
+                        />
+                      )}
+                    </>
+                  )
                   : (
                       <span className="flex items-center gap-2">
-                        <span className="animate-pulse text-cyan-200">En cours de rédaction</span>
-                        <span className="flex gap-1">
-                          <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                          <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                          <span className="w-2 h-2 bg-cyan-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-                        </span>
+                        <span className="text-violet-300/80 text-sm italic">Rédaction en cours</span>
+                        <motion.span
+                          className="inline-block w-0.5 h-4 bg-violet-400 ml-1"
+                          animate={{ opacity: [1, 0, 1] }}
+                          transition={{ duration: 0.75, repeat: Infinity }}
+                        />
                       </span>
                     )
                 )

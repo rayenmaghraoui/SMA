@@ -1,0 +1,482 @@
+[
+  {
+    "id": "conv_1780078865382_hf84d",
+    "title": "comment je peux augmenter le chiffre d'affair…",
+    "messages": [
+      {
+        "id": 1780078886564,
+        "role": "user",
+        "content": "comment je peux augmenter le chiffre d'affaires ",
+        "timestamp": "2026-05-29T18:21:26.564Z"
+      },
+      {
+        "id": 1780078886565,
+        "role": "assistant",
+        "content": "Insight 1: Le panier moyen est très élevé à 1468 TND, indiquant une clientèle haut de gamme. Insight 2: Le site web est votre meilleur canal de vente et de conversion. Insight 3: Votre marge bénéficiaire est forte à 25%, permettant d'investir dans la croissance. Action 1: Lancez une campagne marketing ciblée sur le site web pour valoriser vos produits haut de gamme. Action 2: Élaborez une offre groupée ou un service premium pour augmenter encore le panier moyen.",
+        "timestamp": "2026-05-29T18:21:26.564Z"
+      },
+      {
+        "id": 1780080078622,
+        "role": "user",
+        "content": "donne moi top 5 produits selon les ventes",
+        "timestamp": "2026-05-29T18:41:18.622Z"
+      },
+      {
+        "id": 1780080078623,
+        "role": "assistant",
+        "content": "5 ligne(s) retournée(s).",
+        "timestamp": "2026-05-29T18:41:18.622Z",
+        "sqlResult": {
+          "sql": "SELECT product_name, SUM(revenue_tnd) AS total_ventes FROM ventes GROUP BY product_name ORDER BY total_ventes DESC LIMIT 5",
+          "rows_preview": [
+            {
+              "product_name": "iPhone 14 Pro",
+              "total_ventes": 425182.5
+            },
+            {
+              "product_name": "Canape 3 Places",
+              "total_ventes": 351357.75
+            },
+            {
+              "product_name": "Armoire Moderne",
+              "total_ventes": 260628.75
+            },
+            {
+              "product_name": "Smartphone Samsung Galaxy",
+              "total_ventes": 254769.25
+            },
+            {
+              "product_name": "Table en Bois",
+              "total_ventes": 216534.25
+            }
+          ],
+          "total_rows": 5,
+          "chart_data": {
+            "x_key": "product_name",
+            "y_keys": [
+              "total_ventes"
+            ],
+            "data": [
+              {
+                "product_name": "iPhone 14 Pro",
+                "total_ventes": 425182.5
+              },
+              {
+                "product_name": "Canape 3 Places",
+                "total_ventes": 351357.75
+              },
+              {
+                "product_name": "Armoire Moderne",
+                "total_ventes": 260628.75
+              },
+              {
+                "product_name": "Smartphone Samsung Galaxy",
+                "total_ventes": 254769.25
+              },
+              {
+                "product_name": "Table en Bois",
+                "total_ventes": 216534.25
+              }
+            ]
+          },
+          "message": "5 ligne(s) retournée(s)."
+        }
+      },
+      {
+        "id": 1780080098296,
+        "role": "user",
+        "content": "supprime le produit iphone 14 pro",
+        "timestamp": "2026-05-29T18:41:38.296Z"
+      },
+      {
+        "id": 1780080098297,
+        "role": "assistant",
+        "content": "Insight 1: Le produit iPhone 14 Pro génère un chiffre d'affaires et une marge significatifs. Insight 2: Son prix unitaire élevé contribue au panier moyen anormalement haut. Insight 3: Sa suppression impactera directement le CA total et le nombre de transactions. Action 1: Analysez la part exacte du CA et de la marge générée par l'iPhone 14 Pro avant suppression. Action 2: Planifiez une campagne promotionnelle sur des produits alternatifs pour compenser la perte de volume.",
+        "timestamp": "2026-05-29T18:41:38.296Z"
+      },
+      {
+        "id": 1780080362331,
+        "role": "user",
+        "content": "supprime la clonne product_name de la base Ventes ",
+        "timestamp": "2026-05-29T18:46:02.331Z"
+      },
+      {
+        "id": 1780080362332,
+        "role": "assistant",
+        "content": "Insight 1: La suppression de la colonne 'product_name' supprimera l'identifiant principal des produits. Insight 2: Cette action rendra l'analyse des ventes par produit impossible. Insight 3: Les anomalies de prix unitaire élevé ne pourront plus être associées à des produits spécifiques. Action 1: Avant suppression, exportez et sauvegardez les données de la colonne 'product_name' pour archivage. Action 2: Créez une nouvelle colonne d'identifiant unique (ex: SKU) pour chaque produit avant de supprimer le nom.",
+        "timestamp": "2026-05-29T18:46:02.331Z"
+      },
+      {
+        "id": 1780081391972,
+        "role": "user",
+        "content": "supprime la clonne product_name de la base Ventes",
+        "timestamp": "2026-05-29T19:03:11.972Z"
+      },
+      {
+        "id": 1780081391973,
+        "role": "assistant",
+        "content": "Insight 1: La suppression de 'product_name' supprime le suivi des performances par produit. Insight 2: Cette action empêchera d'identifier les produits à prix anormalement élevés. Insight 3: L'analyse des ventes par région et canal restera possible mais moins détaillée. Action 1: Avant suppression, exporter un rapport historique des ventes par produit. Action 2: Créer un nouvel identifiant produit unique (SKU) dans la base pour conserver une trace.",
+        "timestamp": "2026-05-29T19:03:11.972Z"
+      },
+      {
+        "id": 1780081447785,
+        "role": "user",
+        "content": "DROP table ventes",
+        "timestamp": "2026-05-29T19:04:07.785Z"
+      },
+      {
+        "id": 1780081447786,
+        "role": "assistant",
+        "content": "Erreur: Cette opération n'est pas autorisée. Le système accepte uniquement les requêtes de lecture (SELECT). Les opérations de modification, suppression ou création de tables/colonnes ne sont pas permises.",
+        "timestamp": "2026-05-29T19:04:07.785Z",
+        "isError": true
+      },
+      {
+        "id": 1780081512649,
+        "role": "user",
+        "content": "INSERT INTO ventes (abc , efg )  values (123,456) ;",
+        "timestamp": "2026-05-29T19:05:12.649Z"
+      },
+      {
+        "id": 1780081512650,
+        "role": "assistant",
+        "content": "Erreur: Cette opération n'est pas autorisée. Le système accepte uniquement les requêtes de lecture (SELECT). Les opérations de modification, suppression ou création de tables/colonnes ne sont pas permises.",
+        "timestamp": "2026-05-29T19:05:12.649Z",
+        "isError": true
+      },
+      {
+        "id": 1780086026405,
+        "role": "user",
+        "content": "top 5 produits vendus dans sfax",
+        "timestamp": "2026-05-29T20:20:26.405Z"
+      },
+      {
+        "id": 1780086026406,
+        "role": "assistant",
+        "content": "5 ligne(s) retournée(s).",
+        "timestamp": "2026-05-29T20:20:26.405Z",
+        "sqlResult": {
+          "sql": "SELECT product_name, SUM(quantity) AS total_quantity FROM ventes WHERE customer_region = 'Sfax' GROUP BY product_name ORDER BY total_quantity DESC LIMIT 5",
+          "rows_preview": [
+            {
+              "product_name": "Parfum Oriental",
+              "total_quantity": 112
+            },
+            {
+              "product_name": "Ecouteurs Bluetooth",
+              "total_quantity": 110
+            },
+            {
+              "product_name": "Smartphone Samsung Galaxy",
+              "total_quantity": 102
+            },
+            {
+              "product_name": "Dattes Deglet Nour",
+              "total_quantity": 102
+            },
+            {
+              "product_name": "Huile Olive Extra Virgin",
+              "total_quantity": 91
+            }
+          ],
+          "total_rows": 5,
+          "chart_data": {
+            "x_key": "product_name",
+            "y_keys": [
+              "total_quantity"
+            ],
+            "data": [
+              {
+                "product_name": "Parfum Oriental",
+                "total_quantity": 112
+              },
+              {
+                "product_name": "Ecouteurs Bluetooth",
+                "total_quantity": 110
+              },
+              {
+                "product_name": "Smartphone Samsung Galaxy",
+                "total_quantity": 102
+              },
+              {
+                "product_name": "Dattes Deglet Nour",
+                "total_quantity": 102
+              },
+              {
+                "product_name": "Huile Olive Extra Virgin",
+                "total_quantity": 91
+              }
+            ]
+          },
+          "message": "5 ligne(s) retournée(s)."
+        }
+      }
+    ],
+    "createdAt": "2026-05-29T18:21:05.382Z",
+    "updatedAt": "2026-05-29T20:20:40.132Z"
+  },
+  {
+    "id": "conv_1779709478958_zk6gj",
+    "title": "Compare les ventes par canal de vente",
+    "messages": [
+      {
+        "id": 1779709478958,
+        "role": "user",
+        "content": "Compare les ventes par canal de vente",
+        "timestamp": "2026-05-25T11:44:38.958Z"
+      },
+      {
+        "id": 1779709478959,
+        "role": "assistant",
+        "content": "4 ligne(s) retournée(s).",
+        "timestamp": "2026-05-25T11:44:38.958Z",
+        "sqlResult": {
+          "sql": "SELECT sales_channel, ca_total, nb_transactions, panier_moyen FROM canaux ORDER BY ca_total DESC LIMIT 100",
+          "rows_preview": [
+            {
+              "sales_channel": "Site Web",
+              "ca_total": 450000,
+              "nb_transactions": 450,
+              "panier_moyen": 1000
+            },
+            {
+              "sales_channel": "Magasin Physique",
+              "ca_total": 350000,
+              "nb_transactions": 300,
+              "panier_moyen": 1166.67
+            },
+            {
+              "sales_channel": "Application Mobile",
+              "ca_total": 200000,
+              "nb_transactions": 200,
+              "panier_moyen": 1000
+            },
+            {
+              "sales_channel": "Réseaux Sociaux",
+              "ca_total": 150000,
+              "nb_transactions": 150,
+              "panier_moyen": 1000
+            }
+          ],
+          "total_rows": 4,
+          "chart_data": {
+            "x_key": "sales_channel",
+            "y_keys": [
+              "ca_total",
+              "nb_transactions",
+              "panier_moyen"
+            ],
+            "data": [
+              {
+                "sales_channel": "Site Web",
+                "ca_total": 450000,
+                "nb_transactions": 450,
+                "panier_moyen": 1000
+              },
+              {
+                "sales_channel": "Magasin Physique",
+                "ca_total": 350000,
+                "nb_transactions": 300,
+                "panier_moyen": 1166.67
+              },
+              {
+                "sales_channel": "Application Mobile",
+                "ca_total": 200000,
+                "nb_transactions": 200,
+                "panier_moyen": 1000
+              },
+              {
+                "sales_channel": "Réseaux Sociaux",
+                "ca_total": 150000,
+                "nb_transactions": 150,
+                "panier_moyen": 1000
+              }
+            ]
+          },
+          "message": "4 ligne(s) retournée(s)."
+        }
+      },
+      {
+        "id": 1779709510829,
+        "role": "user",
+        "content": "top 3 produits ",
+        "timestamp": "2026-05-25T11:45:10.829Z"
+      },
+      {
+        "id": 1779709510830,
+        "role": "assistant",
+        "content": "3 ligne(s) retournée(s).",
+        "timestamp": "2026-05-25T11:45:10.829Z",
+        "sqlResult": {
+          "sql": "SELECT product_name, SUM(revenue_tnd) AS ca_total, SUM(quantity) AS quantite_vendue FROM ventes GROUP BY product_name ORDER BY ca_total DESC LIMIT 3",
+          "rows_preview": [
+            {
+              "product_name": "iPhone 14 Pro",
+              "ca_total": 425182.5,
+              "quantite_vendue": 486
+            },
+            {
+              "product_name": "Canape 3 Places",
+              "ca_total": 351357.75,
+              "quantite_vendue": 412
+            },
+            {
+              "product_name": "Armoire Moderne",
+              "ca_total": 260628.75,
+              "quantite_vendue": 420
+            }
+          ],
+          "total_rows": 3,
+          "chart_data": {
+            "x_key": "product_name",
+            "y_keys": [
+              "ca_total",
+              "quantite_vendue"
+            ],
+            "data": [
+              {
+                "product_name": "iPhone 14 Pro",
+                "ca_total": 425182.5,
+                "quantite_vendue": 486
+              },
+              {
+                "product_name": "Canape 3 Places",
+                "ca_total": 351357.75,
+                "quantite_vendue": 412
+              },
+              {
+                "product_name": "Armoire Moderne",
+                "ca_total": 260628.75,
+                "quantite_vendue": 420
+              }
+            ]
+          },
+          "message": "3 ligne(s) retournée(s)."
+        }
+      },
+      {
+        "id": 1779709530617,
+        "role": "user",
+        "content": "combien de produits ?",
+        "timestamp": "2026-05-25T11:45:30.617Z"
+      },
+      {
+        "id": 1779709530618,
+        "role": "assistant",
+        "content": "1 ligne(s) retournée(s).",
+        "timestamp": "2026-05-25T11:45:30.617Z",
+        "sqlResult": {
+          "sql": "SELECT COUNT(DISTINCT product_name) AS nb_produits FROM ventes ORDER BY nb_produits DESC LIMIT 100",
+          "rows_preview": [
+            {
+              "nb_produits": 22
+            }
+          ],
+          "total_rows": 1,
+          "chart_data": null,
+          "message": "1 ligne(s) retournée(s)."
+        }
+      },
+      {
+        "id": 1779709538029,
+        "role": "user",
+        "content": "lesquelles ?",
+        "timestamp": "2026-05-25T11:45:38.029Z"
+      },
+      {
+        "id": 1779709538030,
+        "role": "assistant",
+        "content": "Insight 1: Les anomalies concernent des prix unitaires élevés et des performances régionales exceptionnelles. Insight 2: La région avec un CA de 598,464 TND génère 30% de profit avec un panier moyen très élevé de 1,468 TND. Insight 3: Le canal Site Web est le meilleur performant mais présente aussi un panier moyen anormalement haut de 1,167 TND. Action 1: Analyser la composition des ventes à prix unitaire supérieur à 900 TND pour comprendre leur profitabilité réelle. Action 2: Répliquer la stratégie commerciale de la région performante sur les autres régions dans les 60 jours.",
+        "timestamp": "2026-05-25T11:45:38.029Z"
+      },
+      {
+        "id": 1779709769207,
+        "role": "user",
+        "content": "liste les 22 produits",
+        "timestamp": "2026-05-25T11:49:29.207Z"
+      },
+      {
+        "id": 1779709769208,
+        "role": "assistant",
+        "content": "22 ligne(s) retournée(s).",
+        "timestamp": "2026-05-25T11:49:29.207Z",
+        "sqlResult": {
+          "sql": "SELECT product_name FROM ventes GROUP BY product_name ORDER BY product_name LIMIT 22",
+          "rows_preview": [
+            {
+              "product_name": "Armoire Moderne"
+            },
+            {
+              "product_name": "Cafe Arabica Premium"
+            },
+            {
+              "product_name": "Cahier Oxford"
+            },
+            {
+              "product_name": "Canape 3 Places"
+            },
+            {
+              "product_name": "Chaise Bureau Ergonomique"
+            },
+            {
+              "product_name": "Chemise Homme Classic"
+            },
+            {
+              "product_name": "Classeur Bureau"
+            },
+            {
+              "product_name": "Dattes Deglet Nour"
+            },
+            {
+              "product_name": "Ecouteurs Bluetooth"
+            },
+            {
+              "product_name": "Huile Olive Extra Virgin"
+            },
+            {
+              "product_name": "Jeans Premium"
+            },
+            {
+              "product_name": "Montre Casio"
+            },
+            {
+              "product_name": "Parfum Oriental"
+            },
+            {
+              "product_name": "Robe Femme Elegante"
+            },
+            {
+              "product_name": "Sac a Dos"
+            },
+            {
+              "product_name": "Smartphone Samsung Galaxy"
+            },
+            {
+              "product_name": "Stylos Bic Pack"
+            },
+            {
+              "product_name": "T-Shirt Sport"
+            },
+            {
+              "product_name": "Table en Bois"
+            },
+            {
+              "product_name": "Tablette Huawei"
+            },
+            {
+              "product_name": "The Vert Bio"
+            },
+            {
+              "product_name": "iPhone 14 Pro"
+            }
+          ],
+          "total_rows": 22,
+          "chart_data": null,
+          "message": "22 ligne(s) retournée(s)."
+        }
+      }
+    ],
+    "createdAt": "2026-05-25T11:44:38.958Z",
+    "updatedAt": "2026-05-25T11:49:30.725Z"
+  }
+]

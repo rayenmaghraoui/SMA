@@ -1,193 +1,207 @@
 """
-Route /upload — gestion de l'upload de fichiers CSV.
+Route /upload — gestion de l'upload de fichiers CSV avec normalisation sémantique.
 
-Cette route permet aux utilisateurs d'uploader leurs propres fichiers
-CSV pour analyse personnalisée.
+Cette route accepte des CSV au schéma hétérogène et applique automatiquement
+la couche de normalisation pour les rendre compatibles avec les analyzers
+existants (kpis_analyzer, canaux_analyzer, categories_analyzer, ...).
+
+Pipeline :
+    1. Validation extension + taille
+    2. Parsing CSV → DataFrame
+    3. NormalizationPipeline → DataFrame normalisé + rapport
+    4. Sauvegarde du fichier original ET du fichier normalisé
+    5. Réponse avec métadonnées d'explicabilité
 """
 
 import logging
+from io import BytesIO
 from pathlib import Path
 from typing import List
 
 import pandas as pd
 from fastapi import APIRouter, File, HTTPException, UploadFile
 
+from backend.analysis.cache import invalidate_cache
 from backend.config import UPLOADS_DIR
 from backend.models.response_models import UploadResponse
+from backend.normalization import NormalizationPipeline, NormalizationResult
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="", tags=["Upload"])
 
-# Colonnes attendues par type de fichier (correspondance par similarité ≥70%)
-EXPECTED_COLUMNS = {
-    "ventes": [
-        "invoice_id", "product_name", "category", "quantity",
-        "unit_price_tnd", "revenue_tnd", "customer_id", "customer_region",
-        "sale_date", "sales_channel", "payment_method", "estimated_profit",
-    ],
-    "regions": [
-        "customer_region", "ca_total", "profit_total",
-        "nb_transactions", "panier_moyen",
-    ],
-    "categories": [
-        "category", "ca_total", "profit_total",
-        "nb_transactions", "quantite_vendue", "prix_moyen",
-    ],
-    "canaux": [
-        "sales_channel", "ca_total", "nb_transactions", "panier_moyen",
-    ],
-    "kpis": [
-        "indicateur", "valeur",
-    ],
-}
 
-# Taille maximale: 10 MB
+# ============================================================
+# Configuration
+# ============================================================
+
+# Taille maximale : 10 MB
 MAX_FILE_SIZE = 10 * 1024 * 1024
 
+# Mapping schéma → nom de fichier canonique attendu par loader.py
+SCHEMA_TO_CANONICAL_FILENAME = {
+    "ventes":     "01_donnees_vente.csv",
+    "regions":    "02_analyse_region.csv",
+    "categories": "03_analyse_categorie.csv",
+    "canaux":     "04_analyse_canaux.csv",
+    "kpis":       "05_kpis_globaux.csv",
+}
 
-def _detect_file_type(columns: List[str]) -> str:
-    """
-    Détecte le type de fichier basé sur les colonnes.
-
-    Args:
-        columns: Liste des noms de colonnes.
-
-    Returns:
-        Type de fichier ("finance", "marketing", "support", "unknown").
-    """
-    columns_set = set(col.lower().strip() for col in columns)
-
-    for file_type, expected_cols in EXPECTED_COLUMNS.items():
-        expected_set = set(col.lower() for col in expected_cols)
-        # Match si au moins 70% des colonnes attendues sont présentes
-        match_ratio = len(columns_set & expected_set) / len(expected_set)
-        if match_ratio >= 0.7:
-            return file_type
-
-    return "unknown"
+# Pipeline singleton (instancié une seule fois pour réutiliser les embeddings)
+_pipeline: NormalizationPipeline | None = None
 
 
-def _validate_csv(df: pd.DataFrame, file_type: str) -> List[str]:
-    """
-    Valide le contenu du CSV.
+def _get_pipeline() -> NormalizationPipeline:
+    """Retourne le pipeline de normalisation (singleton)."""
+    global _pipeline
+    if _pipeline is None:
+        _pipeline = NormalizationPipeline(
+            use_semantic=True,
+            use_llm_fallback=False,  # Activable via .env si besoin
+        )
+    return _pipeline
 
-    Args:
-        df: DataFrame chargé.
-        file_type: Type de fichier détecté.
 
-    Returns:
-        Liste des erreurs de validation (vide si OK).
-    """
-    errors = []
-
-    # Vérifier que le fichier n'est pas vide
-    if df.empty:
-        errors.append("Le fichier est vide.")
-        return errors
-
-    # Vérifications spécifiques par type
-    if file_type == "finance":
-        if "revenue" in df.columns:
-            if (df["revenue"] < 0).any():
-                errors.append("Certaines valeurs de 'revenue' sont négatives.")
-
-    elif file_type == "marketing":
-        if "conversion_rate" in df.columns:
-            if (df["conversion_rate"] < 0).any() or (df["conversion_rate"] > 100).any():
-                errors.append("'conversion_rate' doit être entre 0 et 100.")
-
-    elif file_type == "support":
-        if "satisfaction_score" in df.columns:
-            if (df["satisfaction_score"] < 1).any() or (df["satisfaction_score"] > 5).any():
-                errors.append("'satisfaction_score' doit être entre 1 et 5.")
-
-    return errors
+# ============================================================
+# Route principale
+# ============================================================
 
 
 @router.post("/upload", response_model=UploadResponse)
 async def upload_csv(file: UploadFile = File(...)) -> UploadResponse:
     """
-    Upload un fichier CSV pour analyse.
+    Upload un fichier CSV et le normalise automatiquement.
 
-    Le fichier est validé (format, colonnes, contenu) puis sauvegardé
-    dans le dossier uploads pour utilisation ultérieure.
+    Le fichier uploadé est analysé pour :
+        - détecter son domaine métier (finance, marketing, sales, ...)
+        - mapper ses colonnes vers les concepts canoniques internes
+        - le transformer en un schéma compatible avec les analyzers
+
+    Le fichier original est préservé. Une copie normalisée est sauvegardée
+    sous le nom canonique attendu par le pipeline d'analyse.
 
     Args:
         file: Fichier CSV uploadé (multipart/form-data).
 
     Returns:
-        UploadResponse avec le nom du fichier, le type détecté et les colonnes.
+        UploadResponse avec métadonnées d'explicabilité :
+            - file_type : schéma détecté ou "unknown"
+            - columns   : colonnes du dataset normalisé
+            - rows      : nombre de lignes
+            - normalization_summary : explication user-friendly
+            - mappings : détail des renommages appliqués (debug)
 
     Raises:
-        HTTPException 400: Si le fichier n'est pas un CSV valide.
-        HTTPException 413: Si le fichier est trop volumineux.
+        HTTPException 400: Fichier non-CSV, vide ou malformé.
+        HTTPException 413: Fichier trop volumineux.
     """
-    logger.info("Upload de fichier: %s", file.filename)
+    logger.info("Upload de fichier : %s", file.filename)
 
-    # Vérifier l'extension
-    if not file.filename.endswith(".csv"):
+    # ----- Validation extension -----
+    if not file.filename or not file.filename.lower().endswith(".csv"):
         raise HTTPException(
             status_code=400,
-            detail="Seuls les fichiers CSV sont acceptés."
+            detail="Seuls les fichiers CSV sont acceptés.",
         )
 
-    # Lire le contenu
+    # ----- Lecture et taille -----
+    content = await file.read()
+    if len(content) > MAX_FILE_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail=(
+                f"Fichier trop volumineux. Maximum : "
+                f"{MAX_FILE_SIZE // (1024 * 1024)} MB."
+            ),
+        )
+
+    # ----- Parsing CSV -----
     try:
-        content = await file.read()
-
-        # Vérifier la taille
-        if len(content) > MAX_FILE_SIZE:
-            raise HTTPException(
-                status_code=413,
-                detail=f"Fichier trop volumineux. Maximum: {MAX_FILE_SIZE // (1024*1024)} MB."
-            )
-
-        # Charger avec pandas
-        from io import BytesIO
         df = pd.read_csv(BytesIO(content))
-
     except pd.errors.EmptyDataError:
         raise HTTPException(status_code=400, detail="Le fichier CSV est vide.")
     except pd.errors.ParserError as e:
-        raise HTTPException(status_code=400, detail=f"Erreur de parsing CSV: {str(e)}")
+        raise HTTPException(
+            status_code=400, detail=f"Erreur de parsing CSV : {e}",
+        )
     except Exception as e:
         logger.exception("Erreur lors de la lecture du fichier")
-        raise HTTPException(status_code=400, detail=f"Erreur: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Erreur : {e}")
 
-    # Détecter le type de fichier
-    columns = df.columns.tolist()
-    file_type = _detect_file_type(columns)
+    if df.empty:
+        raise HTTPException(status_code=400, detail="Le CSV ne contient aucune ligne.")
 
-    logger.info(
-        "Fichier détecté: type=%s, colonnes=%d, lignes=%d",
-        file_type, len(columns), len(df)
-    )
+    # ----- Normalisation sémantique -----
+    pipeline = _get_pipeline()
+    try:
+        result: NormalizationResult = pipeline.normalize(df)
+    except Exception as e:
+        logger.exception("Échec de la normalisation sémantique")
+        # On ne bloque pas l'upload : le fichier original est gardé
+        result = None  # type: ignore
 
-    # Valider le contenu
-    validation_errors = _validate_csv(df, file_type)
+    # ----- Sauvegarde -----
+    # Toujours sauvegarder l'original sous son nom uploadé
+    original_path = UPLOADS_DIR / file.filename
+    original_path.write_bytes(content)
+    logger.info("Original sauvegardé : %s", original_path)
 
-    if validation_errors:
-        logger.warning("Erreurs de validation: %s", validation_errors)
+    # Si la normalisation a réussi, sauvegarder aussi sous le nom canonique
+    file_type = "unknown"
+    normalized_columns: List[str] = list(df.columns)
+    normalized_rows = len(df)
+    validation_errors: List[str] = []
+    normalization_summary = ""
+    mappings_detail: List[dict] = []
 
-    # Sauvegarder le fichier
-    save_path = UPLOADS_DIR / file.filename
-    with open(save_path, "wb") as f:
-        f.write(content)
+    if result is not None:
+        file_type = result.schema.name if result.schema else "unknown"
+        normalization_summary = result.get_explanation()
+        mappings_detail = [m.to_dict() for m in result.mappings]
+        validation_errors = list(result.report.errors)
 
-    logger.info("Fichier sauvegardé: %s", save_path)
+        if result.success and result.normalized_df is not None and result.schema:
+            normalized_columns = list(result.normalized_df.columns)
+            normalized_rows = len(result.normalized_df)
+
+            canonical_name = SCHEMA_TO_CANONICAL_FILENAME.get(result.schema.name)
+            if canonical_name:
+                canonical_path = UPLOADS_DIR / canonical_name
+                result.normalized_df.to_csv(canonical_path, index=False)
+                logger.info(
+                    "Version normalisée sauvegardée : %s (%d lignes)",
+                    canonical_path, normalized_rows,
+                )
+        else:
+            # Normalisation incomplète : ajouter les warnings/errors visibles
+            validation_errors.extend(result.report.warnings)
+
+    # Invalider le cache car les données ont changé
+    invalidate_cache()
 
     return UploadResponse(
         success=True,
         filename=file.filename,
         file_type=file_type,
         dataset_type=file_type,
-        columns=columns,
-        row_count=len(df),
-        rows=len(df),
+        columns=normalized_columns,
+        row_count=normalized_rows,
+        rows=normalized_rows,
         validation_errors=validation_errors,
-        message=f"Fichier uploadé avec succès ({len(df)} lignes).",
+        message=(
+            normalization_summary
+            or f"Fichier uploadé ({normalized_rows} lignes)."
+        ),
+        # Ces champs additionnels permettent au frontend d'afficher
+        # l'explicabilité du mapping si le modèle de réponse le supporte.
+        normalization_summary=normalization_summary,
+        mappings=mappings_detail,
     )
+
+
+# ============================================================
+# Route de listing (inchangée)
+# ============================================================
 
 
 @router.get("/uploads")
@@ -196,10 +210,10 @@ async def list_uploads() -> dict:
     Liste les fichiers uploadés disponibles.
 
     Returns:
-        Liste des fichiers dans le dossier uploads.
+        Liste des fichiers dans le dossier uploads avec leur taille
+        et date de dernière modification.
     """
     files = []
-
     for f in UPLOADS_DIR.glob("*.csv"):
         files.append({
             "filename": f.name,
@@ -207,7 +221,4 @@ async def list_uploads() -> dict:
             "modified": f.stat().st_mtime,
         })
 
-    return {
-        "files": files,
-        "count": len(files),
-    }
+    return {"files": files, "count": len(files)}

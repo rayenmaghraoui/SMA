@@ -216,11 +216,25 @@ def _remove_duplicate_content(text: str) -> str:
     return normalized
 
 
+def _format_conversation_history(history: list) -> str:
+    """Formate les 3 derniers échanges pour le prompt LLM."""
+    if not history:
+        return ""
+    lines = ["💬 HISTORIQUE (3 derniers échanges) :"]
+    for msg in history[-6:]:
+        role = "Utilisateur" if msg.get("role") == "user" else "Assistant"
+        content = (msg.get("content") or "")[:200]
+        if content:
+            lines.append(f"  [{role}]: {content}")
+    return "\n".join(lines) if len(lines) > 1 else ""
+
+
 def _build_interpretation_prompt(
     kpis_text: str,
     anomalies_text: str,
     rag_text: str,
     user_question: str = "",
+    conversation_history: list = None,
 ) -> str:
     """
     Construit un prompt d'interprétation adapté au contexte.
@@ -229,6 +243,7 @@ def _build_interpretation_prompt(
     le prompt force une réponse focalisée sur ce besoin.
     """
     question = (user_question or "").strip()
+    history_text = _format_conversation_history(conversation_history or [])
 
     base_context = f"""Voici les données d'une PME tunisienne à analyser :
 
@@ -237,7 +252,7 @@ def _build_interpretation_prompt(
 {anomalies_text}
 
 {rag_text}
-"""
+{f"{chr(10)}{history_text}" if history_text else ""}"""
 
     if question:
         return base_context + f"""
@@ -295,11 +310,13 @@ def interpretation_agent(state: AgentState) -> AgentState:
         kpis_text = _format_kpis_for_prompt(kpis)
         anomalies_text = _format_anomalies_for_prompt(anomalies)
         rag_text = _format_rag_context_for_prompt(rag_context)
+        conversation_history = state.get("conversation_history", [])
         user_prompt = _build_interpretation_prompt(
             kpis_text=kpis_text,
             anomalies_text=anomalies_text,
             rag_text=rag_text,
             user_question=user_question,
+            conversation_history=conversation_history,
         )
 
         logger.debug("[Interpretation Agent] Appel LLM en cours...")
@@ -365,11 +382,13 @@ async def interpretation_agent_async(state: AgentState) -> AgentState:
         kpis_text = _format_kpis_for_prompt(kpis)
         anomalies_text = _format_anomalies_for_prompt(anomalies)
         rag_text = _format_rag_context_for_prompt(rag_context)
+        conversation_history = state.get("conversation_history", [])
         user_prompt = _build_interpretation_prompt(
             kpis_text=kpis_text,
             anomalies_text=anomalies_text,
             rag_text=rag_text,
             user_question=user_question,
+            conversation_history=conversation_history,
         )
 
         llm = _get_llm()

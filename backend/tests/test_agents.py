@@ -146,16 +146,17 @@ class TestAnalysisAgent:
         expected = {"revenue_total", "profit_total", "profit_margin", "trend"}
         assert expected.issubset(finance_kpis.keys())
 
-    def test_analysis_agent_kpis_has_marketing_keys(self):
-        """Les KPIs doivent contenir les clés marketing attendues."""
+    def test_analysis_agent_kpis_has_canaux_keys(self):
+        """Les KPIs doivent contenir les clés canaux de vente attendues."""
         state = create_initial_state(raw_data=_make_raw_data())
         result = analysis_agent(state)
-        marketing_kpis = result["kpis"].get("marketing", {})
-        expected = {"total_budget_spent", "total_conversions", "best_channel"}
-        assert expected.issubset(marketing_kpis.keys())
+        # analysis_agent stocke les KPIs canaux sous la clé "marketing"
+        canaux_kpis = result["kpis"].get("marketing", {})
+        expected = {"total_ca", "total_transactions", "best_channel"}
+        assert expected.issubset(canaux_kpis.keys())
 
-    def test_analysis_agent_kpis_has_support_keys(self):
-        """Les KPIs doivent contenir les clés catégories attendues."""
+    def test_analysis_agent_kpis_has_categories_keys(self):
+        """Les KPIs doivent contenir les clés catégories produits attendues."""
         state = create_initial_state(raw_data=_make_raw_data())
         result = analysis_agent(state)
         categories_kpis = result["kpis"].get("categories", {})

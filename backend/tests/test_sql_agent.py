@@ -91,12 +91,12 @@ class TestValidateSql:
         assert ok is False
 
     def test_complex_select_is_valid(self):
-        """Un SELECT avec JOIN, GROUP BY, ORDER BY est valide."""
+        """Un SELECT avec GROUP BY, ORDER BY est valide."""
         sql = """
-        SELECT channel, SUM(conversions) as total_conversions
-        FROM marketing
-        GROUP BY channel
-        ORDER BY total_conversions DESC
+        SELECT sales_channel, SUM(nb_transactions) as total_transactions
+        FROM canaux
+        GROUP BY sales_channel
+        ORDER BY total_transactions DESC
         LIMIT 10
         """
         ok, err = validate_sql(sql)
@@ -196,14 +196,20 @@ class TestExecuteSql:
         import duckdb
 
         conn = duckdb.connect(":memory:")
-        finance_df = pd.DataFrame({
-            "date": ["2024-01-01", "2024-02-01"],
-            "revenue": [100_000.0, 110_000.0],
-            "cost": [70_000.0, 75_000.0],
-            "profit": [30_000.0, 35_000.0],
-            "growth_rate": [0.0, 10.0],
+        # Table "kpis" — schéma canonique 05_kpis_globaux.csv
+        kpis_df = pd.DataFrame({
+            "indicateur": ["CA Total (TND)", "Profit Total (TND)", "Marge Beneficiaire (%)"],
+            "valeur":     [500_000.0, 125_000.0, 25.0],
         })
-        conn.register("finance", finance_df)
+        # Table "canaux" — schéma canonique 04_analyse_canaux.csv
+        canaux_df = pd.DataFrame({
+            "sales_channel":   ["Site Web", "Magasin Physique"],
+            "ca_total":        [450_000.0, 350_000.0],
+            "nb_transactions": [450, 300],
+            "panier_moyen":    [1_000.0, 1_166.67],
+        })
+        conn.register("kpis",   kpis_df)
+        conn.register("canaux", canaux_df)
 
         with patch("backend.sql_agent.executor.get_connection", return_value=conn):
             yield
@@ -212,16 +218,16 @@ class TestExecuteSql:
     async def test_valid_query_returns_rows(self):
         """Une requête SELECT valide retourne des lignes."""
         from backend.sql_agent.executor import execute_sql
-        rows, errors = await execute_sql("SELECT * FROM finance")
+        rows, errors = await execute_sql("SELECT * FROM kpis")
         assert errors == []
-        assert len(rows) == 2
-        assert "revenue" in rows[0]
+        assert len(rows) == 3
+        assert "indicateur" in rows[0]
 
     @pytest.mark.asyncio
     async def test_invalid_sql_returns_error(self):
         """Une requête invalide retourne une erreur sans crash."""
         from backend.sql_agent.executor import execute_sql
-        rows, errors = await execute_sql("DROP TABLE finance")
+        rows, errors = await execute_sql("DROP TABLE kpis")
         assert rows == []
         assert len(errors) > 0
 
@@ -229,7 +235,7 @@ class TestExecuteSql:
     async def test_limit_enforced(self):
         """Le LIMIT est bien imposé (max 500)."""
         from backend.sql_agent.executor import execute_sql
-        rows, errors = await execute_sql("SELECT * FROM finance LIMIT 1")
+        rows, errors = await execute_sql("SELECT * FROM kpis LIMIT 1")
         assert errors == []
         assert len(rows) == 1
 
@@ -237,7 +243,7 @@ class TestExecuteSql:
     async def test_result_is_list_of_dicts(self):
         """Le résultat est une liste de dictionnaires."""
         from backend.sql_agent.executor import execute_sql
-        rows, _ = await execute_sql("SELECT revenue FROM finance LIMIT 1")
+        rows, _ = await execute_sql("SELECT valeur FROM kpis LIMIT 1")
         assert isinstance(rows, list)
         assert isinstance(rows[0], dict)
 

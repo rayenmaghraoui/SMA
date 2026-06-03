@@ -27,8 +27,8 @@ def finance_df() -> pd.DataFrame:
 
 
 @pytest.fixture
-def marketing_df() -> pd.DataFrame:
-    """DataFrame canaux marketing minimal pour les tests."""
+def canaux_df() -> pd.DataFrame:
+    """DataFrame canaux de vente minimal pour les tests (04_analyse_canaux.csv)."""
     return pd.DataFrame({
         "sales_channel":   ["Site Web", "Magasin Physique", "Application Mobile", "Réseaux Sociaux"],
         "ca_total":        [450_000.0, 350_000.0, 200_000.0, 150_000.0],
@@ -38,8 +38,14 @@ def marketing_df() -> pd.DataFrame:
 
 
 @pytest.fixture
-def support_df() -> pd.DataFrame:
-    """DataFrame catégories produits minimal pour les tests."""
+def marketing_df(canaux_df: pd.DataFrame) -> pd.DataFrame:
+    """Alias de canaux_df — conservé pour compatibilité avec test_analysis.py."""
+    return canaux_df
+
+
+@pytest.fixture
+def categories_df() -> pd.DataFrame:
+    """DataFrame catégories produits minimal pour les tests (03_analyse_categorie.csv)."""
     return pd.DataFrame({
         "category":        ["Électronique", "Mobilier", "Vêtements"],
         "ca_total":        [500_000.0, 350_000.0, 200_000.0],
@@ -48,6 +54,12 @@ def support_df() -> pd.DataFrame:
         "quantite_vendue": [600, 350, 400],
         "prix_moyen":      [833.33, 1_166.67, 500.0],
     })
+
+
+@pytest.fixture
+def support_df(categories_df: pd.DataFrame) -> pd.DataFrame:
+    """Alias de categories_df — conservé pour compatibilité avec test_analysis.py."""
+    return categories_df
 
 
 @pytest.fixture

@@ -1,5 +1,5 @@
 {
-  "resume_executif": "L'entreprise a réalisé un chiffre d'affaires de 500,000 TND avec une marge de 25.0%. Le produit le plus vendu est 'iPhone 14 Pro', la région la plus performante est Tunis. Le meilleur canal de vente par chiffre d'affaires est 'Site Web'. La catégorie la plus performante est 'Mobilier'. 765 anomalie(s) ont été détectées et nécessitent attention. Actions prioritaires : Audit et Correction des Données Financières, Analyse et Réplication du Modèle de Vente Groupée.",
+  "resume_executif": "L'entreprise a réalisé un chiffre d'affaires de 500,000 TND avec une marge de 25.0%. Le produit le plus vendu est 'iPhone 14 Pro', la région la plus performante est Tunis. Le meilleur canal de vente par chiffre d'affaires est 'Site Web'. La catégorie la plus performante est 'Mobilier'. 765 anomalie(s) ont été détectées et nécessitent attention. Actions prioritaires : Audit et Réduction Urgente du Budget Marketing, Analyse de Prix et Segmentation Marché.",
   "kpis": {
     "finance": {
       "titre": "Performance Financière",
@@ -5472,42 +5472,42 @@
       }
     ]
   },
-  "interpretation": "Insight 1: La région dominante génère 598464 TND de CA, soit près de 120% du CA total déclaré, indiquant une anomalie de calcul ou de reporting. Insight 2: Cette même région a un panier moyen de 1468 TND, très supérieur aux prix unitaires hauts détectés, suggérant des ventes groupées. Insight 3: La rentabilité régionale est concentrée sur une seule zone, créant un risque de dépendance. Action 1: Auditer et corriger les données de CA et de transactions pour la région anormale afin d'avoir une base fiable. Action 2: Répliquer la stratégie de vente groupée (panier moyen élevé) de la région performante vers les autres régions sous-performantes. Objectif: Clarifier le reporting régional sous 30 jours et augmenter le panier moyen des autres régions de 15% sous 90 jours.",
+  "interpretation": "Insight 1: Marge bénéficiaire saine à 25% mais croissance nulle à 0%. Insight 2: Budget marketing de 1.15M TND disproportionné par rapport au CA de 500k TND. Insight 3: Prix unitaires anormalement élevés, dépassant souvent 900 TND. Action 1: Réviser drastiquement le budget marketing pour réduire le coût d'acquisition. Action 2: Analyser la justification des prix unitaires élevés et leur acceptation par le marché.",
   "recommendations": [
     {
       "priorite": 1,
-      "titre": "Audit et Correction des Données Financières",
-      "action": "Auditer immédiatement les données de CA et de transactions de la région anormale (598 464 TND). Vérifier la cohérence entre les ventes déclarées, les factures et les encaissements. Identifier l'origine de l'anomalie (erreur de saisie, doublon, vente groupée mal comptabilisée) et corriger la base de données pour obtenir un reporting fiable dans les 30 jours.",
-      "impact": "Obtention d'une base financière saine pour la prise de décision. Élimination du risque de fausse analyse stratégique due à des données erronées.",
-      "source": "Analyse Insight 1 & Action 1"
+      "titre": "Audit et Réduction Urgente du Budget Marketing",
+      "action": "Réaliser un audit complet des dépenses marketing de 1.15M TND. Identifier les canaux les moins performants (ex: publicité traditionnelle coûteuse) et les arrêter immédiatement. Réallouer le budget vers des actions digitales mesurables et à faible coût. Objectif : réduire le budget marketing d'au moins 50% dans un premier temps, pour l'aligner sur un CAC acceptable par rapport à la marge.",
+      "impact": "Économie immédiate de > 500k TND. Réduction drastique du CAC. Amélioration de la trésorerie et possibilité de réinvestissement dans des leviers plus rentables.",
+      "source": "guide_gestion_entreprises_tunisiennes.md - 2.3 Optimisation du ROI Marketing & guide_interpretation_kpis_tunisie.md - 3. KPIs Marketing et Vente (CAC)"
     },
     {
       "priorite": 2,
-      "titre": "Analyse et Réplication du Modèle de Vente Groupée",
-      "action": "Analyser en détail le processus de vente dans la région performante (panier moyen de 1 468 TND). Identifier les produits groupés, les offres promotionnelles, les arguments commerciaux ou les canaux de vente spécifiques. Formaliser une stratégie de vente groupée/à valeur ajoutée et la déployer progressivement dans les autres régions via la formation des équipes commerciales.",
-      "impact": "Augmentation du panier moyen des régions sous-performantes de +15% sous 90 jours. Amélioration de la rentabilité par transaction.",
-      "source": "Analyse Insight 2 & Action 2"
+      "titre": "Analyse de Prix et Segmentation Marché",
+      "action": "Lancer une étude de marché ciblée pour comprendre la perception des prix (>900 TND). Segmenter la clientèle : qui accepte ces prix ? Pourquoi ? Identifier si le produit justifie ce prix (qualité, exclusivité, service) ou s'il s'agit d'une erreur de positionnement. Tester des offres packagées ou des versions à prix intermédiaire.",
+      "impact": "Clarification du positionnement. Potentiel d'augmentation du volume des ventes si les prix sont ajustés, ou de consolidation de la marge si le prix premium est justifié. Meilleure adéquation offre/demande.",
+      "source": "Analyse Insight 3 & Bonnes pratiques de pricing"
     },
     {
       "priorite": 3,
-      "titre": "Réduction de la Dépendance Géographique",
-      "action": "Développer un plan d'action pour diversifier les sources de CA. Cibler 1 ou 2 régions sous-performantes prioritaires. Y appliquer la stratégie de vente groupée et lancer une campagne marketing digital ciblée (Facebook Ads géolocalisés) pour tester et stimuler la demande locale. Allouer un budget test et suivre les résultats par région.",
-      "impact": "Réduction du risque stratégique lié à la dépendance d'une seule zone. Création de nouveaux relais de croissance à moyen terme.",
-      "source": "Analyse Insight 3"
+      "titre": "Pivot vers le Marketing Digital Ciblé",
+      "action": "Arrêter les campagnes massives et non mesurables. Concentrer les efforts restants du budget marketing sur Facebook/Instagram Ads avec un ciblage hyper-local (Tunisie, villes cibles, centres d'intérêt précis). Mettre en place des campagnes de retargeting et de contenu (blog, vidéos) pour nourrir le lead. Utiliser les outils analytics pour suivre chaque conversion.",
+      "impact": "Augmentation mesurable du taux de conversion. Réduction du CAC. Meilleure visibilité auprès de la clientèle connectée tunisienne (8M+). Acquisition de données clients exploitables.",
+      "source": "guide_gestion_entreprises_tunisiennes.md - 2.1 Marketing Digital"
     },
     {
       "priorite": 4,
-      "titre": "Optimisation du Taux de Conversion Marketing",
-      "action": "Calculer le Coût d'Acquisition Client (CAC) actuel par canal (ex: Facebook, référencement). Analyser le parcours client pour identifier les points d'abandon. Mettre en place des tests A/B sur les landing pages, les formulaires de contact et le suivi post-clic. Renforcer le remarketing et le lead nurturing par email/SMS adapté au marché tunisien.",
-      "impact": "Augmentation du taux de conversion de 20 à 30%. Réduction du CAC et amélioration du ROI marketing. Acquisition de clients plus rentables.",
-      "source": "Problème identifié & [guide_gestion_entreprises_tunisiennes.md] 2.3 Optimisation du ROI Marketing"
+      "titre": "Implémentation et Suivi Strict du CAC",
+      "action": "Mettre en place un tableau de bord KPI hebdomadaire. Calculer précisément le Coût d'Acquisition Client (CAC) : (Dépenses Marketing / Nombre de nouveaux clients). Comparer ce CAC à la marge moyenne par client. Définir un seuil critique (ex: CAC < 30% de la marge) et ajuster les campagnes en temps réel pour ne jamais le dépasser.",
+      "impact": "Pilotage data-driven des dépenses marketing. Garantie que chaque dinar dépensé en marketing génère un profit. Prévention des pertes financières.",
+      "source": "guide_gestion_entreprises_tunisiennes.md - 2.3 Optimisation du ROI Marketing & guide_interpretation_kpis_tunisie.md - 3. KPIs Marketing et Vente"
     },
     {
       "priorite": 5,
-      "titre": "Mise en Place d'un Tableau de Bord KPI Marketing",
-      "action": "Créer un tableau de bord simple (Excel ou outil gratuit) pour suivre hebdomadairement : Taux de conversion, CAC par canal, coût par lead, panier moyen par région. Définir des objectifs clairs et des seuils d'alerte pour chaque KPI. Former le responsable marketing/commercial à son interprétation et aux actions correctives associées.",
-      "impact": "Pilotage data-driven des actions marketing. Détection rapide des dérives (ex: CAC trop élevé). Meilleure allocation du budget marketing.",
-      "source": "[guide_interpretation_kpis_tunisie.md] 3. KPIs Marketing et Vente"
+      "titre": "Développement de la Fidélisation et des Ventes Croisées",
+      "action": "Une fois l'acquisition maîtrisée, lancer un programme de fidélisation pour les clients existants (programme de points, offres exclusives, service après-vente renforcé). Analyser le panier moyen et proposer systématiquement des ventes croisées ou des accessoires complémentaires. Objectif : augmenter la valeur à vie du client (LTV).",
+      "impact": "Augmentation du chiffre d'affaires par client existant sans coût d'acquisition supplémentaire. Stabilisation et croissance du CA à partir d'une base cliente solide. Amélioration de la rentabilité à long terme.",
+      "source": "Bonnes pratiques de gestion client & Analyse Insight 1 (croissance nulle)"
     }
   ],
   "sources_rag": [
@@ -5523,7 +5523,7 @@
     }
   ],
   "metadata": {
-    "date_generation": "2026-05-19T20:01:28.533985",
+    "date_generation": "2026-05-29T21:19:55.074781",
     "version": "1.0",
     "pipeline_errors": [],
     "nombre_sources": 2

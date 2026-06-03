@@ -19,7 +19,7 @@ from fastapi.responses import StreamingResponse
 from backend.models.request_models import ChatRequest, SqlQueryRequest
 from backend.agents.graph import run_graph_streaming, get_pipeline_steps
 from backend.routes.report import save_report
-from backend.sql_agent.intent_router import classify_intent
+from backend.sql_agent.intent_router import classify_intent, is_destructive_operation
 from backend.sql_agent.generator import generate_sql
 from backend.sql_agent.executor import execute_sql
 
@@ -46,7 +46,7 @@ def _format_sse(event_type: str, content: str) -> str:
     return f"data: {data}\n\n"
 
 
-async def _stream_chat_response(message: str) -> AsyncGenerator[str, None]:
+async def _stream_chat_response(message: str, history: list) -> AsyncGenerator[str, None]:
     """
     Générateur asynchrone pour le streaming de la réponse.
 
@@ -56,10 +56,23 @@ async def _stream_chat_response(message: str) -> AsyncGenerator[str, None]:
 
     Args:
         message: Question de l'utilisateur.
+        history: Historique des 3 derniers échanges.
 
     Yields:
         Événements SSE formatés.
     """
+    # Vérification préalable : opérations destructives toujours refusées
+    if is_destructive_operation(message):
+        yield _format_sse(
+            "error",
+            "Cette opération n'est pas autorisée. "
+            "Le système accepte uniquement les requêtes de lecture (SELECT). "
+            "Les opérations de modification, suppression ou création de tables/colonnes "
+            "ne sont pas permises."
+        )
+        yield _format_sse("done", "")
+        return
+
     # Routage d'intention
     intent = classify_intent(message)
     logger.info("Intent pour '%s': %s", message[:60], intent)
@@ -68,7 +81,7 @@ async def _stream_chat_response(message: str) -> AsyncGenerator[str, None]:
         async for event in _stream_sql_response(message):
             yield event
     else:
-        async for event in _stream_strategic_response(message):
+        async for event in _stream_strategic_response(message, history):
             yield event
 
 
@@ -112,9 +125,13 @@ async def _stream_sql_response(message: str) -> AsyncGenerator[str, None]:
         yield _format_sse("error", str(e))
 
 
-async def _stream_strategic_response(message: str) -> AsyncGenerator[str, None]:
+async def _stream_strategic_response(message: str, history: list) -> AsyncGenerator[str, None]:
     """
     Pipeline LangGraph complet (5 agents) pour les questions stratégiques.
+
+    Args:
+        message: Question utilisateur.
+        history: Historique des 3 derniers échanges (mémoire conversationnelle).
 
     Yields:
         Événements SSE : step → token → report → done (ou error).
@@ -131,8 +148,11 @@ async def _stream_strategic_response(message: str) -> AsyncGenerator[str, None]:
         # Envoyer le début
         yield _format_sse("step", "Démarrage de l'analyse stratégique...")
 
-        # Exécuter le pipeline en streaming
-        async for event in run_graph_streaming(user_question=message):
+        # Exécuter le pipeline en streaming avec l'historique
+        async for event in run_graph_streaming(
+            user_question=message,
+            conversation_history=history,
+        ):
             step = event.get("step", "")
             status = event.get("status", "")
 
@@ -200,8 +220,11 @@ async def chat(request: ChatRequest) -> StreamingResponse:
             detail="Le message ne peut pas être vide."
         )
 
+    # Limiter l'historique à 6 messages max (3 tours)
+    history = (request.history or [])[-6:]
+
     return StreamingResponse(
-        _stream_chat_response(request.message),
+        _stream_chat_response(request.message, history),
         media_type="text/event-stream",
         headers={
             "Cache-Control": "no-cache",

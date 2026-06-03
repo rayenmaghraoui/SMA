@@ -2,7 +2,7 @@
 Sch\u00e9mas Pydantic pour les requ\u00eates entrantes de l'API.
 """
 
-from typing import Optional
+from typing import Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
@@ -13,12 +13,16 @@ class AnalyzeRequest(BaseModel):
 
     Attributes:
         use_defaults: Si True, utilise les fichiers CSV par d\u00e9faut.
-                      Si False, attend un upload pr\u00e9alable.
+        force: Si True, ignore le cache et relance le pipeline complet.
     """
 
     use_defaults: bool = Field(
         default=True,
         description="Utiliser les fichiers CSV par d\u00e9faut (data/)"
+    )
+    force: bool = Field(
+        default=False,
+        description="Forcer une nouvelle analyse en ignorant le cache"
     )
 
 
@@ -28,6 +32,7 @@ class ChatRequest(BaseModel):
 
     Attributes:
         message: Question de l'utilisateur en fran\u00e7ais.
+        history: Historique des 3 derniers \u00e9changes (max 6 messages).
     """
 
     message: str = Field(
@@ -35,6 +40,10 @@ class ChatRequest(BaseModel):
         min_length=1,
         max_length=2000,
         description="Question de l'utilisateur"
+    )
+    history: List[Dict[str, str]] = Field(
+        default=[],
+        description="Historique [{role, content}] \u2014 max 3 tours (6 messages)"
     )
 
 

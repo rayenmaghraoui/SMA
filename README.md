@@ -69,9 +69,10 @@ Types de valeurs : texte, entiers, décimaux, dates (`YYYY-MM-DD`), montants en 
 ### Upload via l'interface (`POST /upload`)
 
 - Format accepté : **`.csv`** uniquement (max ~10 Mo).
-- Détection automatique (schémas legacy) : **finance**, **marketing**, **support** selon les colonnes.
+- **Normalisation sémantique automatique** : le pipeline détecte le schéma (ventes, régions, catégories, canaux, kpis) et mappe les colonnes hétérogènes vers les concepts canoniques internes (synonymes FR/EN → similarité sémantique sentence-t5-base → LLM fallback).
+- Le fichier original est préservé ; une copie normalisée est sauvegardée sous le nom canonique attendu par les analyzers.
 - Fichiers stockés dans `data/uploads/`.
-- **Important :** l'analyse complète (`POST /analyze`) charge les **5 fichiers nommés ci-dessus**. Les CSV uploadés avec d'autres noms doivent correspondre à ce format pour être utilisés.
+- **Important :** l'analyse complète (`POST /analyze`) charge les **5 fichiers nommés ci-dessus**. Un upload réussi génère automatiquement le fichier canonique correspondant.
 
 ### RAG (base de connaissances)
 
@@ -313,8 +314,9 @@ SMA assistant/
 │   ├── Dockerfile
 │   ├── main.py
 │   ├── config.py
-│   ├── analysis/          # loader, analyzers, anomaly_detector
+│   ├── analysis/          # loader, kpis_analyzer, canaux_analyzer, categories_analyzer, anomaly_detector
 │   ├── agents/            # LangGraph (5 agents)
+│   ├── normalization/     # pipeline sémantique : profiler, domain_detector, schema_mapper, transformer
 │   ├── rag/               # embeddings, ingest, retriever, chroma_db/
 │   ├── sql_agent/         # DuckDB, NL→SQL, intent_router
 │   ├── routes/            # analyze, upload, chat, report, sql
@@ -359,11 +361,14 @@ python -m pytest backend/tests/ -v
 
 | Module | Fichier | Contenu |
 |--------|---------|---------|
-| Analyse | `test_analysis.py` | Analyzers, anomalies |
-| Agents | `test_agents.py` | Pipeline LangGraph |
-| RAG | `test_rag.py` | Retriever ChromaDB |
-| Routes | `test_routes.py` | API FastAPI |
-| SQL | `test_sql_agent.py` | Validator, executor, routes SQL |
+| Analyse | `test_analysis.py` | Analyzers (kpis, canaux, catégories), anomalies |
+| Agents | `test_agents.py` | Pipeline LangGraph, AgentState |
+| RAG | `test_rag.py` | Retriever ChromaDB, pertinence sémantique |
+| Routes | `test_routes.py` | API FastAPI : /health, /upload, /analyze, /report |
+| SQL | `test_sql_agent.py` | Validator, executor, intent_router, /sql/query |
+| Normalisation | `test_normalization.py` | Profiler, domain_detector, schema_mapper, transformer, pipeline (45 tests) |
+
+**138/138 tests passent** (`python -m pytest backend/tests/ -v`)
 
 ---
 

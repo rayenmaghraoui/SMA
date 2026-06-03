@@ -6,6 +6,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import FileUploader from '../components/FileUploader';
 import { uploadCSV, listUploads } from '../services/uploadService';
+import { toast } from '../services/toast';
 
 /**
  * Page Upload.
@@ -57,8 +58,14 @@ const Upload = () => {
       setUploadResults(successfulResults);
       await loadPersistedUploads();
 
+      if (successfulResults.length > 0) {
+        toast.success(
+          `${successfulResults.length} fichier${successfulResults.length > 1 ? 's' : ''} importé${successfulResults.length > 1 ? 's' : ''} avec succès.`
+        );
+      }
       if (failedUploads.length > 0) {
         setError(failedUploads.join(' | '));
+        toast.error(`${failedUploads.length} fichier${failedUploads.length > 1 ? 's' : ''} en erreur.`);
       }
     } catch (err) {
       setError(err.response?.data?.detail || err.message || "Erreur lors de l'upload");
@@ -81,10 +88,10 @@ const Upload = () => {
         animate={{ opacity: 1, y: 0 }}
         className="mb-8"
       >
-        <h1 className="text-3xl font-bold text-white drop-shadow-sm">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-300 via-white to-violet-200 bg-clip-text text-transparent drop-shadow-sm">
           Upload de Données
         </h1>
-        <p className="mt-2 text-cyan-200/90">
+        <p className="mt-2 text-violet-200/90">
           Importez vos fichiers CSV pour une analyse personnalisée
         </p>
       </motion.div>
@@ -93,18 +100,18 @@ const Upload = () => {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="mb-8 glass-panel-soft p-6 border-cyan-400/30"
+        className="mb-8 glass-panel-soft p-6 border-violet-400/20"
       >
-        <h2 className="text-lg font-semibold text-cyan-100 mb-3">
+        <h2 className="text-lg font-semibold text-violet-100 mb-3">
           Formats acceptés
         </h2>
         <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
           {[
-            { icon: '🛒', title: 'Ventes', cols: 'invoice_id, product_name, category, quantity, unit_price_tnd, revenue_tnd, customer_id, customer_region, sale_date, sales_channel, payment_method, estimated_profit' },
-            { icon: '🗺️', title: 'Régions', cols: 'customer_region, CA_Total, Profit_Total, Nb_Transactions, Panier_Moyen' },
-            { icon: '📦', title: 'Catégories', cols: 'category, CA_Total, Profit_Total, Nb_Transactions, Quantite_Vendue, Prix_Moyen' },
-            { icon: '📡', title: 'Canaux', cols: 'sales_channel, CA_Total, Nb_Transactions, Panier_Moyen' },
-            { icon: '📊', title: 'KPIs Globaux', cols: 'Indicateur, Valeur' },
+            { icon: '🛒', title: 'Ventes',      cols: 'invoice_id, product_name, category, quantity, unit_price_tnd, revenue_tnd, customer_id, customer_region, sale_date, sales_channel, payment_method, estimated_profit' },
+            { icon: '🗺️', title: 'Régions',     cols: 'customer_region, CA_Total, Profit_Total, Nb_Transactions, Panier_Moyen' },
+            { icon: '📦', title: 'Catégories',  cols: 'category, CA_Total, Profit_Total, Nb_Transactions, Quantite_Vendue, Prix_Moyen' },
+            { icon: '📡', title: 'Canaux',      cols: 'sales_channel, CA_Total, Nb_Transactions, Panier_Moyen' },
+            { icon: '📊', title: 'KPIs Globaux',cols: 'Indicateur, Valeur' },
           ].map((box, i) => (
             <motion.div
               key={box.title}
@@ -112,12 +119,12 @@ const Upload = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 + i * 0.06 }}
               whileHover={{ y: -4 }}
-              className="glass-panel p-4 border-cyan-300/20"
+              className="glass-panel p-4 border-violet-400/20"
             >
               <h3 className="font-medium text-white mb-2">
                 {box.icon} {box.title}
               </h3>
-              <p className="text-xs text-cyan-200/85 leading-relaxed">{box.cols}</p>
+              <p className="text-xs text-violet-200/85 leading-relaxed">{box.cols}</p>
             </motion.div>
           ))}
         </div>
@@ -132,6 +139,59 @@ const Upload = () => {
         <FileUploader onUpload={handleUpload} isLoading={isUploading} />
       </motion.div>
 
+      {/* Animation de succès après upload */}
+      <AnimatePresence>
+        {uploadResults.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 16, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0,  scale: 1 }}
+            exit={{   opacity: 0, y: -8,  scale: 0.95 }}
+            className="mt-4 glass-panel p-6 border-emerald-400/25 bg-emerald-950/30"
+          >
+            <div className="flex items-center gap-4">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: 'spring', stiffness: 340, damping: 20, delay: 0.1 }}
+                className="w-14 h-14 rounded-full bg-emerald-500/20 border border-emerald-400/40
+                           flex items-center justify-center flex-shrink-0"
+              >
+                <motion.svg
+                  className="w-7 h-7 text-emerald-400"
+                  fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                  initial={{ pathLength: 0 }}
+                  animate={{ pathLength: 1 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </motion.svg>
+              </motion.div>
+              <div>
+                <p className="font-semibold text-emerald-300">
+                  {uploadResults.length} fichier{uploadResults.length > 1 ? 's' : ''} importé{uploadResults.length > 1 ? 's' : ''} avec succès
+                </p>
+                <p className="text-sm text-emerald-200/70 mt-0.5">
+                  Retournez sur le Dashboard et cliquez sur <span className="font-medium text-emerald-300">Ré-analyser</span> pour actualiser les résultats.
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 space-y-1.5">
+              {uploadResults.map((r, i) => (
+                <div key={i} className="flex items-center gap-2 text-sm text-emerald-200/80">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 flex-shrink-0" />
+                  <span className="font-mono text-xs">{r.filename}</span>
+                  <span className="text-emerald-400/60">·</span>
+                  <span>{r.row_count} lignes</span>
+                  {r.columns?.length > 0 && (
+                    <span className="text-emerald-400/60 hidden sm:inline">· {r.columns.length} colonnes</span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -142,7 +202,9 @@ const Upload = () => {
           <h3 className="text-lg font-semibold text-white">Fichiers uploadés persistés</h3>
           <button
             onClick={loadPersistedUploads}
-            className="px-3 py-1.5 rounded-lg text-sm text-cyan-100 bg-cyan-500/20 border border-cyan-300/30 hover:bg-cyan-500/30"
+            className="px-3 py-1.5 rounded-lg text-sm text-violet-100
+                       bg-violet-500/15 border border-violet-400/25
+                       hover:bg-violet-500/25 transition-colors"
             type="button"
           >
             Rafraîchir
@@ -150,12 +212,12 @@ const Upload = () => {
         </div>
 
         {persistedUploads.length === 0 ? (
-          <p className="text-cyan-200/80 text-sm">Aucun fichier uploadé pour le moment.</p>
+          <p className="text-violet-200/80 text-sm">Aucun fichier uploadé pour le moment.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-cyan-300/80 border-b border-cyan-400/20">
+                <tr className="text-violet-300/80 border-b border-violet-400/20">
                   <th className="text-left py-2">Fichier</th>
                   <th className="text-left py-2">Taille</th>
                   <th className="text-left py-2">Dernière modification</th>
@@ -163,7 +225,8 @@ const Upload = () => {
               </thead>
               <tbody>
                 {persistedUploads.map((item) => (
-                  <tr key={`${item.filename}-${item.modified}`} className="border-b border-cyan-400/10 text-cyan-100/95">
+                  <tr key={`${item.filename}-${item.modified}`}
+                      className="border-b border-violet-400/10 text-slate-100">
                     <td className="py-2 pr-3">{item.filename}</td>
                     <td className="py-2 pr-3">{formatFileSize(item.size)}</td>
                     <td className="py-2 pr-3">{item.modified ? new Date(item.modified * 1000).toLocaleString('fr-FR') : '-'}</td>
@@ -214,31 +277,34 @@ const Upload = () => {
 
             <div className="space-y-4">
               {uploadResults.map((uploadResult) => (
-                <div key={uploadResult.filename} className="border border-cyan-400/20 rounded-xl p-4 bg-cyan-950/30">
+                <div key={uploadResult.filename}
+                     className="border border-violet-400/15 rounded-xl p-4 bg-slate-900/30">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <p className="text-sm text-cyan-300/80">Fichier</p>
+                      <p className="text-sm text-violet-300/80">Fichier</p>
                       <p className="font-medium text-white">{uploadResult.filename}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-cyan-300/80">Type détecté</p>
+                      <p className="text-sm text-violet-300/80">Type détecté</p>
                       <p className="font-medium text-white capitalize">{uploadResult.file_type}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-cyan-300/80">Nombre de lignes</p>
+                      <p className="text-sm text-violet-300/80">Nombre de lignes</p>
                       <p className="font-medium text-white">{uploadResult.row_count}</p>
                     </div>
                     <div>
-                      <p className="text-sm text-cyan-300/80">Colonnes</p>
+                      <p className="text-sm text-violet-300/80">Colonnes</p>
                       <p className="font-medium text-white">{(uploadResult.columns || []).length}</p>
                     </div>
                   </div>
 
                   <div className="mt-4">
-                    <p className="text-sm text-cyan-300/80 mb-2">Colonnes détectées</p>
+                    <p className="text-sm text-violet-300/80 mb-2">Colonnes détectées</p>
                     <div className="flex flex-wrap gap-2">
                       {(uploadResult.columns || []).map((col) => (
-                        <span key={`${uploadResult.filename}-${col}`} className="px-3 py-1 rounded-full text-sm text-cyan-100 bg-cyan-500/20 border border-cyan-400/25">
+                        <span key={`${uploadResult.filename}-${col}`}
+                              className="px-3 py-1 rounded-full text-sm text-violet-100
+                                         bg-violet-500/15 border border-violet-400/20">
                           {col}
                         </span>
                       ))}
