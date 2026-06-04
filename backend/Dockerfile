@@ -71,19 +71,15 @@ RUN mkdir -p ./data/uploads \
 # Sécurité — utiliser un utilisateur non-root
 # ============================================================
 
-RUN useradd --create-home --shell /bin/bash appuser && \
-    chown -R appuser:appuser /app
-USER appuser
-
 # ============================================================
 # Exposition du port et commande de démarrage
 # ============================================================
 
 EXPOSE 8000
 
-# Healthcheck — vérifie que l'API répond avant de considérer
-# le conteneur comme prêt
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+# Healthcheck avec start-period long pour laisser le temps
+# au modèle sentence-T5-base de se charger (~2-3 minutes)
+HEALTHCHECK --interval=60s --timeout=30s --start-period=300s --retries=5 \
     CMD curl -f http://localhost:8000/health || exit 1
 
 # Démarrer l'application via le module Python (respecte les imports backend.*)
