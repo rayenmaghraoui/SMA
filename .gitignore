@@ -47,6 +47,11 @@ Thumbs.db
 # Rapport PFE (LaTeX)
 rapport_pfe_rayen_finale/
 
+# Fichiers générés par l'application (runtime)
+data/last_report.json
+data/analysis_cache.json
+data/conversations.json
+
 # Mémoire Claude (fichiers internes)
 .claude/
 
