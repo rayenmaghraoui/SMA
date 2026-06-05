@@ -71,8 +71,11 @@ def analysis_agent(state: AgentState) -> AgentState:
         # Étape 2 : Calcul des KPIs par domaine
         # ============================================================
 
-        logger.info("Calcul des KPIs financiers (kpis_globaux)...")
-        kpis["finance"] = kpis_analyzer.analyze(datasets["kpis"])
+        logger.info("Calcul des KPIs financiers (dynamique depuis ventes)...")
+        kpis["finance"] = kpis_analyzer.analyze(
+            datasets["kpis"],
+            df_ventes=datasets.get("ventes")
+        )
 
         logger.info("Calcul des KPIs canaux marketing...")
         kpis["marketing"] = canaux_analyzer.analyze(datasets["canaux"])
