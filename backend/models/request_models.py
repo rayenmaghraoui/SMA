@@ -80,3 +80,36 @@ class SqlQueryRequest(BaseModel):
         description="Question en langage naturel sur les données",
         examples=["Montre-moi les 10 meilleures campagnes par conversions"],
     )
+
+
+class ForecastRequest(BaseModel):
+    """
+    Requête pour la prévision des ventes futures.
+
+    Attributes:
+        horizon: Nombre de mois à prévoir (entre 1 et 12).
+    """
+
+    horizon: int = Field(
+        default=3,
+        ge=1,
+        le=12,
+        description="Nombre de mois futurs à prévoir",
+    )
+
+
+class ComparePeriodsRequest(BaseModel):
+    """
+    Requête pour la comparaison de deux périodes.
+
+    Attributes:
+        period_a_start: Date de début de la période A (YYYY-MM-DD).
+        period_a_end:   Date de fin de la période A (YYYY-MM-DD).
+        period_b_start: Date de début de la période B (YYYY-MM-DD).
+        period_b_end:   Date de fin de la période B (YYYY-MM-DD).
+    """
+
+    period_a_start: str = Field(..., description="Début période A (YYYY-MM-DD)")
+    period_a_end: str = Field(..., description="Fin période A (YYYY-MM-DD)")
+    period_b_start: str = Field(..., description="Début période B (YYYY-MM-DD)")
+    period_b_end: str = Field(..., description="Fin période B (YYYY-MM-DD)")

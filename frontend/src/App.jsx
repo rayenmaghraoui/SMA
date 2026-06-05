@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Upload from './pages/Upload';
 import Chat from './pages/Chat';
 import Report from './pages/Report';
+import Advanced from './pages/Advanced';
 import ParticleField3D from './components/ParticleField3D';
 import ToastContainer from './components/ToastContainer';
 
@@ -21,6 +22,7 @@ const Navbar = () => {
     { path: '/', label: 'Dashboard', icon: '📊' },
     { path: '/upload', label: 'Upload', icon: '📁' },
     { path: '/chat', label: 'Chat', icon: '💬' },
+    { path: '/advanced', label: 'Analyse avancée', icon: '📈' },
     { path: '/report', label: 'Rapport', icon: '📋' },
   ];
 
@@ -103,6 +105,7 @@ const AnimatedRoutes = () => {
           <Route path="/" element={<Dashboard />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/chat" element={<Chat />} />
+          <Route path="/advanced" element={<Advanced />} />
           <Route path="/report" element={<Report />} />
         </Routes>
       </motion.div>

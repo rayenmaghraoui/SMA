@@ -27,6 +27,7 @@ from backend.routes.chat import router as chat_router
 from backend.routes.report import router as report_router
 from backend.routes.sql import router as sql_router
 from backend.routes.conversations import router as conversations_router
+from backend.routes.advanced import router as advanced_router
 from backend.models.response_models import HealthResponse
 
 # ============================================================
@@ -130,6 +131,7 @@ app.include_router(chat_router)
 app.include_router(report_router)
 app.include_router(sql_router)
 app.include_router(conversations_router)
+app.include_router(advanced_router)
 
 
 # ============================================================
