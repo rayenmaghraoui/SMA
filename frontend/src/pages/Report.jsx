@@ -5,6 +5,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import api from '../services/api';
+import { toast } from '../services/toast';
 
 /** Séparateur entre sections */
 const SectionDivider = () => (
@@ -93,6 +94,28 @@ const Report = () => {
   const [report, setReport] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  // Télécharge le rapport PDF généré côté serveur (reportlab)
+  const handleExportPdf = async () => {
+    if (isExporting) return;
+    setIsExporting(true);
+    try {
+      const response = await api.get('/report/pdf', { responseType: 'blob' });
+      const url = URL.createObjectURL(response.data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `rapport_ai_business_consultant_${new Date().toISOString().slice(0, 10)}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('Rapport PDF téléchargé.');
+    } catch (err) {
+      console.error('Erreur export PDF:', err);
+      toast.error('Échec de la génération du PDF. Réessayez.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -165,22 +188,26 @@ const Report = () => {
         </div>
         <motion.button
           type="button"
-          onClick={() => {
-            const prev = document.title;
-            document.title = `Rapport_AI_Business_Consultant_${new Date().toISOString().slice(0, 10)}`;
-            window.print();
-            document.title = prev;
-          }}
+          onClick={handleExportPdf}
+          disabled={isExporting}
           className="no-print px-4 py-2 rounded-xl text-white bg-violet-500/25 border border-violet-400/30
                      hover:bg-violet-500/40 transition-colors flex items-center justify-center gap-2 w-fit
-                     hover:ring-2 hover:ring-violet-400/40 hover:ring-offset-1 hover:ring-offset-slate-950"
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.98 }}
+                     hover:ring-2 hover:ring-violet-400/40 hover:ring-offset-1 hover:ring-offset-slate-950
+                     disabled:opacity-60 disabled:cursor-not-allowed"
+          whileHover={isExporting ? {} : { scale: 1.03 }}
+          whileTap={isExporting ? {} : { scale: 0.98 }}
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Exporter PDF
+          {isExporting ? (
+            <svg className="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          )}
+          {isExporting ? 'Génération…' : 'Exporter PDF'}
         </motion.button>
       </motion.div>
 

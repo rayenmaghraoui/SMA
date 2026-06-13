@@ -12,6 +12,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import Response
 
 from backend.config import DATA_DIR
 
@@ -116,6 +117,48 @@ async def get_report_latest() -> dict:
         "has_report": True,
         "report": report,
     }
+
+
+@router.get("/report/pdf")
+async def get_report_pdf() -> Response:
+    """
+    Génère et télécharge le dernier rapport au format PDF professionnel.
+
+    Returns:
+        Réponse binaire avec le PDF en pièce jointe.
+
+    Raises:
+        HTTPException 404: Si aucun rapport n'est disponible.
+        HTTPException 500: En cas d'erreur de génération.
+    """
+    report = get_last_report()
+
+    if report is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Aucun rapport disponible. Lancez d'abord une analyse via /analyze ou /chat."
+        )
+
+    try:
+        # Import local : reportlab n'est requis que pour cette route
+        from backend.reports.pdf_generator import generate_report_pdf
+
+        pdf_bytes = generate_report_pdf(report)
+        filename = f"rapport_ai_business_consultant_{datetime.now():%Y-%m-%d}.pdf"
+
+        return Response(
+            content=pdf_bytes,
+            media_type="application/pdf",
+            headers={
+                "Content-Disposition": f'attachment; filename="{filename}"',
+            },
+        )
+    except Exception as e:
+        logger.exception("Erreur génération PDF : %s", e)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur lors de la génération du PDF : {str(e)}"
+        )
 
 
 @router.get("/report/summary")

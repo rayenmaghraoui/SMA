@@ -42,5 +42,8 @@ httpx>=0.27.0
 # --- Azure Functions (déploiement Function App uniquement) ---
 azure-functions>=1.18.0
 
+# --- Génération PDF (rapport téléchargeable) ---
+reportlab>=4.0.0
+
 # --- Utilitaires ---
 aiofiles>=23.2.1

@@ -9,7 +9,7 @@ Retourne le SQL et le type de visualisation recommandé (viz_type).
 import json
 import logging
 import re
-from typing import Tuple
+from typing import List, Optional, Tuple
 
 from langchain_openai import ChatOpenAI
 
@@ -63,6 +63,44 @@ def _get_llm() -> ChatOpenAI:
     )
 
 
+def _format_history(history: Optional[List[dict]]) -> str:
+    """
+    Formate l'historique conversationnel pour résoudre les questions de suivi.
+
+    Seules les questions précédentes de l'utilisateur sont conservées : elles
+    permettent au LLM de reconstruire une question complète quand l'utilisateur
+    fait une référence implicite (« et pour Sfax ? », « le même mais en 2024 »).
+    Les réponses de l'assistant (tableaux de résultats) sont ignorées car peu
+    informatives pour la génération SQL.
+
+    Args:
+        history: Liste [{role, content}] des derniers échanges.
+
+    Returns:
+        Bloc de contexte formaté, ou chaîne vide si pas d'historique.
+    """
+    if not history:
+        return ""
+
+    questions = [
+        m.get("content", "").strip()
+        for m in history
+        if m.get("role") == "user" and m.get("content", "").strip()
+    ]
+    if not questions:
+        return ""
+
+    # Garder au plus les 3 dernières questions pour rester concis
+    lines = [f"- {q}" for q in questions[-3:]]
+    return (
+        "\nQuestions précédentes de l'utilisateur (contexte conversationnel) :\n"
+        + "\n".join(lines)
+        + "\n\nSi la question actuelle fait référence à une question précédente "
+        "(« et pour... ? », « le même mais... », « idem en... »), reformule-la "
+        "mentalement en question complète AVANT de générer le SQL.\n"
+    )
+
+
 def _parse_response(raw: str) -> Tuple[str, str]:
     """
     Parse la réponse JSON du LLM pour extraire sql et viz_type.
@@ -93,12 +131,17 @@ def _parse_response(raw: str) -> Tuple[str, str]:
         return sql, "table"
 
 
-async def generate_sql(question: str) -> Tuple[str, str]:
+async def generate_sql(
+    question: str,
+    history: Optional[List[dict]] = None,
+) -> Tuple[str, str]:
     """
     Génère une requête SQL et un type de visualisation depuis une question NL.
 
     Args:
         question: Question de l'utilisateur en français.
+        history: Historique conversationnel optionnel [{role, content}] pour
+                 résoudre les questions de suivi (« et pour Sfax ? »).
 
     Returns:
         (sql, viz_type) — sql prêt à être validé et exécuté.
@@ -107,7 +150,7 @@ async def generate_sql(question: str) -> Tuple[str, str]:
         Exception: Si le LLM est inaccessible.
     """
     schema = get_schema()
-    system_content = _SYSTEM_PROMPT.format(schema=schema)
+    system_content = _SYSTEM_PROMPT.format(schema=schema) + _format_history(history)
 
     llm = _get_llm()
 

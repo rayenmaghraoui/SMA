@@ -78,16 +78,20 @@ async def _stream_chat_response(message: str, history: list) -> AsyncGenerator[s
     logger.info("Intent pour '%s': %s", message[:60], intent)
 
     if intent == "sql":
-        async for event in _stream_sql_response(message):
+        async for event in _stream_sql_response(message, history):
             yield event
     else:
         async for event in _stream_strategic_response(message, history):
             yield event
 
 
-async def _stream_sql_response(message: str) -> AsyncGenerator[str, None]:
+async def _stream_sql_response(message: str, history: list) -> AsyncGenerator[str, None]:
     """
     Pipeline SQL : génère et exécute une requête SQL, stream le résultat.
+
+    Args:
+        message: Question de l'utilisateur.
+        history: Historique des derniers échanges (mémoire conversationnelle).
 
     Yields:
         Événements SSE : step → sql_result → done (ou error).
@@ -96,7 +100,7 @@ async def _stream_sql_response(message: str) -> AsyncGenerator[str, None]:
         yield _format_sse("step", "Analyse de votre question en cours...")
         yield _format_sse("step", "Génération de la requête SQL...")
 
-        sql, viz_type = await generate_sql(message)
+        sql, viz_type = await generate_sql(message, history=history)
         yield _format_sse("step", "Exécution de la requête sur les données...")
 
         rows, errors = await execute_sql(sql)
