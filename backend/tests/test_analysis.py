@@ -55,11 +55,13 @@ class TestFinanceAnalyzer:
         kpis = kpis_analyzer.analyze(finance_df)
         assert kpis["trend"] == "stable"
 
-    def test_missing_column_raises_value_error(self):
-        """Une colonne manquante doit lever ValueError."""
+    def test_missing_column_falls_back_gracefully(self):
+        """Un DataFrame sans la colonne 'indicateur' doit basculer sur le
+        mode de repli (valeurs par défaut) sans lever d'exception."""
         df = pd.DataFrame({"col": [1]})
-        with pytest.raises(ValueError, match="Colonnes manquantes"):
-            kpis_analyzer.analyze(df)
+        kpis = kpis_analyzer.analyze(df)
+        assert kpis["revenue_total"] == 0.0
+        assert "fallback" in kpis["source"]
 
     def test_single_row_does_not_crash(self):
         """Un DataFrame d'une seule ligne ne doit pas provoquer d'erreur."""
