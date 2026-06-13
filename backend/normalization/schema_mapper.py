@@ -41,6 +41,7 @@ from backend.normalization.schemas import (
     InternalSchema,
     get_schema_for_domain,
     get_all_schemas,
+    _CONCEPT_TO_LEGACY_COLUMN,
 )
 from backend.normalization.synonyms import (
     CONCEPT_SYNONYMS,
@@ -49,6 +50,12 @@ from backend.normalization.synonyms import (
 )
 
 logger = logging.getLogger(__name__)
+
+# Index inversé : nom canonique → concept (ex: "sale_date" → DATE)
+# Permet de mapper directement les colonnes qui portent déjà le bon nom.
+_LEGACY_NAME_TO_CONCEPT: Dict[str, CanonicalConcept] = {
+    v: k for k, v in _CONCEPT_TO_LEGACY_COLUMN.items()
+}
 
 
 # ============================================================
@@ -300,6 +307,25 @@ class SchemaMapper:
         concept ne peut être mappé qu'une seule fois par dataset, sauf pour
         les indicateurs/valeurs qui ont chacun leur colonne distincte).
         """
+        # --- Niveau 0 : correspondance nom canonique direct -------------
+        # Si la colonne porte déjà le nom exact attendu par les analyzers
+        # (ex: "sale_date", "revenue_tnd"), on la mappe directement sans
+        # passer par le lookup synonyme — évite les faux échecs de type.
+        legacy_concept = _LEGACY_NAME_TO_CONCEPT.get(column.name)
+        if legacy_concept is not None and self._is_acceptable(
+            legacy_concept, column, candidate_concepts, excluded_concepts
+        ):
+            return ColumnMapping(
+                source_column=column.name,
+                target_concept=legacy_concept,
+                confidence=1.0,
+                method="synonym",
+                reason=(
+                    f"'{column.name}' est le nom canonique exact "
+                    f"de '{legacy_concept.value}'."
+                ),
+            )
+
         # --- Niveau 1 : synonyme exact ----------------------------------
         synonym_concept = find_concept_by_synonym(column.name)
 
