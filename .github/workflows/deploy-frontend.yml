@@ -1,19 +1,10 @@
 # ============================================================
-# Deploy Frontend — Vercel
+# Deploy Frontend — Vercel CLI
 #
-# Ce workflow déploie le frontend React/Vite sur Vercel.
-# Vercel gère automatiquement le CI/CD si le repo GitHub est
-# connecté via vercel.com (approche recommandée, sans ce fichier).
-# Ce workflow sert d'alternative si tu préfères le contrôle CLI.
-#
-# SECRETS GitHub à configurer (Settings → Secrets → Actions) :
-#   VERCEL_TOKEN      → token Vercel (vercel.com → Settings → Tokens)
-#   VERCEL_ORG_ID     → ton org ID Vercel (vercel.com → Settings)
-#   VERCEL_PROJECT_ID → l'ID du projet Vercel (dans .vercel/project.json
-#                       après avoir lié le projet avec `vercel link`)
-#
-# VARIABLE d'environnement à configurer sur vercel.com :
-#   VITE_API_URL = https://sma-backend-8361.azurewebsites.net
+# SECRETS GitHub (Settings → Secrets → Actions) :
+#   VERCEL_TOKEN      → vercel.com → Settings → Tokens
+#   VERCEL_ORG_ID     → team_vmVk144RnLKRMyFxUnYwds8k
+#   VERCEL_PROJECT_ID → prj_o5pSRX2L231QXz2y1PSMycIngn9d
 # ============================================================
 
 name: Deploy Frontend (Vercel)
@@ -35,12 +26,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── 2. Déploiement Vercel ─────────────────────────────────────────
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
+      # ── 2. Node.js ────────────────────────────────────────────────────
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./frontend
-          vercel-args: '--prod'
+          node-version: '20'
+
+      # ── 3. Vercel CLI latest ──────────────────────────────────────────
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      # ── 4. Déploiement production ─────────────────────────────────────
+      - name: Deploy to Vercel
+        working-directory: ./frontend
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }} --yes
