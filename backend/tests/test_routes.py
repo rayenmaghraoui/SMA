@@ -106,6 +106,17 @@ class TestHealthRoute:
 class TestUploadRoute:
     """Tests de la route /upload."""
 
+    @pytest.fixture(autouse=True)
+    def _isolate_uploads(self, tmp_path, monkeypatch):
+        """
+        Redirige les écritures de la route /upload vers un dossier temporaire.
+
+        Sans cette isolation, les tests d'upload écraseraient les vrais fichiers
+        de data/uploads/ (04_analyse_canaux.csv, 05_kpis_globaux.csv, ...) avec
+        des données de fixture, corrompant le dataset de démonstration.
+        """
+        monkeypatch.setattr("backend.routes.upload.UPLOADS_DIR", tmp_path)
+
     @pytest.mark.asyncio
     async def test_upload_valid_finance_csv_returns_200(self, client):
         """Un CSV kpis valide doit retourner HTTP 200."""
