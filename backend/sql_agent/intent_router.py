@@ -81,6 +81,19 @@ _SQL_PATTERNS: list = [
     r"\bdonne[z\s-].{0,30}\bdonn[eé]es?\b",
     r"\bquel(le)?s?\s+sont\s+les?\s+\d+",
     r"\brang(s|er)?\b",
+    # Questions "quel est le X le plus Y"
+    r"\bquel(le)?\s+est\s+le[s]?\b",
+    r"\bquel(le)?s?\s+sont\s+les?\b",
+    r"\bplus\s+(vendu[e]?s?|achet[eé][e]?s?|demand[eé][e]?s?|rentable[s]?|performant[e]?s?|populaire[s]?|[eé]lev[eé][e]?s?|faible[s]?|bas|basse[s]?)\b",
+    r"\bmeilleur(e)?s?\b",
+    r"\bpire[s]?\b",
+    r"\bproduit[s]?\b.{0,30}\b(vendu|achet[eé]|populaire|rentable)\b",
+    r"\b(vendu|achet[eé]).{0,30}\bproduit[s]?\b",
+    r"\bclient[s]?\b.{0,20}\b(plus|meilleur|top|fidèle)\b",
+    r"\br[eé]gion[s]?\b.{0,20}\b(plus|meilleur|top|performant)\b",
+    r"\bidentifi[ez\s-]\b",
+    r"\btrouve[z\s-]\b",
+    r"\bquel(le)?[s]?\b.{0,15}\b(produit|client|r[eé]gion|canal|cat[eé]gorie)\b",
 ]
 
 # Patterns qui suggèrent une analyse stratégique → pipeline LangGraph
