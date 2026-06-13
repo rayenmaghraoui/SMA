@@ -1,7 +1,9 @@
 indicateur,valeur
-CA Total (TND),500000.0
-Profit Total (TND),125000.0
+CA Total (TND),2300000.85
+Profit Total (TND),575000.03
 Marge Beneficiaire (%),25.0
-Nb Transactions,500.0
-Panier Moyen (TND),1000.0
-Quantite Totale Vendue,1500.0
+Nb Transactions,2000.0
+Panier Moyen (TND),1150.0
+Quantite Totale Vendue,10986.0
+Nb Clients Uniques,1565.0
+CA Moyen par Client (TND),1469.65
