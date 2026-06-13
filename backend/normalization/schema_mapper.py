@@ -308,23 +308,29 @@ class SchemaMapper:
         les indicateurs/valeurs qui ont chacun leur colonne distincte).
         """
         # --- Niveau 0 : correspondance nom canonique direct -------------
-        # Si la colonne porte déjà le nom exact attendu par les analyzers
-        # (ex: "sale_date", "revenue_tnd"), on la mappe directement sans
-        # passer par le lookup synonyme — évite les faux échecs de type.
+        # Si la colonne porte EXACTEMENT le nom attendu par les analyzers
+        # (ex: "sale_date", "revenue_tnd"), on la mappe directement.
+        # On vérifie seulement que le concept n'est pas déjà utilisé et
+        # qu'il est dans le périmètre du schéma — on ignore la compatibilité
+        # de type car le nom est une preuve suffisante d'intention.
         legacy_concept = _LEGACY_NAME_TO_CONCEPT.get(column.name)
-        if legacy_concept is not None and self._is_acceptable(
-            legacy_concept, column, candidate_concepts, excluded_concepts
-        ):
-            return ColumnMapping(
-                source_column=column.name,
-                target_concept=legacy_concept,
-                confidence=1.0,
-                method="synonym",
-                reason=(
-                    f"'{column.name}' est le nom canonique exact "
-                    f"de '{legacy_concept.value}'."
-                ),
+        if legacy_concept is not None:
+            already_used = legacy_concept in excluded_concepts
+            out_of_scope = (
+                candidate_concepts is not None
+                and legacy_concept not in candidate_concepts
             )
+            if not already_used and not out_of_scope:
+                return ColumnMapping(
+                    source_column=column.name,
+                    target_concept=legacy_concept,
+                    confidence=1.0,
+                    method="synonym",
+                    reason=(
+                        f"'{column.name}' est le nom canonique exact "
+                        f"de '{legacy_concept.value}'."
+                    ),
+                )
 
         # --- Niveau 1 : synonyme exact ----------------------------------
         synonym_concept = find_concept_by_synonym(column.name)

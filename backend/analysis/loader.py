@@ -130,6 +130,8 @@ def _clean_ventes(df: pd.DataFrame) -> pd.DataFrame:
     """
     df = df.copy()
     df.columns = df.columns.str.strip().str.lower()
+    if "sale_date" not in df.columns and "_unmapped_sale_date" in df.columns:
+        df = df.rename(columns={"_unmapped_sale_date": "sale_date"})
     df["sale_date"] = pd.to_datetime(df["sale_date"], format="%Y-%m-%d", errors="coerce")
     df["product_name"] = df["product_name"].astype(str).str.strip()
     df["category"] = df["category"].astype(str).str.strip()
